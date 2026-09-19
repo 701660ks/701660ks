@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JS UNDEFINED - Admin Users</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    color: #222;
+}
+
+/* HEADER */
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.admin-title {
+    font-size: 14px;
+}
+
+/* PAGE */
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 25px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* CARDS */
+
+.stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow:
+        0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card-title {
+    color: #666;
+    font-size: 14px;
+}
+
+.card-number {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* FILTERS */
+
+.filters {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+input,
+select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.search {
+    flex: 1;
+    min-width: 220px;
+}
+
+/* TABLE */
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow-x: auto;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,0.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #f8f9fb;
+    font-size: 13px;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* STATUS */
+
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* BUTTONS */
+
+button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.view-btn {
+    background: #e5e7eb;
+}
+
+.approve-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.reject-btn {
+    background: #dc2626;
+    color: white;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* MOBILE */
+
+@media(max-width: 800px) {
+
+    .stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+    }
+
+}
+
+@media(max-width: 500px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        JS UNDEFINED
+    </div>
+
+    <div class="admin-title">
+        ADMIN PANEL
+    </div>
+
+</header>
+
+
+<main class="container">
+
+<h1>User Management</h1>
+
+
+<!-- STATISTICS -->
+
+<div class="stats">
+
+    <div class="card">
+        <div class="card-title">
+            Total Users
+        </div>
+
+        <div
+            class="card-number"
+            id="totalUsers">
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            Pending
+        </div>
+
+        <div
+            class="card-number"
+            id="pendingUsers">
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            Approved
+        </div>
+
+        <div
+            class="card-number"
+            id="approvedUsers">
+            0
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-title">
+            Rejected
+        </div>
+
+        <div
+            class="card-number"
+            id="rejectedUsers">
+            0
+        </div>
+    </div>
+
+</div>
+
+
+<!-- FILTERS -->
+
+<div class="filters">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search"
+        placeholder="Search name, email or mobile..."
+    >
+
+
+    <select id="typeFilter">
+
+        <option value="all">
+            All Types
+        </option>
+
+        <option value="User">
+            User
+        </option>
+
+        <option value="Wholesaler">
+            Wholesaler
+        </option>
+
+        <option value="B2B">
+            B2B
+        </option>
+
+    </select>
+
+
+    <select id="statusFilter">
+
+        <option value="all">
+            All Status
+        </option>
+
+        <option value="pending">
+            Pending
+        </option>
+
+        <option value="approved">
+            Approved
+        </option>
+
+        <option value="rejected">
+            Rejected
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- USERS TABLE -->
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+
+<th>Email</th>
+
+<th>Mobile</th>
+
+<th>Type</th>
+
+<th>Status</th>
+
+<th>Registered</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="usersTable">
+
+<tr>
+
+<td colspan="7">
+Loading users...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* ============================
+   SUPABASE
+============================ */
+
+const SUPABASE_URL =
+    "YOUR_SUPABASE_PROJECT_URL";
+
+const SUPABASE_ANON_KEY =
+    "YOUR_SUPABASE_ANON_KEY";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/* ============================
+   VARIABLES
+============================ */
+
+let allUsers = [];
+
+
+/* ============================
+   CHECK ADMIN
+============================ */
+
+async function checkAdmin() {
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient
+        .auth
+        .getUser();
+
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+
+    if (error || !data) {
+
+        alert(
+            "You are not authorized to access the Admin Panel."
+        );
+
+        window.location.href =
+            "index.html";
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* ============================
+   LOAD USERS
+============================ */
+
+async function loadUsers() {
+
+    const isAdmin =
+        await checkAdmin();
+
+    if (!isAdmin) return;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("profiles")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "usersTable"
+        ).innerHTML = `
+
+            <tr>
+                <td colspan="7">
+                    Error loading users:
+                    ${error.message}
+                </td>
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    allUsers = data || [];
+
+    updateStats();
+
+    displayUsers();
+
+}
+
+
+/* ============================
+   STATISTICS
+============================ */
+
+function updateStats() {
+
+    document.getElementById(
+        "totalUsers"
+    ).textContent =
+        allUsers.length;
+
+
+    document.getElementById(
+        "pendingUsers"
+    ).textContent =
+        allUsers.filter(
+            user =>
+                user.status === "pending"
+        ).length;
+
+
+    document.getElementById(
+        "approvedUsers"
+    ).textContent =
+        allUsers.filter(
+            user =>
+                user.status === "approved"
+        ).length;
+
+
+    document.getElementById(
+        "rejectedUsers"
+    ).textContent =
+        allUsers.filter(
+            user =>
+                user.status === "rejected"
+        ).length;
+
+}
+
+
+/* ============================
+   DISPLAY USERS
+============================ */
+
+function displayUsers() {
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase();
+
+
+    const type =
+        document.getElementById(
+            "typeFilter"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+
+    const filtered =
+        allUsers.filter(user => {
+
+            const matchesSearch =
+
+                (user.full_name || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (user.email || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (user.mobile || "")
+                .toLowerCase()
+                .includes(search);
+
+
+            const matchesType =
+                type === "all"
+                ||
+                user.user_type === type;
+
+
+            const matchesStatus =
+                status === "all"
+                ||
+                user.status === status;
+
+
+            return (
+                matchesSearch
+                &&
+                matchesType
+                &&
+                matchesStatus
+            );
+
+        });
+
+
+    const table =
+        document.getElementById(
+            "usersTable"
+        );
+
+
+    if (filtered.length === 0) {
+
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="text-align:center">
+
+                    No users found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+    }
+
+
+    table.innerHTML =
+        filtered.map(user => {
+
+            const date =
+                new Date(
+                    user.created_at
+                ).toLocaleDateString(
+                    "en-IN"
+                );
+
+
+            return `
+
+            <tr>
+
+                <td>
+                    <strong>
+                        ${escapeHTML(
+                            user.full_name || "-"
+                        )}
+                    </strong>
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        user.email || "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        user.mobile || "-"
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        user.user_type || "-"
+                    )}
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status
+                        ${user.status}">
+
+                        ${user.status}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+                    ${date}
+                </td>
+
+
+                <td>
+
+                    <div class="actions">
+
+                        <button
+                            class="view-btn"
+                            onclick="viewUser('${user.id}')">
+
+                            View
+
+                        </button>
+
+
+                        ${
+                            user.status !== "approved"
+
+                            ?
+
+                            `
+
+                            <button
+                                class="approve-btn"
+                                onclick="changeStatus(
+                                    '${user.id}',
+                                    'approved'
+                                )">
+
+                                Approve
+
+                            </button>
+
+                            `
+
+                            :
+
+                            ""
+
+                        }
+
+
+                        ${
+                            user.status !== "rejected"
+
+                            ?
+
+                            `
+
+                            <button
+                                class="reject-btn"
+                                onclick="changeStatus(
+                                    '${user.id}',
+                                    'rejected'
+                                )">
+
+                                Reject
+
+                            </button>
+
+                            `
+
+                            :
+
+                            ""
+
+                        }
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* ============================
+   CHANGE STATUS
+============================ */
+
+async function changeStatus(
+    userId,
+    newStatus
+) {
+
+    const action =
+        newStatus === "approved"
+        ? "approve"
+        : "reject";
+
+
+    const confirmed =
+        confirm(
+            `Are you sure you want to ${action} this user?`
+        );
+
+
+    if (!confirmed) return;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+        .from("profiles")
+        .update({
+            status: newStatus
+        })
+        .eq("id", userId);
+
+
+    if (error) {
+
+        alert(
+            "Error: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        `User ${newStatus} successfully.`
+    );
+
+
+    await loadUsers();
+
+}
+
+
+/* ============================
+   VIEW USER
+============================ */
+
+function viewUser(userId) {
+
+    const user =
+        allUsers.find(
+            item =>
+                item.id === userId
+        );
+
+
+    if (!user) return;
+
+
+    alert(
+
+        "USER DETAILS\n\n" +
+
+        "Name: " +
+        (user.full_name || "-") +
+
+        "\nEmail: " +
+        (user.email || "-") +
+
+        "\nMobile: " +
+        (user.mobile || "-") +
+
+        "\nType: " +
+        (user.user_type || "-") +
+
+        "\nStatus: " +
+        (user.status || "-") +
+
+        "\nRegistered: " +
+        new Date(
+            user.created_at
+        ).toLocaleString("en-IN")
+
+    );
+
+}
+
+
+/* ============================
+   HTML SECURITY
+============================ */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ============================
+   FILTER EVENTS
+============================ */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        displayUsers
+    );
+
+
+document
+    .getElementById("typeFilter")
+    .addEventListener(
+        "change",
+        displayUsers
+    );
+
+
+document
+    .getElementById("statusFilter")
+    .addEventListener(
+        "change",
+        displayUsers
+    );
+
+
+/* ============================
+   START
+============================ */
+
+loadUsers();
+
+</script>
+
+</body>
+</html>
