@@ -1,21 +1,1085 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>JS UNDEFINED</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LUXORA — Fashion & Footwear</title>
 
 <style>
-
-.h1{
-color:red;
-text-align:center;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
+body{
+    background:#fff;
+    color:#171717;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+/* TOP BAR */
+.topbar{
+    background:#111;
+    color:#fff;
+    text-align:center;
+    padding:9px;
+    font-size:13px;
+    letter-spacing:.4px;
+}
+
+/* HEADER */
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:#fff;
+    border-bottom:1px solid #eee;
+}
+
+.navbar{
+    max-width:1400px;
+    margin:auto;
+    height:75px;
+    padding:0 25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:30px;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:2px;
+}
+
+.logo span{
+    color:#e91e63;
+}
+
+.navlinks{
+    display:flex;
+    gap:30px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.navlinks a:hover{
+    color:#e91e63;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.search{
+    width:220px;
+    padding:11px 15px;
+    border:1px solid #ddd;
+    border-radius:25px;
+    outline:none;
+}
+
+.icon{
+    font-size:21px;
+}
+
+.cart{
+    position:relative;
+}
+
+.cart-count{
+    position:absolute;
+    top:-9px;
+    right:-10px;
+    background:#e91e63;
+    color:white;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    font-size:11px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* HERO */
+.hero{
+    min-height:560px;
+    display:flex;
+    align-items:center;
+    background:
+    linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.18)),
+    url("https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=85")
+    center/cover;
+    color:white;
+}
+
+.hero-content{
+    max-width:1400px;
+    width:100%;
+    margin:auto;
+    padding:60px 30px;
+}
+
+.hero small{
+    text-transform:uppercase;
+    letter-spacing:4px;
+    font-weight:bold;
+}
+
+.hero h1{
+    font-size:65px;
+    max-width:700px;
+    margin:15px 0;
+    line-height:1.05;
+}
+
+.hero p{
+    font-size:19px;
+    max-width:520px;
+    line-height:1.6;
+    margin-bottom:30px;
+}
+
+.btn{
+    display:inline-block;
+    background:#e91e63;
+    color:white;
+    padding:15px 30px;
+    border-radius:30px;
+    font-weight:bold;
+    border:none;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+    background:#c2185b;
+}
+
+.btn.light{
+    background:#fff;
+    color:#111;
+    margin-left:10px;
+}
+
+/* SECTION */
+.section{
+    max-width:1400px;
+    margin:auto;
+    padding:75px 25px;
+}
+
+.section-heading{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-heading h2{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.section-heading p{
+    color:#777;
+}
+
+/* CATEGORIES */
+.categories{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.category{
+    height:360px;
+    position:relative;
+    overflow:hidden;
+    border-radius:18px;
+}
+
+.category img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.category:hover img{
+    transform:scale(1.08);
+}
+
+.category-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(transparent,rgba(0,0,0,.75));
+    display:flex;
+    align-items:flex-end;
+    padding:25px;
+    color:white;
+}
+
+.category-overlay h3{
+    font-size:25px;
+}
+
+/* PRODUCTS */
+.products{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+}
+
+.product{
+    background:#fff;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid #eee;
+    transition:.3s;
+}
+
+.product:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.1);
+}
+
+.product-img{
+    position:relative;
+    height:330px;
+    overflow:hidden;
+    background:#f5f5f5;
+}
+
+.product-img img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.product:hover .product-img img{
+    transform:scale(1.05);
+}
+
+.badge{
+    position:absolute;
+    top:15px;
+    left:15px;
+    background:#e91e63;
+    color:#fff;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.wishlist{
+    position:absolute;
+    right:15px;
+    top:15px;
+    background:#fff;
+    border:none;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    font-size:19px;
+}
+
+.product-info{
+    padding:18px;
+}
+
+.product-info h3{
+    font-size:16px;
+    margin-bottom:8px;
+}
+
+.stars{
+    color:#f5a623;
+    font-size:14px;
+}
+
+.price{
+    margin:10px 0;
+    font-size:19px;
+    font-weight:bold;
+}
+
+.old-price{
+    color:#999;
+    text-decoration:line-through;
+    font-size:14px;
+    margin-left:7px;
+    font-weight:normal;
+}
+
+.add-cart{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#111;
+    color:#fff;
+    font-weight:bold;
+}
+
+.add-cart:hover{
+    background:#e91e63;
+}
+
+/* PROMO */
+.promo{
+    margin:30px auto;
+    max-width:1400px;
+    min-height:350px;
+    border-radius:25px;
+    overflow:hidden;
+    background:
+    linear-gradient(90deg,rgba(0,0,0,.75),rgba(0,0,0,.15)),
+    url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1800&q=85")
+    center/cover;
+    display:flex;
+    align-items:center;
+    color:white;
+}
+
+.promo-content{
+    padding:50px;
+}
+
+.promo h2{
+    font-size:48px;
+    margin:10px 0;
+}
+
+.promo p{
+    font-size:18px;
+    margin-bottom:25px;
+}
+
+/* TRUST */
+.trust{
+    background:#fafafa;
+}
+
+.trust-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+    text-align:center;
+}
+
+.trust-item{
+    padding:25px;
+}
+
+.trust-icon{
+    font-size:38px;
+    margin-bottom:15px;
+}
+
+.trust-item h3{
+    margin-bottom:8px;
+}
+
+.trust-item p{
+    color:#777;
+    font-size:14px;
+}
+
+/* REVIEWS */
+.reviews{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.review{
+    padding:30px;
+    border:1px solid #eee;
+    border-radius:16px;
+}
+
+.review-stars{
+    color:#f5a623;
+    margin-bottom:15px;
+}
+
+.review p{
+    color:#555;
+    line-height:1.7;
+}
+
+.customer{
+    margin-top:18px;
+    font-weight:bold;
+}
+
+/* NEWSLETTER */
+.newsletter{
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:65px 20px;
+}
+
+.newsletter h2{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+.newsletter p{
+    color:#bbb;
+    margin-bottom:25px;
+}
+
+.email-box{
+    max-width:500px;
+    margin:auto;
+    display:flex;
+}
+
+.email-box input{
+    flex:1;
+    padding:15px;
+    border:none;
+    outline:none;
+}
+
+.email-box button{
+    padding:15px 25px;
+    border:none;
+    background:#e91e63;
+    color:#fff;
+    font-weight:bold;
+}
+
+/* FOOTER */
+footer{
+    background:#080808;
+    color:white;
+    padding:60px 25px 25px;
+}
+
+.footer-grid{
+    max-width:1400px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:50px;
+}
+
+.footer-col h3{
+    margin-bottom:20px;
+}
+
+.footer-col p{
+    color:#aaa;
+    line-height:1.7;
+}
+
+.footer-col a{
+    display:block;
+    color:#aaa;
+    margin:12px 0;
+}
+
+.footer-col a:hover{
+    color:#fff;
+}
+
+.copyright{
+    max-width:1400px;
+    margin:40px auto 0;
+    padding-top:20px;
+    border-top:1px solid #222;
+    color:#777;
+    text-align:center;
+    font-size:13px;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+    .navlinks{
+        display:none;
+    }
+
+    .search{
+        width:130px;
+    }
+
+    .hero{
+        min-height:500px;
+    }
+
+    .hero h1{
+        font-size:45px;
+    }
+
+    .categories,
+    .products{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .trust-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .reviews{
+        grid-template-columns:1fr;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    .navbar{
+        padding:0 15px;
+    }
+
+    .logo{
+        font-size:22px;
+    }
+
+    .search{
+        display:none;
+    }
+
+    .hero-content{
+        padding:40px 20px;
+    }
+
+    .hero h1{
+        font-size:39px;
+    }
+
+    .hero p{
+        font-size:16px;
+    }
+
+    .btn{
+        padding:13px 22px;
+    }
+
+    .section{
+        padding:50px 15px;
+    }
+
+    .categories,
+    .products{
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    }
+
+    .category{
+        height:240px;
+    }
+
+    .product-img{
+        height:230px;
+    }
+
+    .product-info{
+        padding:12px;
+    }
+
+    .product-info h3{
+        font-size:14px;
+    }
+
+    .promo{
+        margin:15px;
+    }
+
+    .promo-content{
+        padding:30px 25px;
+    }
+
+    .promo h2{
+        font-size:34px;
+    }
+
+    .trust-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+    }
+}
 </style>
 </head>
+
 <body>
 
-    <h1>Hello Everyone 👋</h1>
-<p>hii</p>
+<!-- TOP OFFER -->
+<div class="topbar">
+    🚚 FREE SHIPPING ON ORDERS ABOVE ₹999 &nbsp; | &nbsp; 🔥 EXTRA 10% OFF — USE CODE: WELCOME10
+</div>
+
+<!-- HEADER -->
+<header>
+<nav class="navbar">
+
+    <a href="#" class="logo">
+        LUX<span>ORA</span>
+    </a>
+
+    <div class="navlinks">
+        <a href="#home">Home</a>
+        <a href="#shop">Shop</a>
+        <a href="#categories">Categories</a>
+        <a href="#offers">Offers</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <div class="nav-actions">
+
+        <input class="search"
+        type="text"
+        placeholder="Search products...">
+
+        <span class="icon">♡</span>
+
+        <span class="icon cart">
+            🛒
+            <span class="cart-count" id="cartCount">0</span>
+        </span>
+
+    </div>
+
+</nav>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+
+<div class="hero-content">
+
+    <small>New Collection 2026</small>
+
+    <h1>Style That Defines You.</h1>
+
+    <p>
+        Discover beautiful women's fashion, trendy dresses,
+        elegant ethnic wear and stylish footwear — all in one place.
+    </p>
+
+    <a href="#shop" class="btn">Shop Now</a>
+
+    <a href="#categories" class="btn light">Explore Collection</a>
+
+</div>
+
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" id="categories">
+
+<div class="section-heading">
+    <h2>Shop By Category</h2>
+    <p>Find your perfect style</p>
+</div>
+
+<div class="categories">
+
+    <a href="#" class="category">
+        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85">
+        <div class="category-overlay">
+            <h3>Women's Fashion</h3>
+        </div>
+    </a>
+
+    <a href="#" class="category">
+        <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85">
+        <div class="category-overlay">
+            <h3>Dresses</h3>
+        </div>
+    </a>
+
+    <a href="#" class="category">
+        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=85">
+        <div class="category-overlay">
+            <h3>Ethnic Wear</h3>
+        </div>
+    </a>
+
+    <a href="#" class="category">
+        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=900&q=85">
+        <div class="category-overlay">
+            <h3>Footwear</h3>
+        </div>
+    </a>
+
+</div>
+
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="shop">
+
+<div class="section-heading">
+    <h2>Trending Now</h2>
+    <p>Our most-loved styles</p>
+</div>
+
+<div class="products">
+
+<!-- PRODUCT 1 -->
+<div class="product">
+
+<div class="product-img">
+    <span class="badge">NEW</span>
+    <button class="wishlist">♡</button>
+
+    <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=700&q=85">
+</div>
+
+<div class="product-info">
+
+    <h3>Elegant Floral Dress</h3>
+
+    <div class="stars">★★★★★</div>
+
+    <div class="price">
+        ₹799
+        <span class="old-price">₹1,299</span>
+    </div>
+
+    <button class="add-cart" onclick="addCart()">
+        Add to Cart
+    </button>
+
+</div>
+</div>
+
+
+<!-- PRODUCT 2 -->
+<div class="product">
+
+<div class="product-img">
+    <span class="badge">SALE</span>
+    <button class="wishlist">♡</button>
+
+    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=700&q=85">
+</div>
+
+<div class="product-info">
+
+    <h3>Premium Ethnic Kurta Set</h3>
+
+    <div class="stars">★★★★★</div>
+
+    <div class="price">
+        ₹999
+        <span class="old-price">₹1,599</span>
+    </div>
+
+    <button class="add-cart" onclick="addCart()">
+        Add to Cart
+    </button>
+
+</div>
+</div>
+
+
+<!-- PRODUCT 3 -->
+<div class="product">
+
+<div class="product-img">
+    <span class="badge">TRENDING</span>
+    <button class="wishlist">♡</button>
+
+    <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=700&q=85">
+</div>
+
+<div class="product-info">
+
+    <h3>Stylish Women's Footwear</h3>
+
+    <div class="stars">★★★★★</div>
+
+    <div class="price">
+        ₹699
+        <span class="old-price">₹999</span>
+    </div>
+
+    <button class="add-cart" onclick="addCart()">
+        Add to Cart
+    </button>
+
+</div>
+</div>
+
+
+<!-- PRODUCT 4 -->
+<div class="product">
+
+<div class="product-img">
+    <span class="badge">HOT</span>
+    <button class="wishlist">♡</button>
+
+    <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=700&q=85">
+</div>
+
+<div class="product-info">
+
+    <h3>Modern Women's Top</h3>
+
+    <div class="stars">★★★★★</div>
+
+    <div class="price">
+        ₹599
+        <span class="old-price">₹899</span>
+    </div>
+
+    <button class="add-cart" onclick="addCart()">
+        Add to Cart
+    </button>
+
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- PROMOTION -->
+<section id="offers">
+
+<div class="promo">
+
+<div class="promo-content">
+
+    <small>LIMITED TIME OFFER</small>
+
+    <h2>Up To 50% OFF</h2>
+
+    <p>
+        Upgrade your wardrobe with our latest collection.
+        Limited stock available.
+    </p>
+
+    <a href="#shop" class="btn">
+        Shop Sale
+    </a>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TRUST -->
+<section class="section trust">
+
+<div class="section-heading">
+    <h2>Why Shop With Us?</h2>
+    <p>Shopping made simple and secure</p>
+</div>
+
+<div class="trust-grid">
+
+<div class="trust-item">
+    <div class="trust-icon">🚚</div>
+    <h3>Fast Delivery</h3>
+    <p>Quick and reliable delivery across India.</p>
+</div>
+
+<div class="trust-item">
+    <div class="trust-icon">🔒</div>
+    <h3>Secure Payment</h3>
+    <p>Your payment information is protected.</p>
+</div>
+
+<div class="trust-item">
+    <div class="trust-icon">↩️</div>
+    <h3>Easy Returns</h3>
+    <p>Simple return process on eligible products.</p>
+</div>
+
+<div class="trust-item">
+    <div class="trust-icon">💬</div>
+    <h3>Customer Support</h3>
+    <p>We're here to help whenever you need us.</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- REVIEWS -->
+<section class="section">
+
+<div class="section-heading">
+    <h2>What Customers Say</h2>
+    <p>Loved by our customers</p>
+</div>
+
+<div class="reviews">
+
+<div class="review">
+
+    <div class="review-stars">★★★★★</div>
+
+    <p>
+        "The dress looks exactly like the pictures.
+        Quality is really good and delivery was fast."
+    </p>
+
+    <div class="customer">
+        — Priya S.
+    </div>
+
+</div>
+
+<div class="review">
+
+    <div class="review-stars">★★★★★</div>
+
+    <p>
+        "Very beautiful collection. The fitting was
+        perfect and I absolutely loved it."
+    </p>
+
+    <div class="customer">
+        — Neha R.
+    </div>
+
+</div>
+
+<div class="review">
+
+    <div class="review-stars">★★★★★</div>
+
+    <p>
+        "Good quality at a reasonable price.
+        Definitely ordering again."
+    </p>
+
+    <div class="customer">
+        — Anjali P.
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+
+<h2>Get 10% OFF Your First Order</h2>
+
+<p>
+    Subscribe and receive exclusive offers and new collection updates.
+</p>
+
+<div class="email-box">
+
+<input
+    type="email"
+    placeholder="Enter your email">
+
+<button>
+    Subscribe
+</button>
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+
+<div class="footer-grid">
+
+<div class="footer-col">
+
+    <h3>LUXORA</h3>
+
+    <p>
+        Your destination for stylish women's fashion,
+        ethnic wear, dresses and footwear.
+    </p>
+
+</div>
+
+<div class="footer-col">
+
+    <h3>Shop</h3>
+
+    <a href="#">Women's Fashion</a>
+    <a href="#">Dresses</a>
+    <a href="#">Ethnic Wear</a>
+    <a href="#">Footwear</a>
+
+</div>
+
+<div class="footer-col">
+
+    <h3>Customer Care</h3>
+
+    <a href="#">Contact Us</a>
+    <a href="#">Shipping Policy</a>
+    <a href="#">Return Policy</a>
+    <a href="#">FAQ</a>
+
+</div>
+
+<div class="footer-col">
+
+    <h3>Follow Us</h3>
+
+    <a href="#">Instagram</a>
+    <a href="#">Facebook</a>
+    <a href="#">YouTube</a>
+    <a href="#">WhatsApp</a>
+
+</div>
+
+</div>
+
+<div class="copyright">
+    © 2026 LUXORA. All Rights Reserved.
+</div>
+
+</footer>
+
+
+<script>
+
+let cart = 0;
+
+function addCart(){
+
+    cart++;
+
+    document.getElementById("cartCount").innerText = cart;
+
+    alert("Product added to cart!");
+
+}
+
+</script>
 
 </body>
 </html>
