@@ -1458,37 +1458,39 @@ async function loadAdminData() {
 
         /* LOAD USERS */
 
-        const {
-            data: users,
-            error: usersError
-        } =
-        await supabaseClient
-            .from("profiles")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        /* ================================================
+   LOAD USERS
+================================================ */
+
+const {
+    data: users,
+    error: usersError
+} = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .order("created_at", {
+        ascending: false
+    });
 
 
-        if (usersError)
-            throw usersError;
+if (usersError) {
+
+    console.error(
+        "USERS ERROR:",
+        usersError
+    );
+
+    throw usersError;
+
+}
 
 
-        allUsers =
-            users || [];
+allUsers = users || [];
 
 
-        displayUsers(
-            allUsers
-        );
+displayUsers(allUsers);
 
-
-        await loadBusinessVerifications();
-
-    }
+await loadBusinessVerifications();
 
     catch (error) {
 
