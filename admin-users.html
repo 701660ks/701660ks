@@ -418,588 +418,237 @@ Loading users...
 
 <script>
 
-/* ============================
-   SUPABASE
-============================ */
+async function loadAdminData() {
 
-const SUPABASE_URL =
-    "YOUR_SUPABASE_PROJECT_URL";
+  const message = document.getElementById("message");
 
-const SUPABASE_ANON_KEY =
-    "YOUR_SUPABASE_ANON_KEY";
+  try {
 
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-    );
-
-
-/* ============================
-   VARIABLES
-============================ */
-
-let allUsers = [];
-
-
-/* ============================
-   CHECK ADMIN
-============================ */
-
-async function checkAdmin() {
-
+    // Check logged-in user
     const {
-        data: {
-            user
-        }
-    } =
-        await supabaseClient
-        .auth
-        .getUser();
+      data: { user },
+      error: userError
+    } = await supabaseClient.auth.getUser();
 
+    if (userError) {
+      throw userError;
+    }
 
     if (!user) {
-
-        window.location.href =
-            "login.html";
-
-        return false;
+      window.location.href = "login.html";
+      return;
     }
 
-
+    // Check admin profile
     const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("admin_users")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      data: adminProfile,
+      error: adminError
+    } = await supabaseClient
+      .from("profiles")
+      .select("id, full_name, email, is_admin")
+      .eq("id", user.id)
+      .single();
 
-
-    if (error || !data) {
-
-        alert(
-            "You are not authorized to access the Admin Panel."
-        );
-
-        window.location.href =
-            "index.html";
-
-        return false;
+    if (adminError) {
+      throw adminError;
     }
 
+    if (!adminProfile || adminProfile.is_admin !== true) {
+      message.innerText = "Access denied. You are not an admin.";
+      return;
+    }
 
-    return true;
-}
-
-
-/* ============================
-   LOAD USERS
-============================ */
-
-async function loadUsers() {
-
-    const isAdmin =
-        await checkAdmin();
-
-    if (!isAdmin) return;
-
-
+    // Load all users
     const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("profiles")
-        .select("*")
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
+      data: users,
+      error: usersError
+    } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-
-    if (error) {
-
-        console.error(error);
-
-        document.getElementById(
-            "usersTable"
-        ).innerHTML = `
-
-            <tr>
-                <td colspan="7">
-                    Error loading users:
-                    ${error.message}
-                </td>
-            </tr>
-
-        `;
-
-        return;
+    if (usersError) {
+      throw usersError;
     }
 
+    console.log("Users:", users);
 
-    allUsers = data || [];
+    displayUsers(users);
 
-    updateStats();
+    message.innerText = "";
 
-    displayUsers();
+  } catch (error) {
+
+    console.error("ADMIN ERROR:", error);
+
+    message.innerText =
+      "Database error: " + (error.message || error);
+
+  }
+}
+
+
+function displayUsers(users) {
+
+  const tableBody = document.querySelector("#usersTableBody");
+
+  if (!tableBody) {
+    console.error("usersTableBody not found");
+    return;
+  }
+
+  tableBody.innerHTML = "";
+
+  // Counters
+  const total = users.length;
+
+  const pending = users.filter(
+    u => u.account_status === "pending_admin"
+  ).length;
+
+  const approved = users.filter(
+    u =>
+      u.account_status === "approved" ||
+      u.account_status === "active"
+  ).length;
+
+  const rejected = users.filter(
+    u => u.account_status === "rejected"
+  ).length;
+
+  // Update counters
+  document.getElementById("totalUsers").innerText = total;
+  document.getElementById("pendingUsers").innerText = pending;
+  document.getElementById("approvedUsers").innerText = approved;
+  document.getElementById("rejectedUsers").innerText = rejected;
+
+
+  if (users.length === 0) {
+
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;padding:20px;">
+          No users found
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+
+  users.forEach(user => {
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${escapeHtml(user.full_name || "")}</td>
+
+      <td>${escapeHtml(user.email || "")}</td>
+
+      <td>${escapeHtml(user.mobile || "")}</td>
+
+      <td>${escapeHtml(user.user_type || "")}</td>
+
+      <td>${escapeHtml(user.account_status || "")}</td>
+
+      <td>
+        ${
+          user.created_at
+            ? new Date(user.created_at).toLocaleDateString()
+            : ""
+        }
+      </td>
+
+      <td>
+        ${
+          user.user_type === "wholesaler" ||
+          user.user_type === "b2b"
+            ? `
+              <button onclick="approveUser('${user.id}')">
+                Approve
+              </button>
+
+              <button onclick="rejectUser('${user.id}')">
+                Reject
+              </button>
+            `
+            : "-"
+        }
+      </td>
+    `;
+
+    tableBody.appendChild(row);
+
+  });
 
 }
 
 
-/* ============================
-   STATISTICS
-============================ */
+async function approveUser(id) {
 
-function updateStats() {
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({
+      account_status: "approved"
+    })
+    .eq("id", id);
 
-    document.getElementById(
-        "totalUsers"
-    ).textContent =
-        allUsers.length;
+  if (error) {
 
+    alert("Approval error: " + error.message);
 
-    document.getElementById(
-        "pendingUsers"
-    ).textContent =
-        allUsers.filter(
-            user =>
-                user.status === "pending"
-        ).length;
+    return;
+  }
 
+  alert("User approved.");
 
-    document.getElementById(
-        "approvedUsers"
-    ).textContent =
-        allUsers.filter(
-            user =>
-                user.status === "approved"
-        ).length;
-
-
-    document.getElementById(
-        "rejectedUsers"
-    ).textContent =
-        allUsers.filter(
-            user =>
-                user.status === "rejected"
-        ).length;
-
+  loadAdminData();
 }
 
 
-/* ============================
-   DISPLAY USERS
-============================ */
+async function rejectUser(id) {
 
-function displayUsers() {
+  const { error } = await supabaseClient
+    .from("profiles")
+    .update({
+      account_status: "rejected"
+    })
+    .eq("id", id);
 
-    const search =
-        document.getElementById(
-            "searchInput"
-        )
-        .value
-        .toLowerCase();
+  if (error) {
 
+    alert("Rejection error: " + error.message);
 
-    const type =
-        document.getElementById(
-            "typeFilter"
-        ).value;
+    return;
+  }
 
+  alert("User rejected.");
 
-    const status =
-        document.getElementById(
-            "statusFilter"
-        ).value;
-
-
-    const filtered =
-        allUsers.filter(user => {
-
-            const matchesSearch =
-
-                (user.full_name || "")
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                (user.email || "")
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                (user.mobile || "")
-                .toLowerCase()
-                .includes(search);
-
-
-            const matchesType =
-                type === "all"
-                ||
-                user.user_type === type;
-
-
-            const matchesStatus =
-                status === "all"
-                ||
-                user.status === status;
-
-
-            return (
-                matchesSearch
-                &&
-                matchesType
-                &&
-                matchesStatus
-            );
-
-        });
-
-
-    const table =
-        document.getElementById(
-            "usersTable"
-        );
-
-
-    if (filtered.length === 0) {
-
-        table.innerHTML = `
-
-            <tr>
-
-                <td
-                    colspan="7"
-                    style="text-align:center">
-
-                    No users found.
-
-                </td>
-
-            </tr>
-
-        `;
-
-        return;
-    }
-
-
-    table.innerHTML =
-        filtered.map(user => {
-
-            const date =
-                new Date(
-                    user.created_at
-                ).toLocaleDateString(
-                    "en-IN"
-                );
-
-
-            return `
-
-            <tr>
-
-                <td>
-                    <strong>
-                        ${escapeHTML(
-                            user.full_name || "-"
-                        )}
-                    </strong>
-                </td>
-
-
-                <td>
-                    ${escapeHTML(
-                        user.email || "-"
-                    )}
-                </td>
-
-
-                <td>
-                    ${escapeHTML(
-                        user.mobile || "-"
-                    )}
-                </td>
-
-
-                <td>
-                    ${escapeHTML(
-                        user.user_type || "-"
-                    )}
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="status
-                        ${user.status}">
-
-                        ${user.status}
-
-                    </span>
-
-                </td>
-
-
-                <td>
-                    ${date}
-                </td>
-
-
-                <td>
-
-                    <div class="actions">
-
-                        <button
-                            class="view-btn"
-                            onclick="viewUser('${user.id}')">
-
-                            View
-
-                        </button>
-
-
-                        ${
-                            user.status !== "approved"
-
-                            ?
-
-                            `
-
-                            <button
-                                class="approve-btn"
-                                onclick="changeStatus(
-                                    '${user.id}',
-                                    'approved'
-                                )">
-
-                                Approve
-
-                            </button>
-
-                            `
-
-                            :
-
-                            ""
-
-                        }
-
-
-                        ${
-                            user.status !== "rejected"
-
-                            ?
-
-                            `
-
-                            <button
-                                class="reject-btn"
-                                onclick="changeStatus(
-                                    '${user.id}',
-                                    'rejected'
-                                )">
-
-                                Reject
-
-                            </button>
-
-                            `
-
-                            :
-
-                            ""
-
-                        }
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-            `;
-
-        }).join("");
-
+  loadAdminData();
 }
 
 
-/* ============================
-   CHANGE STATUS
-============================ */
+async function logout() {
 
-async function changeStatus(
-    userId,
-    newStatus
-) {
+  await supabaseClient.auth.signOut();
 
-    const action =
-        newStatus === "approved"
-        ? "approve"
-        : "reject";
-
-
-    const confirmed =
-        confirm(
-            `Are you sure you want to ${action} this user?`
-        );
-
-
-    if (!confirmed) return;
-
-
-    const {
-        error
-    } =
-        await supabaseClient
-        .from("profiles")
-        .update({
-            status: newStatus
-        })
-        .eq("id", userId);
-
-
-    if (error) {
-
-        alert(
-            "Error: " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    alert(
-        `User ${newStatus} successfully.`
-    );
-
-
-    await loadUsers();
-
+  window.location.href = "login.html";
 }
 
 
-/* ============================
-   VIEW USER
-============================ */
+function escapeHtml(value) {
 
-function viewUser(userId) {
-
-    const user =
-        allUsers.find(
-            item =>
-                item.id === userId
-        );
-
-
-    if (!user) return;
-
-
-    alert(
-
-        "USER DETAILS\n\n" +
-
-        "Name: " +
-        (user.full_name || "-") +
-
-        "\nEmail: " +
-        (user.email || "-") +
-
-        "\nMobile: " +
-        (user.mobile || "-") +
-
-        "\nType: " +
-        (user.user_type || "-") +
-
-        "\nStatus: " +
-        (user.status || "-") +
-
-        "\nRegistered: " +
-        new Date(
-            user.created_at
-        ).toLocaleString("en-IN")
-
-    );
-
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
-/* ============================
-   HTML SECURITY
-============================ */
-
-function escapeHTML(value) {
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* ============================
-   FILTER EVENTS
-============================ */
-
-document
-    .getElementById("searchInput")
-    .addEventListener(
-        "input",
-        displayUsers
-    );
-
-
-document
-    .getElementById("typeFilter")
-    .addEventListener(
-        "change",
-        displayUsers
-    );
-
-
-document
-    .getElementById("statusFilter")
-    .addEventListener(
-        "change",
-        displayUsers
-    );
-
-
-/* ============================
-   START
-============================ */
-
-loadUsers();
+loadAdminData();
 
 </script>
 
