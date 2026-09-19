@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>JS UNDEFINED - Admin Users</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 
 <style>
@@ -24,12 +24,11 @@ body {
     color: #222;
 }
 
-/* HEADER */
-
 .header {
     background: #111827;
     color: white;
     padding: 18px 25px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -44,8 +43,6 @@ body {
     font-size: 14px;
 }
 
-/* PAGE */
-
 .container {
     max-width: 1400px;
     margin: auto;
@@ -56,12 +53,13 @@ h1 {
     margin-bottom: 20px;
 }
 
-/* CARDS */
+/* =========================
+   STATISTICS
+========================= */
 
 .stats {
     display: grid;
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -70,8 +68,9 @@ h1 {
     background: white;
     padding: 20px;
     border-radius: 12px;
+
     box-shadow:
-        0 3px 12px rgba(0,0,0,0.08);
+        0 3px 12px rgba(0,0,0,.08);
 }
 
 .card-title {
@@ -85,7 +84,9 @@ h1 {
     margin-top: 8px;
 }
 
-/* FILTERS */
+/* =========================
+   FILTERS
+========================= */
 
 .filters {
     background: white;
@@ -101,8 +102,10 @@ h1 {
 input,
 select {
     padding: 12px;
+
     border: 1px solid #ddd;
     border-radius: 8px;
+
     font-size: 14px;
 }
 
@@ -111,15 +114,19 @@ select {
     min-width: 220px;
 }
 
-/* TABLE */
+/* =========================
+   TABLE
+========================= */
 
 .table-container {
     background: white;
+
     border-radius: 12px;
+
     overflow-x: auto;
 
     box-shadow:
-        0 3px 12px rgba(0,0,0,0.08);
+        0 3px 12px rgba(0,0,0,.08);
 }
 
 table {
@@ -130,7 +137,9 @@ table {
 th,
 td {
     padding: 15px;
+
     text-align: left;
+
     border-bottom: 1px solid #eee;
 }
 
@@ -143,12 +152,19 @@ td {
     font-size: 14px;
 }
 
-/* STATUS */
+/* =========================
+   STATUS
+========================= */
 
 .status {
+    display: inline-block;
+
     padding: 6px 10px;
+
     border-radius: 20px;
+
     font-size: 12px;
+
     font-weight: bold;
 }
 
@@ -167,28 +183,20 @@ td {
     color: #991b1b;
 }
 
-/* BUTTONS */
+/* =========================
+   BUTTONS
+========================= */
 
 button {
     border: none;
+
     padding: 8px 12px;
+
     border-radius: 7px;
+
     cursor: pointer;
+
     font-weight: 600;
-}
-
-.view-btn {
-    background: #e5e7eb;
-}
-
-.approve-btn {
-    background: #16a34a;
-    color: white;
-}
-
-.reject-btn {
-    background: #dc2626;
-    color: white;
 }
 
 button:disabled {
@@ -202,41 +210,61 @@ button:disabled {
     flex-wrap: wrap;
 }
 
-/* MOBILE */
-
-@media(max-width: 800px) {
-
-    .stats {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
-
-    th,
-    td {
-        white-space: nowrap;
-    }
-
+.approve-btn {
+    background: #16a34a;
+    color: white;
 }
 
-@media(max-width: 500px) {
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .container {
-        padding: 15px;
-    }
-
+.reject-btn {
+    background: #dc2626;
+    color: white;
 }
 
+.edit-btn {
+    background: #6c4df6;
+    color: white;
+}
 
-/* =====================================
-   USER EDITOR
-===================================== */
+.delete-btn {
+    background: #ef4444;
+    color: white;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+    display: none;
+
+    padding: 12px 15px;
+
+    margin-bottom: 20px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+}
+
+.message.show {
+    display: block;
+}
+
+.message.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* =========================
+   ADD / EDIT SECTION
+========================= */
 
 .user-editor {
-
     background: white;
 
     margin-top: 25px;
@@ -249,17 +277,11 @@ button:disabled {
         0 3px 12px rgba(0,0,0,.08);
 }
 
-
 .user-editor h2 {
-
     margin-bottom: 20px;
-
-    font-size: 22px;
 }
 
-
 .editor-grid {
-
     display: grid;
 
     grid-template-columns:
@@ -268,9 +290,7 @@ button:disabled {
     gap: 18px;
 }
 
-
 .editor-field label {
-
     display: block;
 
     margin-bottom: 7px;
@@ -280,10 +300,8 @@ button:disabled {
     font-weight: 600;
 }
 
-
 .editor-field input,
 .editor-field select {
-
     width: 100%;
 
     height: 45px;
@@ -299,19 +317,15 @@ button:disabled {
     outline: none;
 }
 
-
 .editor-field input:focus,
 .editor-field select:focus {
-
     border-color: #6c4df6;
 
     box-shadow:
         0 0 0 3px rgba(108,77,246,.10);
 }
 
-
 .editor-buttons {
-
     display: flex;
 
     gap: 10px;
@@ -321,37 +335,54 @@ button:disabled {
     flex-wrap: wrap;
 }
 
-
 .save-user-btn {
-
     background: #6c4df6;
-
     color: white;
 }
-
 
 .new-user-btn {
-
     background: #16a34a;
-
     color: white;
 }
 
-
 .cancel-user-btn {
-
     background: #e5e7eb;
-
     color: #222;
 }
 
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px) {
+
+    .stats {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+    }
+
+}
 
 @media(max-width:700px) {
 
     .editor-grid {
-
         grid-template-columns: 1fr;
+    }
 
+}
+
+@media(max-width:500px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 15px;
     }
 
 }
@@ -379,12 +410,17 @@ button:disabled {
 
 <h1>User Management</h1>
 
+<div id="message" class="message"></div>
 
-<!-- STATISTICS -->
+
+<!-- =========================
+     STATISTICS
+========================= -->
 
 <div class="stats">
 
     <div class="card">
+
         <div class="card-title">
             Total Users
         </div>
@@ -394,10 +430,12 @@ button:disabled {
             id="totalUsers">
             0
         </div>
+
     </div>
 
 
     <div class="card">
+
         <div class="card-title">
             Pending
         </div>
@@ -407,10 +445,12 @@ button:disabled {
             id="pendingUsers">
             0
         </div>
+
     </div>
 
 
     <div class="card">
+
         <div class="card-title">
             Approved
         </div>
@@ -420,10 +460,12 @@ button:disabled {
             id="approvedUsers">
             0
         </div>
+
     </div>
 
 
     <div class="card">
+
         <div class="card-title">
             Rejected
         </div>
@@ -433,12 +475,15 @@ button:disabled {
             id="rejectedUsers">
             0
         </div>
+
     </div>
 
 </div>
 
 
-<!-- FILTERS -->
+<!-- =========================
+     FILTERS
+========================= -->
 
 <div class="filters">
 
@@ -456,15 +501,15 @@ button:disabled {
             All Types
         </option>
 
-        <option value="User">
+        <option value="user">
             User
         </option>
 
-        <option value="Wholesaler">
+        <option value="wholesaler">
             Wholesaler
         </option>
 
-        <option value="B2B">
+        <option value="b2b">
             B2B
         </option>
 
@@ -477,12 +522,16 @@ button:disabled {
             All Status
         </option>
 
-        <option value="pending">
+        <option value="pending_admin">
             Pending
         </option>
 
         <option value="approved">
             Approved
+        </option>
+
+        <option value="active">
+            Active
         </option>
 
         <option value="rejected">
@@ -494,7 +543,9 @@ button:disabled {
 </div>
 
 
-<!-- USERS TABLE -->
+<!-- =========================
+     USER TABLE
+========================= -->
 
 <div class="table-container">
 
@@ -505,23 +556,16 @@ button:disabled {
 <tr>
 
 <th>Name</th>
-
 <th>Email</th>
-
 <th>Mobile</th>
-
 <th>Type</th>
-
 <th>Status</th>
-
 <th>Registered</th>
-
 <th>Action</th>
 
 </tr>
 
 </thead>
-
 
 <tbody id="usersTable">
 
@@ -540,657 +584,356 @@ Loading users...
 </div>
 
 
-<!-- =====================================
-     ADD / EDIT USER SECTION
-===================================== -->
+<!-- =========================
+     ADD / EDIT USER
+========================= -->
 
 <div class="user-editor">
 
-    <h2 id="editorTitle">
-        Add New User
-    </h2>
-
-    <div class="editor-grid">
-
-        <!-- FULL NAME -->
-
-        <div class="editor-field">
-
-            <label>
-                Full Name
-            </label>
-
-            <input
-                type="text"
-                id="editFullName"
-                placeholder="Enter full name"
-            >
-
-        </div>
+<h2 id="editorTitle">
+    Add New User
+</h2>
 
 
-        <!-- EMAIL -->
+<div class="editor-grid">
 
-        <div class="editor-field">
+    <div class="editor-field">
 
-            <label>
-                Email
-            </label>
+        <label>
+            Full Name
+        </label>
 
-            <input
-                type="email"
-                id="editEmail"
-                placeholder="Enter email"
-            >
-
-        </div>
-
-
-        <!-- MOBILE -->
-
-        <div class="editor-field">
-
-            <label>
-                Mobile
-            </label>
-
-            <input
-                type="text"
-                id="editMobile"
-                placeholder="Enter mobile number"
-            >
-
-        </div>
-
-
-        <!-- USER TYPE -->
-
-        <div class="editor-field">
-
-            <label>
-                User Type
-            </label>
-
-            <select id="editUserType">
-
-                <option value="user">
-                    User
-                </option>
-
-                <option value="wholesaler">
-                    Wholesaler
-                </option>
-
-                <option value="b2b">
-                    B2B
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <!-- STATUS -->
-
-        <div class="editor-field">
-
-            <label>
-                Account Status
-            </label>
-
-            <select id="editStatus">
-
-                <option value="active">
-                    Active
-                </option>
-
-                <option value="pending_admin">
-                    Pending
-                </option>
-
-                <option value="approved">
-                    Approved
-                </option>
-
-                <option value="rejected">
-                    Rejected
-                </option>
-
-            </select>
-
-        </div>
+        <input
+            type="text"
+            id="editFullName"
+            placeholder="Enter full name"
+        >
 
     </div>
 
 
-    <!-- BUTTONS -->
+    <div class="editor-field">
 
-    <div class="editor-buttons">
+        <label>
+            Email
+        </label>
 
-        <button
-            class="save-user-btn"
-            onclick="saveUser()">
+        <input
+            type="email"
+            id="editEmail"
+            placeholder="Enter email"
+        >
 
-            💾 Save User
-
-        </button>
-
-
-        <button
-            class="new-user-btn"
-            onclick="newUser()">
-
-            ➕ New User
-
-        </button>
+    </div>
 
 
-        <button
-            class="cancel-user-btn"
-            onclick="cancelEdit()">
+    <div class="editor-field">
 
-            Cancel
+        <label>
+            Mobile
+        </label>
 
-        </button>
+        <input
+            type="text"
+            id="editMobile"
+            placeholder="Enter mobile"
+        >
+
+    </div>
+
+
+    <div class="editor-field">
+
+        <label>
+            User Type
+        </label>
+
+        <select id="editUserType">
+
+            <option value="user">
+                User
+            </option>
+
+            <option value="wholesaler">
+                Wholesaler
+            </option>
+
+            <option value="b2b">
+                B2B
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="editor-field">
+
+        <label>
+            Account Status
+        </label>
+
+        <select id="editStatus">
+
+            <option value="active">
+                Active
+            </option>
+
+            <option value="pending_admin">
+                Pending
+            </option>
+
+            <option value="approved">
+                Approved
+            </option>
+
+            <option value="rejected">
+                Rejected
+            </option>
+
+        </select>
 
     </div>
 
 </div>
 
-</main>
+
+<div class="editor-buttons">
+
+    <button
+        class="save-user-btn"
+        id="saveUserBtn"
+        onclick="saveUser()">
+
+        💾 Save User
+
+    </button>
 
 
+    <button
+        class="new-user-btn"
+        onclick="newUser()">
+
+        ➕ New User
+
+    </button>
 <script>
 
-async function loadAdminData() {
+let allUsers = [];
+let editingUserId = null;
 
-    try {
 
-        // ==============================
-        // 1. CHECK LOGIN
-        // ==============================
+/* =====================================================
+   MESSAGE
+===================================================== */
 
-        const {
-            data: { user },
-            error: userError
-        } = await supabaseClient.auth.getUser();
+function showMessage(text, type) {
 
-        if (userError) {
-            throw userError;
-        }
+    const box =
+        document.getElementById("message");
 
-        if (!user) {
-            window.location.href = "login.html";
-            return;
-        }
+    box.textContent = text;
 
-
-        // ==============================
-        // 2. CHECK ADMIN
-        // ==============================
-
-        const {
-            data: adminProfile,
-            error: adminError
-        } = await supabaseClient
-            .from("profiles")
-            .select("id, full_name, email, is_admin")
-            .eq("id", user.id)
-            .single();
-
-        if (adminError) {
-            throw adminError;
-        }
-
-        if (!adminProfile || adminProfile.is_admin !== true) {
-
-            document.querySelector("#usersTable").innerHTML = `
-                <tr>
-                    <td colspan="7"
-                        style="text-align:center;padding:20px;color:red;">
-                        Access denied. This account is not an admin.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-
-        // ==============================
-        // 3. LOAD ALL USERS
-        // ==============================
-
-        const {
-            data: users,
-            error: usersError
-        } = await supabaseClient
-            .from("profiles")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
-
-        if (usersError) {
-            throw usersError;
-        }
-
-
-        console.log("USERS FROM SUPABASE:", users);
-
-
-        // ==============================
-        // 4. SHOW USERS
-        // ==============================
-
-        displayUsers(users);
-
-    }
-
-    catch (error) {
-
-        console.error("ADMIN ERROR:", error);
-
-        document.querySelector("#usersTable").innerHTML = `
-            <tr>
-                <td colspan="7"
-                    style="text-align:center;padding:20px;color:red;">
-                    Error: ${escapeHtml(error.message || String(error))}
-                </td>
-            </tr>
-        `;
-
-    }
-}
-
-
-
-function displayUsers(users) {
-
-    // IMPORTANT:
-    // Your HTML uses usersTable
-    const tableBody = document.querySelector("#usersTable");
-
-    if (!tableBody) {
-        console.error("usersTable not found");
-        return;
-    }
-
-
-    // ==============================
-    // STATISTICS
-    // ==============================
-
-    const total = users.length;
-
-    const pending = users.filter(user =>
-        user.account_status === "pending_admin"
-    ).length;
-
-    const approved = users.filter(user =>
-        user.account_status === "approved" ||
-        user.account_status === "active"
-    ).length;
-
-    const rejected = users.filter(user =>
-        user.account_status === "rejected"
-    ).length;
-
-
-    document.getElementById("totalUsers").innerText = total;
-
-    document.getElementById("pendingUsers").innerText = pending;
-
-    document.getElementById("approvedUsers").innerText = approved;
-
-    document.getElementById("rejectedUsers").innerText = rejected;
-
-
-    // ==============================
-    // NO USERS
-    // ==============================
-
-    if (!users.length) {
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="7"
-                    style="text-align:center;padding:20px;">
-                    No users found
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    // ==============================
-    // CREATE USER ROWS
-    // ==============================
-
-    tableBody.innerHTML = "";
-
-
-    users.forEach(user => {
-
-        const row = document.createElement("tr");
-
-
-        let statusClass = "";
-
-        if (user.account_status === "pending_admin") {
-            statusClass = "pending";
-        }
-
-        else if (
-            user.account_status === "approved" ||
-            user.account_status === "active"
-        ) {
-            statusClass = "approved";
-        }
-
-        else if (user.account_status === "rejected") {
-            statusClass = "rejected";
-        }
-
-
-        let actionHTML = "-";
-
-
-        // Wholesaler / B2B approval buttons
-        if (
-            user.user_type === "wholesaler" ||
-            user.user_type === "b2b"
-        ) {
-
-            if (user.account_status === "pending_admin") {
-
-                actionHTML = `
-                    <div class="actions">
-
-                        <button
-                            class="approve-btn"
-                            onclick="approveUser('${user.id}')">
-                            Approve
-                        </button>
-
-                        <button
-                            class="reject-btn"
-                            onclick="rejectUser('${user.id}')">
-                            Reject
-                        </button>
-
-                    </div>
-                `;
-
-            }
-
-            else {
-
-                actionHTML = `
-                    <span>
-                        No action
-                    </span>
-                `;
-
-            }
-        }
-
-
-        row.innerHTML = `
-
-            <td>
-                ${escapeHtml(user.full_name || "")}
-            </td>
-
-            <td>
-                ${escapeHtml(user.email || "")}
-            </td>
-
-            <td>
-                ${escapeHtml(user.mobile || "")}
-            </td>
-
-            <td>
-                ${escapeHtml(user.user_type || "")}
-            </td>
-
-            <td>
-
-                <span class="status ${statusClass}">
-                    ${escapeHtml(user.account_status || "")}
-                </span>
-
-            </td>
-
-            <td>
-                ${
-                    user.created_at
-                    ? new Date(user.created_at)
-                        .toLocaleDateString()
-                    : ""
-                }
-            </td>
-
-            <td>
-                ${actionHTML}
-            </td>
-
-        `;
-
-
-        tableBody.appendChild(row);
-
-    });
+    box.className =
+        "message show " + type;
 
 }
 
 
-
-// ==============================
-// APPROVE USER
-// ==============================
-
-async function approveUser(id) {
-
-    const confirmed = confirm(
-        "Approve this user?"
-    );
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    const {
-        error
-    } = await supabaseClient
-        .from("profiles")
-        .update({
-            account_status: "approved"
-        })
-        .eq("id", id);
-
-
-    if (error) {
-
-        alert(
-            "Approval error: " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    alert("User approved successfully.");
-
-    loadAdminData();
-
-}
-
-
-
-// ==============================
-// REJECT USER
-// ==============================
-
-async function rejectUser(id) {
-
-    const confirmed = confirm(
-        "Reject this user?"
-    );
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    const {
-        error
-    } = await supabaseClient
-        .from("profiles")
-        .update({
-            account_status: "rejected"
-        })
-        .eq("id", id);
-
-
-    if (error) {
-
-        alert(
-            "Rejection error: " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    alert("User rejected successfully.");
-
-    loadAdminData();
-
-}
-
-
-
-// ==============================
-// LOGOUT
-// ==============================
-
-async function logout() {
-
-    await supabaseClient.auth.signOut();
-
-    window.location.href = "login.html";
-
-}
-
-
-
-// ==============================
-// HTML SECURITY
-// ==============================
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(value) {
 
-    return String(value)
-
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
-
         .replace(/</g, "&lt;")
-
         .replace(/>/g, "&gt;")
-
         .replace(/"/g, "&quot;")
-
         .replace(/'/g, "&#039;");
 
 }
 
 
+/* =====================================================
+   LOAD ADMIN
+===================================================== */
 
-// ==============================
-// START
-// ==============================
+async function loadAdminData() {
 
-loadAdminData();
+    try {
+
+        const {
+            data: { user },
+            error: userError
+        } =
+        await supabaseClient.auth.getUser();
+
+
+        if (userError)
+            throw userError;
+
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        /* CHECK ADMIN */
+
+        const {
+            data: adminProfile,
+            error: adminError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .select("id,is_admin")
+            .eq("id", user.id)
+            .single();
+
+
+        if (adminError)
+            throw adminError;
+
+
+        if (
+            !adminProfile ||
+            adminProfile.is_admin !== true
+        ) {
+
+            showMessage(
+                "Access denied. This account is not an admin.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /* LOAD USERS */
+
+        const {
+            data: users,
+            error: usersError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (usersError)
+            throw usersError;
+
+
+        allUsers = users || [];
+
+
+        displayUsers(allUsers);
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "ADMIN ERROR:",
+            error
+        );
+
+        showMessage(
+            error.message ||
+            "Could not load users.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DISPLAY USERS
+===================================================== */
+
 function displayUsers(users) {
 
     const tableBody =
-        document.querySelector("#usersTable");
-
-    if (!tableBody) {
-
-        console.error(
-            "usersTable not found"
+        document.getElementById(
+            "usersTable"
         );
 
-        return;
-    }
 
-
-    // ==============================
-    // COUNTERS
-    // ==============================
+    /* COUNTERS */
 
     const total =
         users.length;
 
+
     const pending =
         users.filter(
-            u =>
-                u.account_status ===
+            user =>
+                user.account_status ===
                 "pending_admin"
         ).length;
 
+
     const approved =
         users.filter(
-            u =>
-                u.account_status ===
+            user =>
+                user.account_status ===
                     "approved" ||
-                u.account_status ===
+                user.account_status ===
                     "active"
         ).length;
 
+
     const rejected =
         users.filter(
-            u =>
-                u.account_status ===
+            user =>
+                user.account_status ===
                 "rejected"
         ).length;
 
 
     document.getElementById(
         "totalUsers"
-    ).innerText = total;
+    ).textContent = total;
 
 
     document.getElementById(
         "pendingUsers"
-    ).innerText = pending;
+    ).textContent = pending;
 
 
     document.getElementById(
         "approvedUsers"
-    ).innerText = approved;
+    ).textContent = approved;
 
 
     document.getElementById(
         "rejectedUsers"
-    ).innerText = rejected;
+    ).textContent = rejected;
 
 
-    // ==============================
-    // NO USERS
-    // ==============================
+    /* NO USERS */
 
     if (!users.length) {
 
         tableBody.innerHTML = `
+
             <tr>
+
                 <td
                     colspan="7"
                     style="
@@ -1200,7 +943,9 @@ function displayUsers(users) {
                 >
                     No users found
                 </td>
+
             </tr>
+
         `;
 
         return;
@@ -1210,9 +955,7 @@ function displayUsers(users) {
     tableBody.innerHTML = "";
 
 
-    // ==============================
-    // USERS
-    // ==============================
+    /* CREATE ROWS */
 
     users.forEach(user => {
 
@@ -1228,8 +971,7 @@ function displayUsers(users) {
             "pending_admin"
         ) {
 
-            statusClass =
-                "pending";
+            statusClass = "pending";
 
         }
 
@@ -1240,8 +982,7 @@ function displayUsers(users) {
                 "active"
         ) {
 
-            statusClass =
-                "approved";
+            statusClass = "approved";
 
         }
 
@@ -1250,8 +991,46 @@ function displayUsers(users) {
             "rejected"
         ) {
 
-            statusClass =
-                "rejected";
+            statusClass = "rejected";
+
+        }
+
+
+        let approvalButtons = "";
+
+
+        if (
+            (
+                user.user_type ===
+                "wholesaler" ||
+                user.user_type ===
+                "b2b"
+            ) &&
+            user.account_status ===
+            "pending_admin"
+        ) {
+
+            approvalButtons = `
+
+                <button
+                    class="approve-btn"
+                    onclick="approveUser('${user.id}')">
+
+                    Approve
+
+                </button>
+
+
+                <button
+                    class="reject-btn"
+                    onclick="rejectUser('${user.id}')">
+
+                    Reject
+
+                </button>
+
+            `;
+
         }
 
 
@@ -1259,76 +1038,90 @@ function displayUsers(users) {
 
             <td>
                 ${escapeHtml(
-                    user.full_name || ""
+                    user.full_name
                 )}
             </td>
+
 
             <td>
                 ${escapeHtml(
-                    user.email || ""
+                    user.email
                 )}
             </td>
+
 
             <td>
                 ${escapeHtml(
-                    user.mobile || ""
+                    user.mobile
                 )}
             </td>
+
 
             <td>
                 ${escapeHtml(
-                    user.user_type || ""
+                    user.user_type
                 )}
             </td>
 
+
             <td>
 
-                <span class="status ${statusClass}">
+                <span
+                    class="status ${statusClass}"
+                >
 
                     ${escapeHtml(
-                        user.account_status || ""
+                        user.account_status
                     )}
 
                 </span>
 
             </td>
 
+
             <td>
 
                 ${
                     user.created_at
-                    ? new Date(
+                    ?
+                    new Date(
                         user.created_at
                     ).toLocaleDateString()
-                    : ""
+                    :
+                    ""
                 }
 
             </td>
+
 
             <td>
 
                 <div class="actions">
 
+                    ${approvalButtons}
+
+
                     <button
-                        class="view-btn"
+                        class="edit-btn"
                         onclick="editUser('${user.id}')">
 
-                        ✏️ Edit
+                        Edit
 
                     </button>
 
 
                     <button
-                        class="reject-btn"
+                        class="delete-btn"
                         onclick="deleteUser('${user.id}')">
 
-                        🗑️ Delete
+                        Delete
 
                     </button>
 
                 </div>
 
             </td>
+
         `;
 
 
@@ -1337,6 +1130,637 @@ function displayUsers(users) {
     });
 
 }
+
+
+/* =====================================================
+   EDIT USER
+===================================================== */
+
+function editUser(id) {
+
+    const user =
+        allUsers.find(
+            item => item.id === id
+        );
+
+
+    if (!user) {
+
+        alert("User not found.");
+
+        return;
+    }
+
+
+    editingUserId = id;
+
+
+    document.getElementById(
+        "editorTitle"
+    ).textContent =
+        "Edit User";
+
+
+    document.getElementById(
+        "editFullName"
+    ).value =
+        user.full_name || "";
+
+
+    document.getElementById(
+        "editEmail"
+    ).value =
+        user.email || "";
+
+
+    document.getElementById(
+        "editMobile"
+    ).value =
+        user.mobile || "";
+
+
+    document.getElementById(
+        "editUserType"
+    ).value =
+        user.user_type || "user";
+
+
+    document.getElementById(
+        "editStatus"
+    ).value =
+        user.account_status || "active";
+
+
+    /* SCROLL TO EDITOR */
+
+    document
+        .querySelector(".user-editor")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* =====================================================
+   SAVE USER
+===================================================== */
+
+async function saveUser() {
+
+    const fullName =
+        document.getElementById(
+            "editFullName"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "editEmail"
+        ).value.trim();
+
+
+    const mobile =
+        document.getElementById(
+            "editMobile"
+        ).value.trim();
+
+
+    const userType =
+        document.getElementById(
+            "editUserType"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "editStatus"
+        ).value;
+
+
+    if (!fullName) {
+
+        alert(
+            "Please enter full name."
+        );
+
+        return;
+    }
+
+
+    if (!email) {
+
+        alert(
+            "Please enter email."
+        );
+
+        return;
+    }
+
+
+    /* =================================================
+       EDIT EXISTING USER
+    ================================================= */
+
+    if (editingUserId) {
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+
+                full_name:
+                    fullName,
+
+                email:
+                    email,
+
+                mobile:
+                    mobile,
+
+                user_type:
+                    userType,
+
+                account_status:
+                    status
+
+            })
+            .eq(
+                "id",
+                editingUserId
+            );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Update error: " +
+                error.message
+            );
+
+            return;
+        }
+
+
+        showMessage(
+            "User updated successfully.",
+            "success"
+        );
+
+
+        cancelEdit();
+
+
+        await loadAdminData();
+
+        return;
+    }
+
+
+    /* =================================================
+       NEW USER
+    ================================================= */
+
+    /*
+       IMPORTANT:
+
+       A profiles row normally belongs to
+       an auth.users row.
+
+       Therefore a normal browser page
+       should NOT create Auth users with
+       the service_role key.
+
+       For now we show the instruction.
+    */
+
+    alert(
+        "To create a completely new login user, " +
+        "you need a Supabase Edge Function using " +
+        "the Admin Auth API. Do not put the " +
+        "service_role key in this HTML file."
+    );
+
+}
+
+
+/* =====================================================
+   NEW USER BUTTON
+===================================================== */
+
+function newUser() {
+
+    editingUserId = null;
+
+
+    document.getElementById(
+        "editorTitle"
+    ).textContent =
+        "Add New User";
+
+
+    document.getElementById(
+        "editFullName"
+    ).value = "";
+
+
+    document.getElementById(
+        "editEmail"
+    ).value = "";
+
+
+    document.getElementById(
+        "editMobile"
+    ).value = "";
+
+
+    document.getElementById(
+        "editUserType"
+    ).value =
+        "user";
+
+
+    document.getElementById(
+        "editStatus"
+    ).value =
+        "active";
+
+
+    document
+        .querySelector(".user-editor")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+/* =====================================================
+   CANCEL EDIT
+===================================================== */
+
+function cancelEdit() {
+
+    editingUserId = null;
+
+
+    document.getElementById(
+        "editorTitle"
+    ).textContent =
+        "Add New User";
+
+
+    document.getElementById(
+        "editFullName"
+    ).value = "";
+
+
+    document.getElementById(
+        "editEmail"
+    ).value = "";
+
+
+    document.getElementById(
+        "editMobile"
+    ).value = "";
+
+
+    document.getElementById(
+        "editUserType"
+    ).value =
+        "user";
+
+
+    document.getElementById(
+        "editStatus"
+    ).value =
+        "active";
+
+}
+
+
+/* =====================================================
+   APPROVE USER
+===================================================== */
+
+async function approveUser(id) {
+
+    if (
+        !confirm(
+            "Approve this user?"
+        )
+    ) {
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .update({
+
+            account_status:
+                "approved"
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if (error) {
+
+        alert(
+            "Approval error: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "User approved successfully.",
+        "success"
+    );
+
+
+    await loadAdminData();
+
+}
+
+
+/* =====================================================
+   REJECT USER
+===================================================== */
+
+async function rejectUser(id) {
+
+    if (
+        !confirm(
+            "Reject this user?"
+        )
+    ) {
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .update({
+
+            account_status:
+                "rejected"
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if (error) {
+
+        alert(
+            "Rejection error: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "User rejected successfully.",
+        "success"
+    );
+
+
+    await loadAdminData();
+
+}
+
+
+/* =====================================================
+   DELETE USER
+===================================================== */
+
+async function deleteUser(id) {
+
+    const user =
+        allUsers.find(
+            item => item.id === id
+        );
+
+
+    if (!user) {
+
+        alert("User not found.");
+
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+            "Delete this user's profile?\n\n" +
+            "Name: " +
+            (user.full_name || "") +
+            "\nEmail: " +
+            (user.email || "")
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    /*
+       This deletes the profile row.
+
+       If profiles.id is linked to auth.users,
+       deleting the Auth account requires an
+       Edge Function / server-side Admin API.
+    */
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .delete()
+        .eq(
+            "id",
+            id
+        );
+
+
+    if (error) {
+
+        alert(
+            "Delete error: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "Profile deleted successfully.",
+        "success"
+    );
+
+
+    await loadAdminData();
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function applyFilters() {
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    const type =
+        document.getElementById(
+            "typeFilter"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+
+    const filtered =
+        allUsers.filter(user => {
+
+            const matchesSearch =
+
+                !search ||
+
+                String(
+                    user.full_name || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    user.email || ""
+                )
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(
+                    user.mobile || ""
+                )
+                .toLowerCase()
+                .includes(search);
+
+
+            const matchesType =
+                type === "all" ||
+                user.user_type === type;
+
+
+            const matchesStatus =
+                status === "all" ||
+                user.account_status === status;
+
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesStatus
+            );
+
+        });
+
+
+    displayUsers(filtered);
+
+}
+
+
+/* =====================================================
+   FILTER EVENTS
+===================================================== */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+document
+    .getElementById("typeFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+document
+    .getElementById("statusFilter")
+    .addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadAdminData();
+
 </script>
+
 </body>
 </html>
+
+    <button
+        class="cancel-user-btn"
+        onclick="cancelEdit()">
+
+        Cancel
+
+    </button>
+
+</div>
+
+</div>
+
+</main>
+
+
