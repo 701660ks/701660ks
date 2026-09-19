@@ -1024,6 +1024,111 @@ document
 
     e.preventDefault();
 
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    // Get form values
+    const fullName =
+        document.getElementById("fullName").value.trim();
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const mobile =
+        document.getElementById("mobile").value.trim();
+
+    const userType =
+        document.querySelector(
+            'input[name="userType"]:checked'
+        )?.value;
+
+    const password =
+        document.getElementById("password").value;
+
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+
+    // Check password
+    if (password !== confirmPassword) {
+
+        showMessage(
+            "Passwords do not match.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // Check user type
+    if (!userType) {
+
+        showMessage(
+            "Please select user type.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    // CREATE SUPABASE ACCOUNT
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.signUp({
+
+        email: email,
+
+        password: password,
+
+        options: {
+
+            data: {
+
+                full_name: fullName,
+
+                mobile: mobile,
+
+                user_type: userType
+
+            }
+
+        }
+
+    });
+
+
+    // Check error
+    if (error) {
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    // SUCCESS
+    showMessage(
+        "Registration successful! Please login.",
+        "success"
+    );
+
+
+    setTimeout(() => {
+
+        window.location.href =
+            "login.html";
+
+    }, 1500);
+
+});
+
     const name =
         document.getElementById("fullName").value.trim();
 
