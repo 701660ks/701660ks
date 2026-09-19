@@ -484,26 +484,42 @@
     =================================================== -->
 
     <div
-        id="successScreen"
-        class="success hidden"
-    >
+    id="successScreen"
+    class="success hidden"
+>
 
-        <div class="success-icon">
-            ✓
-        </div>
-
-        <h2>
-            Verification Submitted Successfully
-        </h2>
-
-        <p>
-            Your business account is being verified.
-        </p>
-
+    <div class="success-icon">
+        ✓
     </div>
 
-</div>
+    <h2>
+        Verification Submitted Successfully
+    </h2>
 
+    <p>
+        Your business account is being verified.
+    </p>
+
+    <button
+        type="button"
+        onclick="goToHome()"
+        style="
+            margin-top:20px;
+            width:100%;
+            padding:14px;
+            border:0;
+            border-radius:8px;
+            background:#198754;
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+        "
+    >
+        Go to Home
+    </button>
+
+</div>
 
 <script>
 
@@ -1400,6 +1416,11 @@ async function submitVerification() {
 /* =========================================================
    INITIAL PAGE
 ========================================================= */
+
+
+function goToHome() {
+    window.location.href = "index.html";
+}
 
 updateVerificationType();
 
