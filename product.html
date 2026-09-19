@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>JS UNDEFINED — Add Product</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f6fa;
+    color: #171717;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    height: 68px;
+
+    background: #111827;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-box {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #5b35f5;
+
+    border-radius: 8px;
+
+    font-weight: 900;
+}
+
+.logo-text {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.logo-sub {
+    display: block;
+
+    font-size: 8px;
+
+    color: #aaa;
+
+    letter-spacing: .5px;
+
+    margin-top: 2px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-name {
+    background: white;
+
+    color: #222;
+
+    padding: 8px 13px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: bold;
+
+    max-width: 160px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-btn {
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid #273449;
+
+    background: #1b2638;
+
+    color: white;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.logout {
+    background: #ef4444;
+
+    border: none;
+
+    color: white;
+
+    padding: 10px 13px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container {
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 22px;
+}
+
+/* =========================
+   PAGE HEADER
+========================= */
+
+.page-header {
+    background: linear-gradient(
+        135deg,
+        #172033,
+        #253a68
+    );
+
+    color: white;
+
+    padding: 26px;
+
+    border-radius: 15px;
+
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin: 0 0 7px;
+
+    font-size: 26px;
+}
+
+.page-header p {
+    margin: 0;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+    display: none;
+
+    padding: 13px 15px;
+
+    border-radius: 9px;
+
+    margin-bottom: 18px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.message.success {
+    display: block;
+
+    background: #e8f8ed;
+
+    color: #176b2b;
+}
+
+.message.error {
+    display: block;
+
+    background: #ffe9e9;
+
+    color: #a00000;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card {
+    background: white;
+
+    border: 1px solid #e7e7e7;
+
+    border-radius: 15px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.04);
+}
+
+.card-title {
+    font-size: 20px;
+
+    font-weight: 800;
+
+    margin-bottom: 5px;
+}
+
+.card-subtitle {
+    color: #777;
+
+    font-size: 12px;
+
+    margin-bottom: 22px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 17px;
+}
+
+.field {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #444;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #d9d9d9;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: #222;
+
+    outline: none;
+
+    font-size: 13px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: #5b35f5;
+
+    box-shadow:
+        0 0 0 3px rgba(91,53,245,.08);
+}
+
+.field textarea {
+    min-height: 120px;
+
+    resize: vertical;
+}
+
+.help {
+    color: #888;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+/* =========================
+   PRICE BOX
+========================= */
+
+.price-box {
+    background: #f8f7ff;
+
+    border: 1px solid #e7e1ff;
+
+    border-radius: 10px;
+
+    padding: 14px;
+
+    margin-top: 2px;
+}
+
+.price-result {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.price-result-title {
+    color: #666;
+
+    font-size: 11px;
+}
+
+.final-price {
+    font-size: 20px;
+
+    font-weight: 800;
+
+    color: #5b35f5;
+}
+
+.discount-value {
+    color: #16803a;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+/* =========================
+   IMAGE UPLOAD
+========================= */
+
+.upload-box {
+    border: 2px dashed #d7d7d7;
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    background: #fafafa;
+
+    text-align: center;
+}
+
+.upload-box:hover {
+    border-color: #5b35f5;
+}
+
+.upload-icon {
+    font-size: 27px;
+
+    margin-bottom: 7px;
+}
+
+.upload-title {
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+.upload-text {
+    font-size: 10px;
+
+    color: #888;
+
+    margin-top: 5px;
+}
+
+.upload-box input {
+    margin-top: 12px;
+}
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+.preview-title {
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-top: 15px;
+
+    margin-bottom: 8px;
+}
+
+.image-preview {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 10px;
+}
+
+.preview-item {
+    position: relative;
+
+    aspect-ratio: 1;
+
+    border-radius: 9px;
+
+    overflow: hidden;
+
+    background: #eee;
+
+    border: 1px solid #ddd;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.remove-preview {
+    position: absolute;
+
+    top: 5px;
+    right: 5px;
+
+    width: 23px;
+    height: 23px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.7);
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #eee;
+}
+
+.primary {
+    background: #5b35f5;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.primary:hover {
+    background: #4c2de0;
+}
+
+.primary:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+.secondary {
+    background: #eee;
+
+    color: #222;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.secondary:hover {
+    background: #e2e2e2;
+}
+
+/* =========================
+   BACK
+========================= */
+
+.back-link {
+    display: inline-block;
+
+    margin-bottom: 15px;
+
+    color: #5b35f5;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading {
+    opacity: .6;
+
+    pointer-events: none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px) {
+
+    .header {
+        padding: 0 12px;
+    }
+
+    .user-name {
+        max-width: 85px;
+    }
+
+    .container {
+        padding: 13px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .image-preview {
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+}
+
+@media(max-width:500px) {
+
+    .header {
+        height: 62px;
+    }
+
+    .logo-text {
+        font-size: 13px;
+    }
+
+    .logo-sub {
+        font-size: 7px;
+    }
+
+    .header-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .logout {
+        padding: 8px 10px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .page-header {
+        padding: 21px;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .image-preview {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+    <div class="logo-area">
+
+        <div class="logo-box">
+            JS
+        </div>
+
+        <div>
+
+            <div class="logo-text">
+                JS UNDEFINED
+            </div>
+
+            <span class="logo-sub">
+                BUSINESS PARTNER
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            id="userName"
+            class="user-name">
+            Loading...
+        </span>
+
+
+        <button
+            class="header-btn"
+            onclick="openSearch()"
+            title="Search">
+
+            🔎
+
+        </button>
+
+
+        <button
+            class="header-btn"
+            onclick="openMenu()"
+            title="Menu">
+
+            ☰
+
+        </button>
+
+
+        <button
+            class="logout"
+            onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <a
+        href="business-user.html"
+        class="back-link">
+
+        ← Back to Business Dashboard
+
+    </a>
+
+
+    <!-- =========================
+         PAGE HEADER
+    ========================= -->
+
+    <section class="page-header">
+
+        <h1>
+            Add Product
+        </h1>
+
+        <p>
+            Publish a product for your B2B buyers with pricing,
+            images and complete product information.
+        </p>
+
+    </section>
+
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <!-- =========================
+         PRODUCT FORM
+    ========================= -->
+
+    <section class="card">
+
+
+        <div
+            id="formTitle"
+            class="card-title">
+
+            Product Information
+
+        </div>
+
+
+        <div class="card-subtitle">
+
+            Add all important information about your product.
+
+        </div>
+
+
+        <form id="productForm">
+
+
+            <div class="form-grid">
+
+
+                <!-- PRODUCT TYPE -->
+
+                <div class="field">
+
+                    <label>
+                        Product Type
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        id="productType"
+                        type="text"
+                        placeholder="e.g. Electronics"
+                        required>
+
+                </div>
+
+
+                <!-- SUB TYPE -->
+
+                <div class="field">
+
+                    <label>
+                        Product Sub Type
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        id="productSubType"
+                        type="text"
+                        placeholder="e.g. Mobile Accessories"
+                        required>
+
+                </div>
+
+
+                <!-- TARGET -->
+
+                <div class="field">
+
+                    <label>
+                        Product For
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="targetFor"
+                        required>
+
+                        <option value="business">
+                            Business
+                        </option>
+
+                        <option value="retailer">
+                            Retailer
+                        </option>
+
+                        <option value="wholesaler">
+                            Wholesaler
+                        </option>
+
+                        <option value="all">
+                            All
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NAME -->
+
+                <div class="field">
+
+                    <label>
+                        Product Name
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        id="productName"
+                        type="text"
+                        placeholder="Enter product name"
+                        required>
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div class="field">
+
+                    <label>
+                        Selling Price
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        id="price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Selling price"
+                        required>
+
+                </div>
+
+
+                <!-- DISCOUNT -->
+
+                <div class="field">
+
+                    <label>
+                        Discount (%)
+                    </label>
+
+                    <input
+                        id="discount"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="0"
+                        placeholder="0">
+
+                </div>
+
+
+                <!-- ORIGINAL PRICE -->
+
+                <div class="field">
+
+                    <label>
+                        Original Price
+                    </label>
+
+                    <input
+                        id="originalPrice"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Original price">
+
+                </div>
+
+
+                <!-- BULK -->
+
+                <div class="field">
+
+                    <label>
+                        Bulk Quantity
+                    </label>
+
+                    <input
+                        id="bulkQuantity"
+                        type="number"
+                        min="1"
+                        placeholder="e.g. 100">
+
+                    <div class="help">
+                        Example: minimum quantity for bulk pricing.
+                    </div>
+
+                </div>
+
+
+                <!-- MINIMUM -->
+
+                <div class="field">
+
+                    <label>
+                        Minimum Buying Quantity
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        id="minimumQuantity"
+                        type="number"
+                        min="1"
+                        value="1"
+                        required>
+
+                    <div class="help">
+                        Smallest quantity a buyer can order.
+                    </div>
+
+                </div>
+
+
+                <!-- PRICE PREVIEW -->
+
+                <div class="field">
+
+                    <label>
+                        Price Preview
+                    </label>
+
+                    <div class="price-box">
+
+                        <div class="price-result">
+
+                            <div>
+
+                                <div class="price-result-title">
+                                    Final Selling Price
+                                </div>
+
+                                <div
+                                    id="finalPrice"
+                                    class="final-price">
+
+                                    ₹0.00
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                id="discountValue"
+                                class="discount-value">
+
+                                Save ₹0.00
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- IMAGES -->
+
+                <div class="field full">
+
+                    <label>
+                        Product Images
+                    </label>
+
+
+                    <div class="upload-box">
+
+                        <div class="upload-icon">
+                            🖼️
+                        </div>
+
+                        <div class="upload-title">
+                            Upload Product Images
+                        </div>
+
+                        <div class="upload-text">
+                            Maximum 6 images • Maximum 5MB per image
+                        </div>
+
+
+                        <input
+                            id="images"
+                            type="file"
+                            accept="image/*"
+                            multiple>
+
+
+                    </div>
+
+
+                    <div
+                        id="existingImagesTitle"
+                        class="preview-title"
+                        style="display:none;">
+
+                        Existing Images
+
+                    </div>
+
+
+                    <div
+                        id="existingImages"
+                        class="image-preview">
+                    </div>
+
+
+                    <div
+                        id="previewTitle"
+                        class="preview-title"
+                        style="display:none;">
+
+                        New Images
+
+                    </div>
+
+
+                    <div
+                        id="imagePreview"
+                        class="image-preview">
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="field full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        placeholder="Describe the product, quality, packaging, delivery details..."></textarea>
+
+                </div>
+
+
+                <!-- MORE INFO -->
+
+                <div class="field full">
+
+                    <label>
+                        More Information
+                    </label>
+
+                    <textarea
+                        id="moreInfo"
+                        placeholder="Specifications, sizes, colours, material, warranty, notes..."></textarea>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <button
+                    id="saveButton"
+                    type="submit"
+                    class="primary">
+
+                    💾 Save Product
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="secondary"
+                    onclick="resetForm()">
+
+                    Clear
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="secondary"
+                    onclick="goBack()">
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* =========================
+   VARIABLES
+========================= */
+
+let currentUser = null;
+
+let editingProductId = null;
+
+let existingImageUrls = [];
+
+let selectedFiles = [];
+
+
+/* =========================
+   START
+========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        await loadBusinessUser();
+
+    }
+);
+
+
+/* =========================
+   LOAD USER
+========================= */
+/* =========================
+   LOAD BUSINESS USER
+========================= */
+
+async function loadBusinessUser() {
+
+    try {
+
+        const {
+            data: {
+                user
+            },
+            error: userError
+        } = await supabaseClient
+            .auth
+            .getUser();
+
+        if (userError) {
+            throw userError;
+        }
+
+        if (!user) {
+
+            window.location.href = "index.html";
+
+            return;
+        }
+
+        currentUser = user;
+
+
+        /* GET PROFILE */
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                full_name,
+                email,
+                user_type,
+                account_status
+            `)
+            .eq("id", user.id)
+            .single();
+
+
+        if (profileError) {
+            throw profileError;
+        }
+
+
+        /* CHECK BUSINESS ACCOUNT */
+
+        if (
+            profile.user_type !== "b2b" &&
+            profile.user_type !== "wholesaler"
+        ) {
+
+            alert(
+                "Business account required."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+
+        /* CHECK ACCOUNT STATUS */
+
+        if (
+            profile.account_status !== "approved" &&
+            profile.account_status !== "active"
+        ) {
+
+            alert(
+                "Your business account is not approved yet."
+            );
+
+            window.location.href =
+                "index.html";
+
+            return;
+        }
+
+
+        /* SHOW USER NAME */
+
+        document
+            .getElementById("userName")
+            .textContent =
+                profile.full_name ||
+                profile.email ||
+                user.email ||
+                "Business User";
+
+
+        /* CHECK EDIT MODE */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const productId =
+            params.get("id");
+
+
+        if (productId) {
+
+            await loadProductForEdit(
+                productId
+            );
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "LOAD USER ERROR:",
+            error
+        );
+
+        showMessage(
+            error.message ||
+            "Could not load business user.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   START PAGE
+========================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadBusinessUser();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+
