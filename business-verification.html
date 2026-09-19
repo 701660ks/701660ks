@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Business Verification</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f4f6f8;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 30px auto;
+        }
+
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
+
+
+        .subtitle {
+            margin: 0 0 22px;
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+
+        .label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d9d9d9;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #198754;
+        }
+
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+
+        .option {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 13px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+
+        .option.selected {
+            border-color: #198754;
+            background: #f0fff7;
+        }
+
+
+        .option input {
+            margin: 0;
+        }
+
+
+        .upload-box {
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 14px;
+            background: #fafafa;
+        }
+
+
+        .upload-box label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+
+        .upload-box input[type="file"] {
+            width: 100%;
+            font-size: 13px;
+        }
+
+
+        .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+
+        .main-error {
+            background: #fff0f0;
+            border: 1px solid #ffcaca;
+            color: #c62828;
+            padding: 11px;
+            border-radius: 7px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            background: #198754;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            background: #157347;
+        }
+
+
+        button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        .success {
+            text-align: center;
+            padding: 20px 5px;
+        }
+
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #198754;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+        }
+
+
+        .success h2 {
+            margin: 0 0 10px;
+            font-size: 21px;
+        }
+
+
+        .success p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        .home-button {
+            margin-top: 20px;
+            background: #343a40;
+        }
+
+
+        .home-button:hover {
+            background: #23272b;
+        }
+
+
+        .status-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            color: #7a5b00;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         VERIFICATION FORM
+    ====================================================== -->
+
+    <div
+        class="card"
+        id="verificationForm"
+    >
+
+        <h1>
+            Business Verification
+        </h1>
+
+
+        <p class="subtitle">
+            Please provide your business details for verification.
+        </p>
+
+
+        <!-- MAIN ERROR -->
+
+        <div
+            id="mainError"
+            class="main-error"
+        ></div>
+
+
+        <!-- STATUS -->
+
+        <div
+            id="statusBox"
+            class="status-box"
+        ></div>
+
+
+        <!-- =================================================
+             GST / PAN SELECT
+        ================================================== -->
+
+        <div class="field">
+
+            <label class="label">
+                Do you have GST?
+            </label>
+
+
+            <div class="options">
+
+
+                <!-- GST -->
+
+                <label
+                    class="option selected"
+                    id="gstOptionBox"
+                >
+
+                    <input
+                        type="radio"
+                        name="verificationType"
+                        value="GST"
+                        id="gstOption"
+                        checked
+                    >
+
+                    <span>
+                        I have GST
+                    </span>
+
+                </label>
+
+
+                <!-- PAN -->
+
+                <label
+                    class="option"
+                    id="panOptionBox"
+                >
+
+                    <input
+                        type="radio"
+                        name="verificationType"
+                        value="PAN"
+                        id="panOption"
+                    >
+
+                    <span>
+                        I don't have GST
+                    </span>
+
+                </label>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GST SECTION
+        ================================================== -->
+
+        <div id="gstSection">
+
+            <div class="field">
+
+                <label
+                    class="label"
+                    for="gstNumber"
+                >
+                    GST Number
+                </label>
+
+
+                <input
+                    type="text"
+                    id="gstNumber"
+                    maxlength="15"
+                    placeholder="Enter 15 digit GST number"
+                    autocomplete="off"
+                >
+
+
+                <div
+                    id="gstError"
+                    class="error"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PAN SECTION
+        ================================================== -->
+
+        <div
+            id="panSection"
+            class="hidden"
+        >
+
+
+            <!-- PAN NUMBER -->
+
+            <div class="field">
+
+                <label
+                    class="label"
+                    for="panNumber"
+                >
+                    PAN Number
+                </label>
+
+
+                <input
+                    type="text"
+                    id="panNumber"
+                    maxlength="10"
+                    placeholder="Enter PAN number"
+                    autocomplete="off"
+                >
+
+
+                <div
+                    id="panError"
+                    class="error"
+                ></div>
+
+            </div>
+
+
+            <!-- PAN FRONT -->
+
+            <div class="upload-box">
+
+                <label>
+                    PAN Card Front Side
+                </label>
+
+
+                <input
+                    type="file"
+                    id="panFront"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+
+
+                <div
+                    id="frontError"
+                    class="error"
+                ></div>
+
+            </div>
+
+
+            <!-- PAN BACK -->
+
+            <div class="upload-box">
+
+                <label>
+                    PAN Card Back Side
+                </label>
+
+
+                <input
+                    type="file"
+                    id="panBack"
+                    accept="image/jpeg,image/png,image/webp"
+                >
+
+
+                <div
+                    id="backError"
+                    class="error"
+                ></div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             BUSINESS NAME
+        ================================================== -->
+
+        <div class="field">
+
+            <label
+                class="label"
+                for="businessName"
+            >
+                Business Name
+            </label>
+
+
+            <input
+                type="text"
+                id="businessName"
+                placeholder="Enter business name"
+                autocomplete="organization"
+            >
+
+        </div>
+
+
+        <!-- =================================================
+             BUSINESS ADDRESS
+        ================================================== -->
+
+        <div class="field">
+
+            <label
+                class="label"
+                for="businessAddress"
+            >
+                Business Address
+            </label>
+
+
+            <textarea
+                id="businessAddress"
+                placeholder="Enter complete business address"
+            ></textarea>
+
+        </div>
+
+
+        <!-- =================================================
+             SUBMIT
+        ================================================== -->
+
+        <button
+            type="button"
+            id="submitButton"
+        >
+            Submit Verification
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SUCCESS SCREEN
+    ====================================================== -->
+
+    <div
+        class="card success hidden"
+        id="successScreen"
+    >
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+
+        <h2>
+            Verification Submitted Successfully
+        </h2>
+
+
+        <p>
+            Your business account is being verified.
+        </p>
+
+
+        <button
+            type="button"
+            class="home-button"
+            id="homeButton"
+        >
+            Go to Home
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     YOUR SUPABASE FILE
+========================================================= -->
+
+<script src="supabase.js"></script>
+
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+           GET ELEMENTS
+        ====================================================== */
+
+        const gstOption =
+            document.getElementById("gstOption");
+
+        const panOption =
+            document.getElementById("panOption");
+
+        const gstOptionBox =
+            document.getElementById("gstOptionBox");
+
+        const panOptionBox =
+            document.getElementById("panOptionBox");
+
+        const gstSection =
+            document.getElementById("gstSection");
+
+        const panSection =
+            document.getElementById("panSection");
+
+        const gstNumber =
+            document.getElementById("gstNumber");
+
+        const panNumber =
+            document.getElementById("panNumber");
+
+        const panFront =
+            document.getElementById("panFront");
+
+        const panBack =
+            document.getElementById("panBack");
+
+        const businessName =
+            document.getElementById("businessName");
+
+        const businessAddress =
+            document.getElementById("businessAddress");
+
+        const submitButton =
+            document.getElementById("submitButton");
+
+        const verificationForm =
+            document.getElementById("verificationForm");
+
+        const successScreen =
+            document.getElementById("successScreen");
+
+        const mainError =
+            document.getElementById("mainError");
+
+        const statusBox =
+            document.getElementById("statusBox");
+
+
+        /* =====================================================
+           CHECK SUPABASE
+        ====================================================== */
+
+        if (
+            typeof supabaseClient === "undefined"
+        ) {
+
+            mainError.textContent =
+                "Supabase is not loaded. Please check supabase.js.";
+
+            mainError.style.display =
+                "block";
+
+            return;
+        }
+
+
+        /* =====================================================
+           SHOW GST / PAN
+        ====================================================== */
+
+        function updateVerificationType() {
+
+
+            clearErrors();
+
+
+            if (
+                panOption.checked
+            ) {
+
+                gstSection.classList.add(
+                    "hidden"
+                );
+
+                panSection.classList.remove(
+                    "hidden"
+                );
+
+
+                gstOptionBox.classList.remove(
+                    "selected"
+                );
+
+                panOptionBox.classList.add(
+                    "selected"
+                );
+
+
+                gstNumber.value = "";
+
+            } else {
+
+
+                gstSection.classList.remove(
+                    "hidden"
+                );
+
+                panSection.classList.add(
+                    "hidden"
+                );
+
+
+                gstOptionBox.classList.add(
+                    "selected"
+                );
+
+                panOptionBox.classList.remove(
+                    "selected"
+                );
+
+
+                panNumber.value = "";
+
+                panFront.value = "";
+
+                panBack.value = "";
+
+            }
+
+        }
+
+
+        gstOption.addEventListener(
+            "change",
+            updateVerificationType
+        );
+
+
+        panOption.addEventListener(
+            "change",
+            updateVerificationType
+        );
+
+
+        /* =====================================================
+           UPPERCASE INPUT
+        ====================================================== */
+
+        gstNumber.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value
+                        .toUpperCase()
+                        .replace(
+                            /[^A-Z0-9]/g,
+                            ""
+                        );
+
+            }
+        );
+
+
+        panNumber.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value
+                        .toUpperCase()
+                        .replace(
+                            /[^A-Z0-9]/g,
+                            ""
+                        );
+
+            }
+        );
+
+
+        /* =====================================================
+           CLEAR ERRORS
+        ====================================================== */
+
+        function clearErrors() {
+
+            mainError.textContent = "";
+
+            mainError.style.display =
+                "none";
+
+
+            document.getElementById(
+                "gstError"
+            ).textContent = "";
+
+            document.getElementById(
+                "panError"
+            ).textContent = "";
+
+            document.getElementById(
+                "frontError"
+            ).textContent = "";
+
+            document.getElementById(
+                "backError"
+            ).textContent = "";
+
+        }
+
+
+        /* =====================================================
+           MAIN ERROR
+        ====================================================== */
+
+        function showError(message) {
+
+            mainError.textContent =
+                message;
+
+            mainError.style.display =
+                "block";
+
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+
+        /* =====================================================
+           CHECK EXISTING VERIFICATION
+        ====================================================== */
+
+        async function checkExistingVerification() {
+
+            try {
+
+                const {
+                    data: userData,
+                    error: userError
+                } =
+                    await supabaseClient
+                        .auth
+                        .getUser();
+
+
+                if (
+                    userError ||
+                    !userData.user
+                ) {
+
+                    showError(
+                        "Please login before submitting business verification."
+                    );
+
+                    submitButton.disabled =
+                        true;
+
+                    return;
+                }
+
+
+                const user =
+                    userData.user;
+
+
+                const {
+                    data,
+                    error
+                } =
+                    await supabaseClient
+                        .from(
+                            "business_verifications"
+                        )
+                        .select(
+                            "status"
+                        )
+                        .eq(
+                            "user_id",
+                            user.id
+                        )
+                        .order(
+                            "created_at",
+                            {
+                                ascending: false
+                            }
+                        )
+                        .limit(1)
+                        .maybeSingle();
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    return;
+                }
+
+
+                if (!data) {
+                    return;
+                }
+
+
+                if (
+                    data.status === "pending"
+                ) {
+
+                    verificationForm.classList.add(
+                        "hidden"
+                    );
+
+                    statusBox.style.display =
+                        "block";
+
+                    statusBox.textContent =
+                        "Your business verification is already submitted and is pending review.";
+
+                }
+
+
+                if (
+                    data.status === "verified"
+                ) {
+
+                    verificationForm.classList.add(
+                        "hidden"
+                    );
+
+                    statusBox.style.display =
+                        "block";
+
+                    statusBox.style.background =
+                        "#e8fff1";
+
+                    statusBox.style.color =
+                        "#146c43";
+
+                    statusBox.textContent =
+                        "Your business account has already been verified.";
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Existing verification error:",
+                    error
+                );
+
+            }
+        }
+
+
+        /* =====================================================
+           SUBMIT VERIFICATION
+        ====================================================== */
+
+        submitButton.addEventListener(
+            "click",
+            async function () {
+
+                clearErrors();
+
+                submitButton.disabled = true;
+                submitButton.textContent = "Please wait...";
+
+                let frontPath = null;
+                let backPath = null;
+
+                try {
+
+                    const {
+                        data: userData,
+                        error: userError
+                    } = await supabaseClient.auth.getUser();
+
+                    if (userError) {
+                        throw new Error(userError.message);
+                    }
+
+                    if (!userData.user) {
+                        throw new Error("Please login first.");
+                    }
+
+                    const user = userData.user;
+
+
+                    /* GET GST OR PAN */
+
+                    const selected =
+                        document.querySelector(
+                            'input[name="verificationType"]:checked'
+                        );
+
+                    if (!selected) {
+                        throw new Error(
+                            "Please select GST or PAN."
+                        );
+                    }
+
+                    const verificationType =
+                        selected.value;
+
+
+                    /* GET FORM VALUES */
+
+                    const gst =
+                        gstNumber.value
+                            .trim()
+                            .toUpperCase();
+
+                    const pan =
+                        panNumber.value
+                            .trim()
+                            .toUpperCase();
+
+                    const name =
+                        businessName.value.trim();
+
+                    const address =
+                        businessAddress.value.trim();
+
+
+                    /* BUSINESS NAME */
+
+                    if (!name) {
+                        throw new Error(
+                            "Please enter your business name."
+                        );
+                    }
+
+
+                    /* ADDRESS */
+
+                    if (!address) {
+                        throw new Error(
+                            "Please enter your business address."
+                        );
+                    }
+
+
+                    /* =========================================
+                       GST
+                    ========================================== */
+
+                    if (verificationType === "GST") {
+
+                        const gstPattern =
+                            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+
+                        if (!gstPattern.test(gst)) {
+                            throw new Error(
+                                "Please enter a valid 15 digit GST number."
+                            );
+                        }
+
+                    }
+
+
+                    /* =========================================
+                       PAN
+                    ========================================== */
+
+                    if (verificationType === "PAN") {
+
+                        const panPattern =
+                            /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+
+                        if (!panPattern.test(pan)) {
+                            throw new Error(
+                                "Please enter a valid 10 digit PAN number."
+                            );
+                        }
+
+
+                        const frontFile =
+                            panFront.files[0];
+
+                        const backFile =
+                            panBack.files[0];
+
+
+                        if (!frontFile) {
+                            throw new Error(
+                                "Please upload PAN front side."
+                            );
+                        }
+
+
+                        if (!backFile) {
+                            throw new Error(
+                                "Please upload PAN back side."
+                            );
+                        }
+
+
+                        /* FRONT IMAGE */
+
+                        submitButton.textContent =
+                            "Uploading PAN front...";
+
+
+                        const frontExtension =
+                            frontFile.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase();
+
+
+                        frontPath =
+                            user.id +
+                            "/" +
+                            Date.now() +
+                            "_front." +
+                            frontExtension;
+
+
+                        const frontUpload =
+                            await supabaseClient
+                                .storage
+                                .from("pan-documents")
+                                .upload(
+                                    frontPath,
+                                    frontFile,
+                                    {
+                                        upsert: false,
+                                        contentType:
+                                            frontFile.type
+                                    }
+                                );
+
+
+                        if (frontUpload.error) {
+                            throw new Error(
+                                "PAN front upload failed: " +
+                                frontUpload.error.message
+                            );
+                        }
+
+
+                        /* BACK IMAGE */
+
+                        submitButton.textContent =
+                            "Uploading PAN back...";
+
+
+                        const backExtension =
+                            backFile.name
+                                .split(".")
+                                .pop()
+                                .toLowerCase();
+
+
+                        backPath =
+                            user.id +
+                            "/" +
+                            Date.now() +
+                            "_back." +
+                            backExtension;
+
+
+                        const backUpload =
+                            await supabaseClient
+                                .storage
+                                .from("pan-documents")
+                                .upload(
+                                    backPath,
+                                    backFile,
+                                    {
+                                        upsert: false,
+                                        contentType:
+                                            backFile.type
+                                    }
+                                );
+
+
+                        if (backUpload.error) {
+                            throw new Error(
+                                "PAN back upload failed: " +
+                                backUpload.error.message
+                            );
+                        }
+
+                    }
+
+
+                    /* =========================================
+                       SAVE TO SUPABASE TABLE
+                    ========================================== */
+
+                    submitButton.textContent =
+                        "Saving verification...";
+
+
+                    const record = {
+
+                        user_id: user.id,
+
+                        verification_type:
+                            verificationType,
+
+                        gst_number:
+                            verificationType === "GST"
+                                ? gst
+                                : null,
+
+                        pan_number:
+                            verificationType === "PAN"
+                                ? pan
+                                : null,
+
+                        pan_front_path:
+                            verificationType === "PAN"
+                                ? frontPath
+                                : null,
+
+                        pan_back_path:
+                            verificationType === "PAN"
+                                ? backPath
+                                : null,
+
+                        business_name:
+                            name,
+
+                        business_address:
+                            address,
+
+                        status:
+                            "pending"
+
+                    };
+
+
+                    const {
+                        error: insertError
+                    } =
+                        await supabaseClient
+                            .from(
+                                "business_verifications"
+                            )
+                            .insert(record);
+
+
+                    if (insertError) {
+                        throw new Error(
+                            insertError.message
+                        );
+                    }
+
+
+                    /* =========================================
+                       SUCCESS SCREEN
+                    ========================================== */
+
+                    verificationForm.classList.add(
+                        "hidden"
+                    );
+
+                    successScreen.classList.remove(
+                        "hidden"
+                    );
+
+                } catch (error) {
+
+                    console.error(
+                        "SUBMIT ERROR:",
+                        error
+                    );
+
+                    showError(
+                        error.message ||
+                        "Something went wrong."
+                    );
+
+                } finally {
+
+                    submitButton.disabled = false;
+
+                    submitButton.textContent =
+                        "Submit Verification";
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           HOME BUTTON
+        ====================================================== */
+
+        document
+            .getElementById("homeButton")
+            .addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+
+        /* =====================================================
+           START PAGE
+        ====================================================== */
+
+        updateVerificationType();
+
+        checkExistingVerification();
+
+    }
+
+);
+
+</script>
+
+</body>
+</html>
+
+   
