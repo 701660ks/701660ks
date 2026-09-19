@@ -3728,7 +3728,11 @@ async function saveVerificationUpdate(
 ========================================================= */
 
 
-      async function deleteVerification(id) {
+        /* =========================================================
+   DELETE BUSINESS VERIFICATION
+========================================================= */
+
+async function deleteVerification(id) {
 
     if (!id) {
         showMessage(
@@ -3749,13 +3753,14 @@ async function saveVerificationUpdate(
     try {
 
         console.log(
-            "Deleting business verification:",
+            "DELETE START:",
             id
         );
 
-        /*
-         * 1. GET VERIFICATION
-         */
+        /* -----------------------------------------
+           1. GET RECORD
+        ----------------------------------------- */
+
         const {
             data: verification,
             error: getError
@@ -3766,48 +3771,69 @@ async function saveVerificationUpdate(
             .maybeSingle();
 
         if (getError) {
-            throw new Error(
-                "Could not find verification: " +
-                getError.message
-            );
+            throw getError;
         }
 
         if (!verification) {
             throw new Error(
-                "Business verification not found."
+                "Business verification record was not found."
             );
         }
 
         console.log(
-            "Verification found:",
+            "Record found:",
             verification
         );
 
-        /*
-         * 2. DELETE BUSINESS VERIFICATION
-         */
+
+        /* -----------------------------------------
+           2. DELETE RECORD
+        ----------------------------------------- */
+
         const {
+            data: deletedRows,
             error: deleteError
         } = await supabaseClient
             .from("business_verifications")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .select("id");
 
         if (deleteError) {
+
             console.error(
-                "DELETE BUSINESS ERROR:",
+                "DELETE ERROR:",
                 deleteError
             );
 
+            throw deleteError;
+        }
+
+
+        /* -----------------------------------------
+           3. VERIFY DELETE
+        ----------------------------------------- */
+
+        if (
+            !deletedRows ||
+            deletedRows.length === 0
+        ) {
+
             throw new Error(
-                "Could not delete business verification: " +
-                deleteError.message
+                "Supabase did not delete the verification record. Check your RLS DELETE policy."
             );
         }
 
-        /*
-         * 3. RESET PROFILE STATUS
-         */
+        console.log(
+            "Deleted successfully:",
+            deletedRows
+        );
+
+
+        /* -----------------------------------------
+           4. RESET USER STATUS
+        ----------------------------------------- */
+
         if (verification.user_id) {
 
             const {
@@ -3825,14 +3851,10 @@ async function saveVerificationUpdate(
             if (profileError) {
 
                 console.error(
-                    "PROFILE RESET ERROR:",
+                    "PROFILE UPDATE ERROR:",
                     profileError
                 );
 
-                /*
-                 * Verification was already deleted.
-                 * Tell admin about the profile problem.
-                 */
                 throw new Error(
                     "Verification deleted, but user status could not be reset: " +
                     profileError.message
@@ -3840,34 +3862,33 @@ async function saveVerificationUpdate(
             }
         }
 
-        /*
-         * 4. REMOVE FROM LOCAL ARRAY
-         */
-        allVerifications =
-            allVerifications.filter(
-                function(row) {
-                    return String(row.id) !==
-                           String(id);
-                }
-            );
 
-        /*
-         * 5. REFRESH TABLES
-         */
-        displayVerifications(
-            allVerifications
-        );
+        /* -----------------------------------------
+           5. RELOAD TABLE
+        ----------------------------------------- */
+
+        await loadBusinessVerifications();
 
         await loadUsers();
+
+
+        /* -----------------------------------------
+           6. SUCCESS
+        ----------------------------------------- */
 
         showMessage(
             "Business verification deleted successfully. User status reset to pending.",
             "success"
         );
 
-        closeViewModal();
+        console.log(
+            "DELETE COMPLETE:",
+            id
+        );
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "DELETE VERIFICATION ERROR:",
@@ -3881,8 +3902,6 @@ async function saveVerificationUpdate(
         );
     }
 }
-
-        
 
 
      
