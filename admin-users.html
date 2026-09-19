@@ -1166,9 +1166,10 @@ async function loadAdmin() {
         }
 
 
-        await loadUsers();
-
-        await loadBusinessVerifications();
+  await Promise.allSettled([
+    loadUsers(),
+    loadBusinessVerifications()
+]);
 
 
         showMessage(
@@ -1243,63 +1244,119 @@ async function loadAdmin() {
 /* =========================================================
    LOAD USERS
 ========================================================= */
-
 async function loadUsers() {
 
     const table =
-        document.getElementById(
-            "usersTable"
-        );
+        document.getElementById("usersTable");
 
+    if (!table) {
+        console.error("usersTable not found.");
+        return;
+    }
 
     table.innerHTML = `
-
-    <tr>
-
-    <td colspan="8">
-    Loading users...
-    </td>
-
-    </tr>
-
+        <tr>
+            <td colspan="8"
+                style="text-align:center;padding:25px;">
+                Loading users...
+            </td>
+        </tr>
     `;
 
+    try {
 
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .select("*")
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
+        if (
+            typeof supabaseClient === "undefined"
+        ) {
+            throw new Error(
+                "supabaseClient is not available."
+            );
+        }
+
+        console.log(
+            "Loading users from profiles..."
         );
 
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
 
-    if (error) {
+        if (error) {
+
+            console.error(
+                "USERS SUPABASE ERROR:",
+                error
+            );
+
+            throw error;
+        }
+
+        console.log(
+            "Users loaded:",
+            data
+        );
+
+        allUsers =
+            data || [];
+
+        displayUsers(
+            allUsers
+        );
+
+    } catch (error) {
 
         console.error(
-            "USERS ERROR:",
+            "LOAD USERS ERROR:",
             error
         );
 
-        throw error;
+        allUsers = [];
 
+        table.innerHTML = `
+            <tr>
+                <td colspan="8"
+                    style="
+                        text-align:center;
+                        padding:25px;
+                        color:#991b1b;
+                    ">
+
+                    <strong>
+                        ❌ Could not load users
+                    </strong>
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error?.message ||
+                        "Unknown Supabase error"
+                    )}
+
+                </td>
+            </tr>
+        `;
+
+        /*
+         * Keep the Business Verification
+         * section working even if Users fails.
+         */
+
+        showMessage(
+            error?.message ||
+            "Could not load users.",
+            "error"
+        );
     }
-
-
-    allUsers =
-        data || [];
-
-
-    displayUsers(
-        allUsers
-    );
-
 }
 
 
