@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,19 +12,11 @@
 
 <title>JS UNDEFINED - Admin Panel</title>
 
-
-<!-- SUPABASE -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
-
 <style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
 
 * {
     box-sizing: border-box;
@@ -34,692 +25,374 @@
 }
 
 body {
-
     font-family: Arial, sans-serif;
-
     background: #f5f6fa;
-
     color: #222;
-
 }
 
 button {
-
     border: none;
-
     padding: 9px 13px;
-
     border-radius: 7px;
-
     cursor: pointer;
-
     font-weight: 600;
-
 }
 
 button:disabled {
-
     opacity: .5;
-
     cursor: not-allowed;
-
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
-
 .header {
-
     background: #111827;
-
     color: white;
-
     padding: 18px 25px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
 }
 
 .logo {
-
     font-size: 22px;
-
     font-weight: bold;
-
 }
 
 .admin-title {
-
     font-size: 14px;
-
 }
 
-
-/* =========================================================
-   CONTAINER
-========================================================= */
-
 .container {
-
     max-width: 1400px;
-
     margin: auto;
-
     padding: 25px;
-
 }
 
 h1 {
-
     margin-bottom: 20px;
-
 }
 
 h2 {
-
     margin-bottom: 20px;
-
 }
 
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
 .message {
-
     display: none;
-
     padding: 13px 15px;
-
     margin-bottom: 20px;
-
     border-radius: 10px;
-
     font-size: 14px;
-
 }
 
 .message.show {
-
     display: block;
-
 }
 
 .message.success {
-
     background: #dcfce7;
-
     color: #166534;
-
 }
 
 .message.error {
-
     background: #fee2e2;
-
     color: #991b1b;
-
 }
 
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
 .stats {
-
     display: grid;
-
     grid-template-columns: repeat(4, 1fr);
-
     gap: 15px;
-
     margin-bottom: 25px;
-
 }
 
 .card {
-
     background: white;
-
     padding: 20px;
-
     border-radius: 12px;
-
     box-shadow: 0 3px 12px rgba(0,0,0,.08);
-
 }
 
 .card-title {
-
     color: #666;
-
     font-size: 14px;
-
 }
 
 .card-number {
-
     font-size: 28px;
-
     font-weight: bold;
-
     margin-top: 8px;
-
 }
 
-
-/* =========================================================
-   FILTERS
-========================================================= */
-
 .filters {
-
     background: white;
-
     padding: 20px;
-
     border-radius: 12px;
-
     margin-bottom: 20px;
-
     display: flex;
-
     gap: 12px;
-
     flex-wrap: wrap;
-
 }
 
 input,
 select,
 textarea {
-
     padding: 12px;
-
     border: 1px solid #ddd;
-
     border-radius: 8px;
-
     font-size: 14px;
-
 }
 
 .search {
-
     flex: 1;
-
     min-width: 220px;
-
 }
 
-
-/* =========================================================
-   TABLE
-========================================================= */
-
 .table-container {
-
     background: white;
-
     border-radius: 12px;
-
     overflow-x: auto;
-
     box-shadow: 0 3px 12px rgba(0,0,0,.08);
-
     margin-bottom: 25px;
-
 }
 
 table {
-
     width: 100%;
-
     border-collapse: collapse;
-
 }
 
 th,
 td {
-
     padding: 14px;
-
     text-align: left;
-
     border-bottom: 1px solid #eee;
-
 }
 
 th {
-
     background: #f8f9fb;
-
     font-size: 13px;
-
 }
 
 td {
-
     font-size: 14px;
-
 }
 
-
-/* =========================================================
-   STATUS
-========================================================= */
-
 .status {
-
     display: inline-block;
-
     padding: 6px 10px;
-
     border-radius: 20px;
-
     font-size: 12px;
-
     font-weight: bold;
-
 }
 
 .pending {
-
     background: #fff3cd;
-
     color: #856404;
-
 }
 
 .approved {
-
     background: #d1fae5;
-
     color: #065f46;
-
 }
 
 .rejected {
-
     background: #fee2e2;
-
     color: #991b1b;
-
 }
 
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
 .actions {
-
     display: flex;
-
     gap: 6px;
-
     flex-wrap: wrap;
-
 }
 
 .approve-btn {
-
     background: #16a34a;
-
     color: white;
-
 }
 
 .reject-btn {
-
     background: #dc2626;
-
     color: white;
-
 }
 
 .edit-btn {
-
     background: #6c4df6;
-
     color: white;
-
 }
 
 .delete-btn {
-
     background: #ef4444;
-
     color: white;
-
 }
 
 .view-btn {
-
     background: #2563eb;
-
     color: white;
-
 }
 
-
-/* =========================================================
-   SECTION
-========================================================= */
-
 .section {
-
     background: white;
-
     padding: 20px;
-
     border-radius: 12px;
-
     margin-top: 25px;
-
     box-shadow: 0 3px 12px rgba(0,0,0,.08);
-
 }
 
 .section-title {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     margin-bottom: 20px;
-
 }
 
 .section-title h2 {
-
     margin: 0;
-
 }
 
-
-/* =========================================================
-   USER EDITOR
-========================================================= */
-
 .user-editor {
-
     background: white;
-
     margin-top: 25px;
-
     padding: 25px;
-
     border-radius: 12px;
-
     box-shadow: 0 3px 12px rgba(0,0,0,.08);
-
 }
 
 .editor-grid {
-
     display: grid;
-
     grid-template-columns: repeat(2,1fr);
-
     gap: 18px;
-
 }
 
 .editor-field label {
-
     display: block;
-
     margin-bottom: 7px;
-
     font-size: 13px;
-
     font-weight: 600;
-
 }
 
 .editor-field input,
 .editor-field select {
-
     width: 100%;
-
     height: 45px;
-
     padding: 0 12px;
-
 }
 
 .editor-buttons {
-
     display: flex;
-
     gap: 10px;
-
     margin-top: 22px;
-
     flex-wrap: wrap;
-
 }
 
 .save-user-btn {
-
     background: #6c4df6;
-
     color: white;
-
 }
 
 .new-user-btn {
-
     background: #16a34a;
-
     color: white;
-
 }
 
 .cancel-user-btn {
-
     background: #e5e7eb;
-
     color: #222;
-
 }
 
-
-/* =========================================================
-   MODAL
-========================================================= */
-
 .modal {
-
     display: none;
-
     position: fixed;
-
     inset: 0;
-
     background: rgba(0,0,0,.65);
-
     z-index: 9999;
-
     align-items: center;
-
     justify-content: center;
-
     padding: 20px;
-
 }
 
 .modal.show {
-
     display: flex;
-
 }
 
 .modal-box {
-
     background: white;
-
     width: 100%;
-
-    max-width: 700px;
-
+    max-width: 750px;
     max-height: 90vh;
-
     overflow-y: auto;
-
     border-radius: 14px;
-
     padding: 25px;
-
 }
 
 .modal-close {
-
     float: right;
-
     background: #e5e7eb;
-
-    color: #222;
-
 }
 
-.verification-details {
-
+.detail-box {
     background: #f8fafc;
-
     padding: 15px;
-
     border-radius: 10px;
-
-    margin-top: 10px;
-
+    margin-top: 15px;
 }
 
 .detail-row {
-
-    margin-bottom: 10px;
-
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+    word-break: break-word;
 }
 
 .detail-label {
-
     font-weight: bold;
-
-    display: inline-block;
-
-    min-width: 130px;
-
 }
 
-
-/* =========================================================
-   PAN PHOTOS
-========================================================= */
-
-.pan-photo-grid {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 15px;
-
-    margin-top: 15px;
-
-}
-
-.pan-photo-box {
-
-    border: 1px solid #ddd;
-
-    border-radius: 10px;
-
-    padding: 10px;
-
-    background: white;
-
-}
-
-.pan-photo-box h4 {
-
-    margin-bottom: 10px;
-
-}
-
-.pan-photo {
-
+.reject-reason {
     width: 100%;
+    min-height: 110px;
+    margin-top: 10px;
+}
 
-    max-height: 300px;
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
 
-    object-fit: contain;
-
-    border-radius: 8px;
-
+.photo-box {
     border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 10px;
+}
 
-    background: #f5f5f5;
-
+.photo-box img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    margin-top: 10px;
+    border-radius: 8px;
 }
 
 .no-photo {
-
-    padding: 25px 10px;
-
+    padding: 25px;
     text-align: center;
-
     color: #777;
-
-    background: #f5f6fa;
-
-    border-radius: 8px;
-
 }
 
-
-/* =========================================================
-   REJECTION
-========================================================= */
-
-.reject-reason {
-
-    width: 100%;
-
-    min-height: 110px;
-
-    margin-top: 10px;
-
+.user-id {
+    font-size: 11px;
+    word-break: break-all;
+    max-width: 130px;
 }
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
 
 @media(max-width:800px) {
 
     .stats {
-
         grid-template-columns: repeat(2,1fr);
-
     }
 
     th,
     td {
-
         white-space: nowrap;
-
     }
 
 }
@@ -727,15 +400,11 @@ td {
 @media(max-width:700px) {
 
     .editor-grid {
-
         grid-template-columns: 1fr;
-
     }
 
-    .pan-photo-grid {
-
+    .photo-grid {
         grid-template-columns: 1fr;
-
     }
 
 }
@@ -743,21 +412,15 @@ td {
 @media(max-width:500px) {
 
     .stats {
-
         grid-template-columns: 1fr;
-
     }
 
     .container {
-
         padding: 15px;
-
     }
 
     .header {
-
         padding: 15px;
-
     }
 
 }
@@ -768,167 +431,159 @@ td {
 
 <body>
 
-
 <header class="header">
 
-    <div class="logo">
-        JS UNDEFINED
-    </div>
+<div class="logo">
+JS UNDEFINED
+</div>
 
-    <div class="admin-title">
-        ADMIN PANEL
-    </div>
+<div class="admin-title">
+ADMIN PANEL
+</div>
 
 </header>
 
 
 <main class="container">
 
-
 <h1>
-    User Management
+User Management
 </h1>
 
 
 <div
-    id="message"
-    class="message">
+id="message"
+class="message">
 </div>
 
 
-<!-- =====================================================
-     STATISTICS
-===================================================== -->
+<!-- STATISTICS -->
 
 <div class="stats">
 
-    <div class="card">
+<div class="card">
 
-        <div class="card-title">
-            Total Users
-        </div>
+<div class="card-title">
+Total Users
+</div>
 
-        <div
-            id="totalUsers"
-            class="card-number">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-title">
-            Pending
-        </div>
-
-        <div
-            id="pendingUsers"
-            class="card-number">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-title">
-            Approved
-        </div>
-
-        <div
-            id="approvedUsers"
-            class="card-number">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="card">
-
-        <div class="card-title">
-            Rejected
-        </div>
-
-        <div
-            id="rejectedUsers"
-            class="card-number">
-            0
-        </div>
-
-    </div>
+<div
+id="totalUsers"
+class="card-number">
+0
+</div>
 
 </div>
 
 
-<!-- =====================================================
-     FILTERS
-===================================================== -->
+<div class="card">
+
+<div class="card-title">
+Pending
+</div>
+
+<div
+id="pendingUsers"
+class="card-number">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Approved
+</div>
+
+<div
+id="approvedUsers"
+class="card-number">
+0
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="card-title">
+Rejected
+</div>
+
+<div
+id="rejectedUsers"
+class="card-number">
+0
+</div>
+
+</div>
+
+</div>
+
+
+<!-- FILTER -->
 
 <div class="filters">
 
-    <input
-        id="searchInput"
-        class="search"
-        type="text"
-        placeholder="Search name, email or mobile..."
-    >
+<input
+id="searchInput"
+class="search"
+type="text"
+placeholder="Search name, email or mobile..."
+>
 
 
-    <select id="typeFilter">
+<select id="typeFilter">
 
-        <option value="all">
-            All Types
-        </option>
+<option value="all">
+All Types
+</option>
 
-        <option value="user">
-            User
-        </option>
+<option value="user">
+User
+</option>
 
-        <option value="wholesaler">
-            Wholesaler
-        </option>
+<option value="wholesaler">
+Wholesaler
+</option>
 
-        <option value="b2b">
-            B2B
-        </option>
+<option value="b2b">
+B2B
+</option>
 
-    </select>
+</select>
 
 
-    <select id="statusFilter">
+<select id="statusFilter">
 
-        <option value="all">
-            All Status
-        </option>
+<option value="all">
+All Status
+</option>
 
-        <option value="pending">
-            Pending
-        </option>
+<option value="pending">
+Pending
+</option>
 
-        <option value="approved">
-            Approved
-        </option>
+<option value="approved">
+Approved
+</option>
 
-        <option value="active">
-            Active
-        </option>
+<option value="active">
+Active
+</option>
 
-        <option value="rejected">
-            Rejected
-        </option>
+<option value="rejected">
+Rejected
+</option>
 
-    </select>
+</select>
 
 </div>
 
 
-<!-- =====================================================
-     USERS TABLE
-===================================================== -->
+<!-- USERS TABLE -->
 
 <div class="table-container">
 
@@ -937,19 +592,14 @@ td {
 <thead>
 
 <tr>
-<th>User ID </th>
+
+<th>User ID</th>
 <th>Name</th>
-
 <th>Email</th>
-
 <th>Mobile</th>
-
 <th>Type</th>
-
 <th>Status</th>
-
 <th>Registered</th>
-
 <th>Action</th>
 
 </tr>
@@ -962,7 +612,7 @@ td {
 <tr>
 
 <td colspan="8">
-    Loading users...
+Loading users...
 </td>
 
 </tr>
@@ -974,14 +624,12 @@ td {
 </div>
 
 
-<!-- =====================================================
-     USER EDITOR
-===================================================== -->
+<!-- USER EDITOR -->
 
 <div class="user-editor">
 
 <h2 id="editorTitle">
-    Add New User
+Add New User
 </h2>
 
 
@@ -991,13 +639,13 @@ td {
 <div class="editor-field">
 
 <label>
-    Full Name
+Full Name
 </label>
 
 <input
-    id="editFullName"
-    type="text"
-    placeholder="Enter full name"
+id="editFullName"
+type="text"
+placeholder="Enter full name"
 >
 
 </div>
@@ -1006,13 +654,13 @@ td {
 <div class="editor-field">
 
 <label>
-    Email
+Email
 </label>
 
 <input
-    id="editEmail"
-    type="email"
-    placeholder="Enter email"
+id="editEmail"
+type="email"
+placeholder="Enter email"
 >
 
 </div>
@@ -1021,13 +669,13 @@ td {
 <div class="editor-field">
 
 <label>
-    Mobile
+Mobile
 </label>
 
 <input
-    id="editMobile"
-    type="text"
-    placeholder="Enter mobile"
+id="editMobile"
+type="text"
+placeholder="Enter mobile"
 >
 
 </div>
@@ -1036,21 +684,21 @@ td {
 <div class="editor-field">
 
 <label>
-    User Type
+User Type
 </label>
 
 <select id="editUserType">
 
 <option value="user">
-    User
+User
 </option>
 
 <option value="wholesaler">
-    Wholesaler
+Wholesaler
 </option>
 
 <option value="b2b">
-    B2B
+B2B
 </option>
 
 </select>
@@ -1061,31 +709,30 @@ td {
 <div class="editor-field">
 
 <label>
-    Account Status
+Account Status
 </label>
 
 <select id="editStatus">
 
 <option value="active">
-    Active
+Active
 </option>
 
 <option value="pending">
-    Pending
+Pending
 </option>
 
 <option value="approved">
-    Approved
+Approved
 </option>
 
 <option value="rejected">
-    Rejected
+Rejected
 </option>
 
 </select>
 
 </div>
-
 
 </div>
 
@@ -1093,9 +740,9 @@ td {
 <div class="editor-buttons">
 
 <button
-    id="saveUserBtn"
-    class="save-user-btn"
-    onclick="saveUser()">
+id="saveUserBtn"
+class="save-user-btn"
+onclick="saveUser()">
 
 💾 Save User
 
@@ -1103,8 +750,8 @@ td {
 
 
 <button
-    class="new-user-btn"
-    onclick="newUser()">
+class="new-user-btn"
+onclick="newUser()">
 
 ➕ New User
 
@@ -1112,8 +759,8 @@ td {
 
 
 <button
-    class="cancel-user-btn"
-    onclick="cancelEdit()">
+class="cancel-user-btn"
+onclick="cancelEdit()">
 
 Cancel
 
@@ -1123,23 +770,22 @@ Cancel
 
 </div>
 
-<!-- =====================================================
-     BUSINESS VERIFICATIONS
-===================================================== -->
+
+<!-- BUSINESS VERIFICATIONS -->
 
 <div class="section">
 
 <div class="section-title">
 
 <h2>
-    Business Verifications
+Business Verifications
 </h2>
 
 <button
-    class="view-btn"
-    onclick="loadBusinessVerifications()">
+class="view-btn"
+onclick="loadBusinessVerifications()">
 
-Refresh
+🔄 Refresh
 
 </button>
 
@@ -1154,33 +800,13 @@ Refresh
 
 <tr>
 
-<th>
-    Business
-</th>
-
-<th>
-    User
-</th>
-
-<th>
-    Type
-</th>
-
-<th>
-    GST / PAN
-</th>
-
-<th>
-    Status
-</th>
-
-<th>
-    Submitted
-</th>
-
-<th>
-    Action
-</th>
+<th>Business</th>
+<th>User</th>
+<th>Type</th>
+<th>GST / PAN</th>
+<th>Status</th>
+<th>Submitted</th>
+<th>Action</th>
 
 </tr>
 
@@ -1192,7 +818,7 @@ Refresh
 <tr>
 
 <td colspan="7">
-    Loading business verifications...
+Loading business verifications...
 </td>
 
 </tr>
@@ -1205,88 +831,74 @@ Refresh
 
 </div>
 
-
 </main>
 
 
-<!-- =====================================================
-     VIEW VERIFICATION MODAL
-===================================================== -->
+<!-- VIEW MODAL -->
 
 <div
-    id="viewModal"
-    class="modal">
+id="viewModal"
+class="modal">
 
 <div class="modal-box">
 
 <button
-    class="modal-close"
-    onclick="closeViewModal()">
+class="modal-close"
+onclick="closeViewModal()">
 
 ✕
 
 </button>
 
-
 <h2>
-    Business Verification
+Business Verification
 </h2>
 
-
-<div
-    id="viewVerificationContent">
-
+<div id="viewContent">
 Loading...
-
-</div>
-
-
 </div>
 
 </div>
 
+</div>
 
-<!-- =====================================================
-     REJECTION MODAL
-===================================================== -->
+
+<!-- REJECT MODAL -->
 
 <div
-    id="rejectModal"
-    class="modal">
+id="rejectModal"
+class="modal">
 
 <div class="modal-box">
 
 <button
-    class="modal-close"
-    onclick="closeRejectModal()">
+class="modal-close"
+onclick="closeRejectModal()">
 
 ✕
 
 </button>
 
-
 <h2>
-    Reject Verification
+Reject Verification
 </h2>
-
 
 <p>
-    Please enter the rejection reason.
+Enter rejection reason.
 </p>
 
-
 <textarea
-    id="rejectReason"
-    class="reject-reason"
-    placeholder="Example: PAN document is not clear."
+id="rejectReason"
+class="reject-reason"
+placeholder="Example: PAN document is not clear."
 ></textarea>
 
 
 <div class="editor-buttons">
 
 <button
-    class="reject-btn"
-    onclick="confirmRejectVerification()">
+class="reject-btn"
+onclick="confirmReject()">
 
 Reject Verification
 
@@ -1294,8 +906,8 @@ Reject Verification
 
 
 <button
-    class="cancel-user-btn"
-    onclick="closeRejectModal()">
+class="cancel-user-btn"
+onclick="closeRejectModal()">
 
 Cancel
 
@@ -1311,7 +923,7 @@ Cancel
 <script>
 
 /* =========================================================
-   GLOBAL VARIABLES
+   GLOBAL
 ========================================================= */
 
 let allUsers = [];
@@ -1320,17 +932,22 @@ let allVerifications = [];
 
 let editingUserId = null;
 
-let rejectingVerificationId = null;
+let rejectingId = null;
 
 
 /* =========================================================
    MESSAGE
 ========================================================= */
 
-function showMessage(text, type = "success") {
+function showMessage(
+    text,
+    type = "success"
+) {
 
     const box =
-        document.getElementById("message");
+        document.getElementById(
+            "message"
+        );
 
     box.textContent = text;
 
@@ -1347,44 +964,74 @@ function showMessage(text, type = "success") {
 
 
 /* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
 function escapeHtml(value) {
 
     return String(value ?? "")
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
 
 /* =========================================================
-   STATUS CLASS
+   DATE
 ========================================================= */
 
-function getStatusClass(status) {
+function formatDate(value) {
 
-    if (status === "pending")
+    if (!value) {
+        return "-";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return String(value);
+
+    }
+
+    return date.toLocaleString();
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function statusClass(status) {
+
+    status =
+        String(status || "")
+            .toLowerCase();
+
+    if (status === "pending") {
         return "pending";
+    }
 
     if (
         status === "approved" ||
         status === "active" ||
         status === "verified"
-    )
+    ) {
         return "approved";
+    }
 
-    if (status === "rejected")
+    if (status === "rejected") {
         return "rejected";
+    }
 
     return "";
 
@@ -1392,26 +1039,48 @@ function getStatusClass(status) {
 
 
 /* =========================================================
-   LOAD ADMIN
+   ADMIN LOAD
 ========================================================= */
 
-async function loadAdminData() {
+async function loadAdmin() {
 
     try {
 
+        console.log(
+            "ADMIN PANEL START"
+        );
+
+
+        if (
+            typeof supabaseClient ===
+            "undefined"
+        ) {
+
+            throw new Error(
+                "supabaseClient not found. Check supabase.js."
+            );
+
+        }
+
+
+        /* CHECK LOGIN */
+
         const {
-            data: {
-                user
-            },
-            error: userError
+            data,
+            error
         } =
         await supabaseClient
             .auth
             .getUser();
 
 
-        if (userError)
-            throw userError;
+        if (error) {
+            throw error;
+        }
+
+
+        const user =
+            data?.user;
 
 
         if (!user) {
@@ -1424,88 +1093,183 @@ async function loadAdminData() {
         }
 
 
+        console.log(
+            "Logged in:",
+            user.id
+        );
+
+
         /* CHECK ADMIN */
 
         const {
-            data: adminProfile,
-            error: adminError
+            data: profile,
+            error: profileError
         } =
         await supabaseClient
             .from("profiles")
             .select("id,is_admin")
             .eq("id", user.id)
-            .single();
+            .maybeSingle();
 
 
-        if (adminError)
-            throw adminError;
+        if (profileError) {
+            throw profileError;
+        }
 
 
-        if (
-            !adminProfile ||
-            adminProfile.is_admin !== true
-        ) {
+        if (!profile) {
 
-            showMessage(
-                "Access denied. This account is not an admin.",
-                "error"
+            throw new Error(
+                "Your profile does not exist."
             );
-
-            return;
 
         }
 
 
-        /* LOAD USERS */
+        if (
+            profile.is_admin !== true
+        ) {
 
-        /* ================================================
-   LOAD USERS
-================================================ */
+            throw new Error(
+                "Access denied. is_admin is not true."
+            );
 
-const {
-    data: users,
-    error: usersError
-} = await supabaseClient
-    .from("profiles")
-    .select("*")
-    .order("created_at", {
-        ascending: false
-    });
+        }
 
 
-if (usersError) {
+        await loadUsers();
 
-    console.error(
-        "USERS ERROR:",
-        usersError
-    );
-
-    throw usersError;
-
-}
+        await loadBusinessVerifications();
 
 
-allUsers = users || [];
+        showMessage(
+            "Admin panel loaded successfully."
+        );
 
+    }
 
-displayUsers(allUsers);
-
-await loadBusinessVerifications();
-
-    catch (error) {
+    catch(error) {
 
         console.error(
             "ADMIN ERROR:",
             error
         );
 
+
         showMessage(
             error.message ||
-            "Could not load admin data.",
+            "Admin panel error.",
             "error"
         );
 
+
+        document.getElementById(
+            "usersTable"
+        ).innerHTML = `
+
+        <tr>
+
+        <td
+        colspan="8"
+        style="color:#991b1b;padding:20px"
+        >
+
+        ❌ ${escapeHtml(
+            error.message
+        )}
+
+        </td>
+
+        </tr>
+
+        `;
+
+
+        document.getElementById(
+            "verificationTable"
+        ).innerHTML = `
+
+        <tr>
+
+        <td
+        colspan="7"
+        style="color:#991b1b;padding:20px"
+        >
+
+        ❌ ${escapeHtml(
+            error.message
+        )}
+
+        </td>
+
+        </tr>
+
+        `;
+
     }
+
+}
+
+
+/* =========================================================
+   LOAD USERS
+========================================================= */
+
+async function loadUsers() {
+
+    const table =
+        document.getElementById(
+            "usersTable"
+        );
+
+
+    table.innerHTML = `
+
+    <tr>
+
+    <td colspan="8">
+    Loading users...
+    </td>
+
+    </tr>
+
+    `;
+
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .select("*")
+        .order(
+            "created_at",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "USERS ERROR:",
+            error
+        );
+
+        throw error;
+
+    }
+
+
+    allUsers =
+        data || [];
+
+
+    displayUsers(
+        allUsers
+    );
 
 }
 
@@ -1516,39 +1280,51 @@ await loadBusinessVerifications();
 
 function displayUsers(users) {
 
-    const tableBody =
+    const table =
         document.getElementById(
             "usersTable"
         );
 
 
     const total =
-        users.length;
+        allUsers.length;
 
 
     const pending =
-        users.filter(
-            user =>
-                user.account_status ===
-                "pending"
+        allUsers.filter(
+            u =>
+            String(
+                u.account_status || ""
+            ).toLowerCase()
+            === "pending"
         ).length;
 
 
     const approved =
-        users.filter(
-            user =>
-                user.account_status ===
-                    "approved" ||
-                user.account_status ===
-                    "active"
+        allUsers.filter(
+            u => {
+
+                const s =
+                    String(
+                        u.account_status || ""
+                    ).toLowerCase();
+
+                return (
+                    s === "approved" ||
+                    s === "active"
+                );
+
+            }
         ).length;
 
 
     const rejected =
-        users.filter(
-            user =>
-                user.account_status ===
-                "rejected"
+        allUsers.filter(
+            u =>
+            String(
+                u.account_status || ""
+            ).toLowerCase()
+            === "rejected"
         ).length;
 
 
@@ -1578,20 +1354,20 @@ function displayUsers(users) {
 
     if (!users.length) {
 
-        tableBody.innerHTML = `
+        table.innerHTML = `
 
-            <tr>
+        <tr>
 
-                <td
-                    colspan="8"
-                    style="text-align:center;padding:25px"
-                >
+        <td
+        colspan="8"
+        style="text-align:center;padding:25px"
+        >
 
-                    No users found
+        No users found.
 
-                </td>
+        </td>
 
-            </tr>
+        </tr>
 
         `;
 
@@ -1600,145 +1376,118 @@ function displayUsers(users) {
     }
 
 
-    tableBody.innerHTML = "";
+    table.innerHTML = "";
 
 
-    users.forEach(user => {
+    users.forEach(
+        user => {
 
-        const row =
-            document.createElement("tr");
-
-
-        const statusClass =
-            getStatusClass(
-                user.account_status
-            );
+            const tr =
+                document.createElement(
+                    "tr"
+                );
 
 
-        let approvalButtons = "";
+            const status =
+                user.account_status ||
+                "-";
 
 
-        if (
-            (
-                user.user_type ===
-                "wholesaler" ||
+            tr.innerHTML = `
 
-                user.user_type ===
-                "b2b"
-            )
+            <td class="user-id">
 
-            &&
-
-            user.account_status ===
-            "pending"
-        ) {
-
-            approvalButtons = `
-
-                <button
-                    class="approve-btn"
-                    onclick="approveUser('${user.id}')">
-
-                    Approve
-
-                </button>
-
-
-                <button
-                    class="reject-btn"
-                    onclick="rejectUser('${user.id}')">
-
-                    Reject
-
-                </button>
-
-            `;
-
-        }
-
-
-        row.innerHTML = `
-
-
-          <td>
                 ${escapeHtml(
                     user.id
                 )}
+
             </td>
 
-            <td>
-                ${escapeHtml(
-                    user.full_name
-                )}
-            </td>
 
             <td>
+
                 ${escapeHtml(
-                    user.email
+                    user.full_name ||
+                    "-"
                 )}
+
             </td>
 
-            <td>
-                ${escapeHtml(
-                    user.mobile
-                )}
-            </td>
 
             <td>
+
                 ${escapeHtml(
-                    user.user_type
+                    user.email ||
+                    "-"
                 )}
+
             </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    user.mobile ||
+                    "-"
+                )}
+
+            </td>
+
+
+            <td>
+
+                ${escapeHtml(
+                    user.user_type ||
+                    "-"
+                )}
+
+            </td>
+
 
             <td>
 
                 <span
-                    class="status ${statusClass}"
+                class="status ${statusClass(status)}"
                 >
 
-                    ${escapeHtml(
-                        user.account_status
-                    )}
+                ${escapeHtml(status)}
 
                 </span>
 
             </td>
 
+
             <td>
 
-                ${
-                    user.created_at
-                    ?
-                    new Date(
+                ${escapeHtml(
+                    formatDate(
                         user.created_at
-                    ).toLocaleDateString()
-                    :
-                    ""
-                }
+                    )
+                )}
 
             </td>
+
 
             <td>
 
                 <div class="actions">
 
-                    ${approvalButtons}
-
-
                     <button
-                        class="edit-btn"
-                        onclick="editUser('${user.id}')">
+                    class="edit-btn"
+                    onclick="editUser('${escapeHtml(user.id)}')"
+                    >
 
-                        Edit
+                    ✏️ Edit
 
                     </button>
 
 
                     <button
-                        class="delete-btn"
-                        onclick="deleteUser('${user.id}')">
+                    class="delete-btn"
+                    onclick="deleteUser('${escapeHtml(user.id)}')"
+                    >
 
-                        Delete
+                    🗑 Delete
 
                     </button>
 
@@ -1746,12 +1495,129 @@ function displayUsers(users) {
 
             </td>
 
-        `;
+            `;
 
 
-        tableBody.appendChild(row);
+            table.appendChild(
+                tr
+            );
 
-    });
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+
+             /* =========================================================
+   FILTER USERS
+========================================================= */
+
+function filterUsers() {
+
+    const searchInput =
+        document.getElementById("searchInput");
+
+    const typeFilter =
+        document.getElementById("typeFilter");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
+
+    const search =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+
+    const selectedType =
+        typeFilter.value;
+
+
+    const selectedStatus =
+        statusFilter.value;
+
+
+    const filteredUsers =
+        allUsers.filter(function(user) {
+
+            const name =
+                String(
+                    user.full_name || ""
+                ).toLowerCase();
+
+
+            const email =
+                String(
+                    user.email || ""
+                ).toLowerCase();
+
+
+            const mobile =
+                String(
+                    user.mobile || ""
+                ).toLowerCase();
+
+
+            const userType =
+                String(
+                    user.user_type || ""
+                ).toLowerCase();
+
+
+            const accountStatus =
+                String(
+                    user.account_status || ""
+                ).toLowerCase();
+
+
+            /* SEARCH */
+
+            const matchesSearch =
+                !search ||
+
+                name.includes(search) ||
+
+                email.includes(search) ||
+
+                mobile.includes(search);
+
+
+            /* TYPE */
+
+            const matchesType =
+                selectedType === "all" ||
+
+                userType ===
+                selectedType;
+
+
+            /* STATUS */
+
+            const matchesStatus =
+                selectedStatus === "all" ||
+
+                accountStatus ===
+                selectedStatus;
+
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesStatus
+            );
+
+        });
+
+
+    displayUsers(
+        filteredUsers
+    );
 
 }
 
@@ -1763,21 +1629,28 @@ function displayUsers(users) {
 function editUser(id) {
 
     const user =
-        allUsers.find(
-            item => item.id === id
-        );
+        allUsers.find(function(u) {
+
+            return String(u.id) ===
+                   String(id);
+
+        });
 
 
     if (!user) {
 
-        alert("User not found.");
+        showMessage(
+            "User not found.",
+            "error"
+        );
 
         return;
 
     }
 
 
-    editingUserId = id;
+    editingUserId =
+        user.id;
 
 
     document.getElementById(
@@ -1816,11 +1689,15 @@ function editUser(id) {
         user.account_status || "active";
 
 
-    document
-        .querySelector(".user-editor")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+    document.querySelector(
+        ".user-editor"
+    ).scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
 
 }
 
@@ -1832,6 +1709,7 @@ function editUser(id) {
 function newUser() {
 
     editingUserId = null;
+
 
     document.getElementById(
         "editorTitle"
@@ -1885,94 +1763,45 @@ function cancelEdit() {
 
 async function saveUser() {
 
-    const fullName =
-        document.getElementById(
-            "editFullName"
-        ).value.trim();
+    try {
+
+        const fullName =
+            document.getElementById(
+                "editFullName"
+            ).value.trim();
 
 
-    const email =
-        document.getElementById(
-            "editEmail"
-        ).value.trim();
+        const email =
+            document.getElementById(
+                "editEmail"
+            ).value.trim();
 
 
-    const mobile =
-        document.getElementById(
-            "editMobile"
-        ).value.trim();
+        const mobile =
+            document.getElementById(
+                "editMobile"
+            ).value.trim();
 
 
-    const userType =
-        document.getElementById(
-            "editUserType"
-        ).value;
+        const userType =
+            document.getElementById(
+                "editUserType"
+            ).value;
 
 
-    const status =
-        document.getElementById(
-            "editStatus"
-        ).value;
+        const accountStatus =
+            document.getElementById(
+                "editStatus"
+            ).value;
 
 
-    if (!fullName) {
+        /* VALIDATION */
 
-        alert(
-            "Please enter full name."
-        );
+        if (!fullName) {
 
-        return;
-
-    }
-
-
-    if (!email) {
-
-        alert(
-            "Please enter email."
-        );
-
-        return;
-
-    }
-
-
-    if (editingUserId) {
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("profiles")
-            .update({
-
-                full_name:
-                    fullName,
-
-                email:
-                    email,
-
-                mobile:
-                    mobile,
-
-                user_type:
-                    userType,
-
-                account_status:
-                    status
-
-            })
-            .eq(
-                "id",
-                editingUserId
-            );
-
-
-        if (error) {
-
-            alert(
-                "Update error: " +
-                error.message
+            showMessage(
+                "Please enter full name.",
+                "error"
             );
 
             return;
@@ -1980,45 +1809,11 @@ async function saveUser() {
         }
 
 
-        showMessage(
-            "User updated successfully.",
-            "success"
-        );
+        if (!email) {
 
-    }
-
-    else {
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("profiles")
-            .insert({
-
-                full_name:
-                    fullName,
-
-                email:
-                    email,
-
-                mobile:
-                    mobile,
-
-                user_type:
-                    userType,
-
-                account_status:
-                    status
-
-            });
-
-
-        if (error) {
-
-            alert(
-                "Insert error: " +
-                error.message
+            showMessage(
+                "Please enter email.",
+                "error"
             );
 
             return;
@@ -2026,174 +1821,217 @@ async function saveUser() {
         }
 
 
+        /* DATA */
+
+        const userData = {
+
+            full_name:
+                fullName,
+
+            email:
+                email,
+
+            mobile:
+                mobile,
+
+            user_type:
+                userType,
+
+            account_status:
+                accountStatus
+
+        };
+
+
+        /* =================================================
+           UPDATE EXISTING USER
+        ================================================= */
+
+        if (editingUserId) {
+
+            const {
+                error
+            } =
+            await supabaseClient
+
+                .from("profiles")
+
+                .update(userData)
+
+                .eq(
+                    "id",
+                    editingUserId
+                );
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+
+            showMessage(
+                "User updated successfully."
+            );
+
+        }
+
+
+        /* =================================================
+           ADD NEW PROFILE
+        ================================================= */
+
+        else {
+
+            /*
+             * This inserts a row into profiles.
+             *
+             * It does NOT create a Supabase Auth account.
+             */
+
+            const {
+                error
+            } =
+            await supabaseClient
+
+                .from("profiles")
+
+                .insert([
+                    userData
+                ]);
+
+
+            if (error) {
+
+                throw error;
+
+            }
+
+
+            showMessage(
+                "New user profile added successfully."
+            );
+
+        }
+
+
+        newUser();
+
+
+        await loadUsers();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "SAVE USER ERROR:",
+            error
+        );
+
+
         showMessage(
-            "User added successfully.",
-            "success"
+
+            error.message ||
+            "Could not save user.",
+
+            "error"
+
         );
 
     }
-
-
-    cancelEdit();
-
-    await loadAdminData();
 
 }
 
 
 /* =========================================================
-   APPROVE USER
-========================================================= */
-
-async function approveUser(id) {
-
-    if (
-        !confirm(
-            "Approve this user?"
-        )
-    )
-        return;
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .update({
-
-            account_status:
-                "approved"
-
-        })
-        .eq(
-            "id",
-            id
-        );
-
-
-    if (error) {
-
-        alert(
-            "Approve error: " +
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    showMessage(
-        "User approved successfully.",
-        "success"
-    );
-
-
-    await loadAdminData();
-
-}
-
-
-/* =========================================================
-   REJECT USER
-========================================================= */
-
-async function rejectUser(id) {
-
-    if (
-        !confirm(
-            "Reject this user?"
-        )
-    )
-        return;
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .update({
-
-            account_status:
-                "rejected"
-
-        })
-        .eq(
-            "id",
-            id
-        );
-
-
-    if (error) {
-
-        alert(
-            "Reject error: " +
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    showMessage(
-        "User rejected.",
-        "success"
-    );
-
-
-    await loadAdminData();
-
-}
-
-
-/* =========================================================
-   DELETE USER PROFILE
+   DELETE USER
 ========================================================= */
 
 async function deleteUser(id) {
 
-    if (
-        !confirm(
-            "Delete this user profile?"
-        )
-    )
-        return;
+    const user =
+        allUsers.find(function(u) {
+
+            return String(u.id) ===
+                   String(id);
+
+        });
 
 
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .delete()
-        .eq(
-            "id",
-            id
+    const userName =
+        user?.full_name ||
+        user?.email ||
+        "this user";
+
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete " +
+            userName +
+            "?"
         );
 
 
-    if (error) {
-
-        alert(
-            "Delete error: " +
-            error.message
-        );
+    if (!confirmed) {
 
         return;
 
     }
 
 
-    showMessage(
-        "User deleted.",
-        "success"
-    );
+    try {
+
+        const {
+            error
+        } =
+        await supabaseClient
+
+            .from("profiles")
+
+            .delete()
+
+            .eq(
+                "id",
+                id
+            );
 
 
-    await loadAdminData();
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        showMessage(
+            "User deleted successfully."
+        );
+
+
+        await loadUsers();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE USER ERROR:",
+            error
+        );
+
+
+        showMessage(
+
+            error.message ||
+            "Could not delete user.",
+
+            "error"
+
+        );
+
+    }
 
 }
 
@@ -2214,10 +2052,9 @@ async function loadBusinessVerifications() {
 
         <tr>
 
-            <td colspan="7"
-                style="text-align:center;padding:20px">
+            <td colspan="7">
 
-                Loading...
+                Loading business verifications...
 
             </td>
 
@@ -2248,25 +2085,27 @@ async function loadBusinessVerifications() {
             );
 
 
-        if (error)
+        if (error) {
+
             throw error;
+
+        }
 
 
         allVerifications =
             data || [];
 
 
-        displayBusinessVerifications(
+        displayVerifications(
             allVerifications
         );
-
 
     }
 
     catch (error) {
 
         console.error(
-            "VERIFICATION LOAD ERROR:",
+            "BUSINESS VERIFICATION ERROR:",
             error
         );
 
@@ -2275,12 +2114,19 @@ async function loadBusinessVerifications() {
 
             <tr>
 
-                <td colspan="7"
-                    style="text-align:center">
+                <td
+                    colspan="7"
+                    style="
+                        color:#991b1b;
+                        padding:20px;
+                    "
+                >
 
-                    ${escapeHtml(
-                        error.message
-                    )}
+                    ❌ ${
+                        escapeHtml(
+                            error.message
+                        )
+                    }
 
                 </td>
 
@@ -2297,7 +2143,7 @@ async function loadBusinessVerifications() {
    DISPLAY BUSINESS VERIFICATIONS
 ========================================================= */
 
-function displayBusinessVerifications(
+function displayVerifications(
     verifications
 ) {
 
@@ -2307,7 +2153,10 @@ function displayBusinessVerifications(
         );
 
 
-    if (!verifications.length) {
+    if (
+        !verifications ||
+        verifications.length === 0
+    ) {
 
         table.innerHTML = `
 
@@ -2315,7 +2164,10 @@ function displayBusinessVerifications(
 
                 <td
                     colspan="7"
-                    style="text-align:center;padding:25px"
+                    style="
+                        text-align:center;
+                        padding:25px;
+                    "
                 >
 
                     No business verifications found.
@@ -2335,79 +2187,97 @@ function displayBusinessVerifications(
 
 
     verifications.forEach(
-        verification => {
+        function(row) {
 
-            const row =
+            const businessName =
+
+                row.business_name ||
+
+                row.company_name ||
+
+                row.shop_name ||
+
+                row.business ||
+
+                "-";
+
+
+            const businessType =
+
+                row.business_type ||
+
+                row.user_type ||
+
+                row.type ||
+
+                "-";
+
+
+            const gstNumber =
+
+                row.gst_number ||
+
+                row.gst_no ||
+
+                row.gst ||
+
+                "";
+
+
+            const panNumber =
+
+                row.pan_number ||
+
+                row.pan_no ||
+
+                row.pan ||
+
+                "";
+
+
+            const gstPan =
+
+                gstNumber ||
+
+                panNumber ||
+
+                "-";
+
+
+            const status =
+
+                row.status ||
+
+                "pending";
+
+
+            const statusLower =
+
+                String(status)
+                    .toLowerCase();
+
+
+            const tr =
                 document.createElement("tr");
 
 
-            const number =
-                verification.verification_type ===
-                "GST"
-
-                ?
-
-                verification.gst_number
-
-                :
-
-                verification.pan_number;
-
-
-            const statusClass =
-                getStatusClass(
-                    verification.status
-                );
-
-
-            let actionButtons = `
-
-                <button
-                    class="view-btn"
-                    onclick="viewVerification('${verification.id}')">
-
-                    View
-
-                </button>
-
-            `;
-
-
-            if (
-                verification.status ===
-                "pending"
-            ) {
-
-                actionButtons += `
-
-                    <button
-                        class="approve-btn"
-                        onclick="verifyBusiness('${verification.id}')">
-
-                        Verify
-
-                    </button>
-
-
-                    <button
-                        class="reject-btn"
-                        onclick="openRejectModal('${verification.id}')">
-
-                        Reject
-
-                    </button>
-
-                `;
-
-            }
-
-
-            row.innerHTML = `
+            tr.innerHTML = `
 
                 <td>
 
                     ${escapeHtml(
-                        verification.business_name
+                        businessName
+                    )}
+
+                </td>
+
+
+                <td
+                    class="user-id"
+                >
+
+                    ${escapeHtml(
+                        row.user_id || "-"
                     )}
 
                 </td>
@@ -2416,7 +2286,7 @@ function displayBusinessVerifications(
                 <td>
 
                     ${escapeHtml(
-                        verification.user_id.
+                        businessType
                     )}
 
                 </td>
@@ -2425,16 +2295,7 @@ function displayBusinessVerifications(
                 <td>
 
                     ${escapeHtml(
-                        verification.verification_type
-                    )}
-
-                </td>
-
-
-                <td>
-
-                    ${escapeHtml(
-                        number
+                        gstPan
                     )}
 
                 </td>
@@ -2443,11 +2304,14 @@ function displayBusinessVerifications(
                 <td>
 
                     <span
-                        class="status ${statusClass}"
+                        class="
+                            status
+                            ${getStatusClass(status)}
+                        "
                     >
 
                         ${escapeHtml(
-                            verification.status
+                            status
                         )}
 
                     </span>
@@ -2457,29 +2321,69 @@ function displayBusinessVerifications(
 
                 <td>
 
-                    ${
-                        verification.created_at
-
-                        ?
-
-                        new Date(
-                            verification.created_at
-                        ).toLocaleString()
-
-                        :
-
-                        ""
-
-                    }
+                    ${escapeHtml(
+                        formatDate(
+                            row.created_at
+                        )
+                    )}
 
                 </td>
 
 
                 <td>
 
-                    <div class="actions">
+                    <div
+                        class="actions"
+                    >
 
-                        ${actionButtons}
+                        <button
+                            class="view-btn"
+                            onclick="
+                                viewVerification(
+                                    '${escapeHtml(row.id)}'
+                                )
+                            "
+                        >
+                            👁 View
+                        </button>
+
+
+                        ${
+                            statusLower === "pending"
+
+                            ?
+
+                            `
+
+                            <button
+                                class="approve-btn"
+                                onclick="
+                                    approveVerification(
+                                        '${escapeHtml(row.id)}'
+                                    )
+                                "
+                            >
+                                ✓ Approve
+                            </button>
+
+
+                            <button
+                                class="reject-btn"
+                                onclick="
+                                    openRejectModal(
+                                        '${escapeHtml(row.id)}'
+                                    )
+                                "
+                            >
+                                ✕ Reject
+                            </button>
+
+                            `
+
+                            :
+
+                            ""
+                        }
 
                     </div>
 
@@ -2488,7 +2392,7 @@ function displayBusinessVerifications(
             `;
 
 
-            table.appendChild(row);
+            table.appendChild(tr);
 
         }
     );
@@ -2497,97 +2401,10 @@ function displayBusinessVerifications(
 
 
 /* =========================================================
-   STORAGE IMAGE URL
+   VIEW BUSINESS VERIFICATION
 ========================================================= */
 
-async function getDocumentUrl(
-    value
-) {
-
-    if (!value)
-        return null;
-
-
-    /*
-       If database already contains
-       a complete URL, use it directly.
-    */
-
-    if (
-        value.startsWith("http://") ||
-        value.startsWith("https://")
-    ) {
-
-        return value;
-
-    }
-
-
-    /*
-       Otherwise assume it is a
-       Supabase Storage file path.
-    */
-
-    const {
-        data,
-        error
-    } =
-    await supabaseClient
-
-        .storage
-
-        .from(
-            "business-documents"
-        )
-
-        .createSignedUrl(
-            value,
-            3600
-        );
-
-
-    if (error) {
-
-        console.error(
-            "IMAGE URL ERROR:",
-            error
-        );
-
-        return null;
-
-    }
-
-
-    return data?.signedUrl || null;
-
-}
-
-
-/* =========================================================
-   VIEW VERIFICATION
-========================================================= */
-
-async function viewVerification(
-    id
-) {
-
-    const verification =
-        allVerifications.find(
-            item =>
-                item.id === id
-        );
-
-
-    if (!verification) {
-
-        alert(
-            "Verification not found."
-        );
-
-        return;
-
-    }
-
+async function viewVerification(id) {
 
     const modal =
         document.getElementById(
@@ -2597,379 +2414,23 @@ async function viewVerification(
 
     const content =
         document.getElementById(
-            "viewVerificationContent"
+            "viewContent"
         );
 
 
-    modal.classList.add("show");
+    modal.classList.add(
+        "show"
+    );
 
 
-    content.innerHTML = `
-
-        <p>
-            Loading verification...
-        </p>
-
-    `;
+    content.innerHTML =
+        "Loading...";
 
 
     try {
-
-        let frontImage = null;
-
-        let backImage = null;
-
-
-        /*
-           Only PAN needs PAN images.
-        */
-
-        if (
-            verification.verification_type ===
-            "PAN"
-        ) {
-
-            frontImage =
-                await getDocumentUrl(
-                    verification.pan_front_url
-                );
-
-
-            backImage =
-                await getDocumentUrl(
-                    verification.pan_back_url
-                );
-
-        }
-
-
-        let documentHTML = "";
-
-
-        if (
-            verification.verification_type ===
-            "PAN"
-        ) {
-
-            documentHTML = `
-
-                <hr
-                    style="
-                        margin:20px 0;
-                        border:0;
-                        border-top:1px solid #ddd;
-                    "
-                >
-
-
-                <h3>
-                    PAN Card Photos
-                </h3>
-
-
-                <div class="pan-photo-grid">
-
-
-                    <div class="pan-photo-box">
-
-                        <h4>
-                            PAN Card Front Side
-                        </h4>
-
-
-                        ${
-                            frontImage
-
-                            ?
-
-                            `
-
-                            <img
-                                class="pan-photo"
-                                src="${escapeHtml(frontImage)}"
-                                alt="PAN Card Front"
-                            >
-
-                            `
-
-                            :
-
-                            `
-
-                            <div class="no-photo">
-
-                                Front photo not available.
-
-                            </div>
-
-                            `
-
-                        }
-
-                    </div>
-
-
-
-                    <div class="pan-photo-box">
-
-                        <h4>
-                            PAN Card Back Side
-                        </h4>
-
-
-                        ${
-                            backImage
-
-                            ?
-
-                            `
-
-                            <img
-                                class="pan-photo"
-                                src="${escapeHtml(backImage)}"
-                                alt="PAN Card Back"
-                            >
-
-                            `
-
-                            :
-
-                            `
-
-                            <div class="no-photo">
-
-                                Back photo not available.
-
-                            </div>
-
-                            `
-
-                        }
-
-                    </div>
-
-
-                </div>
-
-            `;
-
-        }
-
-
-        content.innerHTML = `
-
-            <div class="verification-details">
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Business:
-                    </span>
-
-                    ${escapeHtml(
-                        verification.business_name
-                    )}
-
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Address:
-                    </span>
-
-                    ${escapeHtml(
-                        verification.business_address
-                    )}
-
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Type:
-                    </span>
-
-                    ${escapeHtml(
-                        verification.verification_type
-                    )}
-
-                </div>
-
-
-                ${
-                    verification.verification_type ===
-                    "GST"
-
-                    ?
-
-                    `
-
-                    <div class="detail-row">
-
-                        <span class="detail-label">
-                            GST Number:
-                        </span>
-
-                        ${escapeHtml(
-                            verification.gst_number
-                        )}
-
-                    </div>
-
-                    `
-
-                    :
-
-                    `
-
-                    <div class="detail-row">
-
-                        <span class="detail-label">
-                            PAN Number:
-                        </span>
-
-                        ${escapeHtml(
-                            verification.pan_number
-                        )}
-
-                    </div>
-
-                    `
-                }
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Status:
-                    </span>
-
-                    <span
-                        class="status ${
-                            getStatusClass(
-                                verification.status
-                            )
-                        }"
-                    >
-
-                        ${escapeHtml(
-                            verification.status
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                ${
-                    verification.rejection_reason
-
-                    ?
-
-                    `
-
-                    <div class="detail-row">
-
-                        <span class="detail-label">
-                            Rejection Reason:
-                        </span>
-
-                        ${escapeHtml(
-                            verification.rejection_reason
-                        )}
-
-                    </div>
-
-                    `
-
-                    :
-
-                    ""
-
-                }
-
-
-                ${
-                    documentHTML
-                }
-
-
-            </div>
-
-        `;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "VIEW ERROR:",
-            error
-        );
-
-
-        content.innerHTML = `
-
-            <div class="message show error">
-
-                ${escapeHtml(
-                    error.message
-                )}
-
-            </div>
-
-        `;
-
-    }
-
-}
-
-
-/* =========================================================
-   CLOSE VIEW MODAL
-========================================================= */
-
-function closeViewModal() {
-
-    document
-        .getElementById(
-            "viewModal"
-        )
-        .classList.remove(
-            "show"
-        );
-
-}
-
-
-/* =========================================================
-   VERIFY BUSINESS
-========================================================= */
-
-async function verifyBusiness(
-    id
-) {
-
-    if (
-        !confirm(
-            "Are you sure you want to verify this business?"
-        )
-    )
-        return;
-
-
-    try {
-
-        /*
-           1. Update business verification
-        */
 
         const {
-            data: verification,
+            data,
             error
         } =
         await supabaseClient
@@ -2978,76 +2439,375 @@ async function verifyBusiness(
                 "business_verifications"
             )
 
-            .update({
-
-                status:
-                    "verified",
-
-                rejection_reason:
-                    null,
-
-                updated_at:
-                    new Date().toISOString()
-
-            })
+            .select("*")
 
             .eq(
                 "id",
                 id
             )
 
-            .select()
-            
             .single();
 
 
-        if (error)
+        if (error) {
+
             throw error;
 
-
-        /*
-           2. Also update profile status
-           if the verification belongs
-           to the user.
-        */
-
-        if (
-            verification &&
-            verification.user_id
-        ) {
-
-            const {
-                error:
-                    profileError
-            } =
-            await supabaseClient
-
-                .from(
-                    "profiles"
-                )
-
-                .update({
-
-                    account_status:
-                        "approved"
-
-                })
-
-                .eq(
-                    "id",
-                    verification.user_id
-                );
+        }
 
 
-            if (profileError) {
+        renderVerification(
+            data
+        );
 
-                console.error(
-                    "PROFILE UPDATE ERROR:",
-                    profileError
-                );
+    }
+
+    catch (error) {
+
+        console.error(
+            "VIEW VERIFICATION ERROR:",
+            error
+        );
+
+
+        content.innerHTML = `
+
+            <div
+                style="
+                    color:#991b1b;
+                    padding:20px;
+                "
+            >
+
+                ❌ ${
+                    escapeHtml(
+                        error.message
+                    )
+                }
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   RENDER VERIFICATION DETAILS
+========================================================= */
+
+function renderVerification(
+    row
+) {
+
+    const content =
+        document.getElementById(
+            "viewContent"
+        );
+
+
+    let html = `
+
+        <div class="verification-details">
+
+    `;
+
+
+    Object.keys(row).forEach(
+        function(key) {
+
+            const value =
+                row[key];
+
+
+            /* Skip image URLs here */
+
+            if (
+
+                key === "pan_front_url" ||
+
+                key === "pan_back_url" ||
+
+                key === "pan_front" ||
+
+                key === "pan_back" ||
+
+                key === "pan_front_image" ||
+
+                key === "pan_back_image"
+
+            ) {
+
+                return;
 
             }
 
+
+            html += `
+
+                <div
+                    class="detail-row"
+                >
+
+                    <span
+                        class="detail-label"
+                    >
+
+                        ${escapeHtml(
+                            key
+                        )}
+
+                    </span>
+
+                    :
+
+                    ${escapeHtml(
+                        value
+                    )}
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    /* PAN IMAGES */
+
+    const frontImage =
+
+        row.pan_front_url ||
+
+        row.pan_front ||
+
+        row.pan_front_image ||
+
+        row.pan_card_front ||
+
+        "";
+
+
+    const backImage =
+
+        row.pan_back_url ||
+
+        row.pan_back ||
+
+        row.pan_back_image ||
+
+        row.pan_card_back ||
+
+        "";
+
+
+    html += `
+
+        <h3
+            style="
+                margin-top:20px;
+            "
+        >
+            PAN Documents
+        </h3>
+
+
+        <div
+            class="pan-photo-grid"
+        >
+
+
+            <div
+                class="pan-photo-box"
+            >
+
+                <h4>
+                    PAN Front
+                </h4>
+
+    `;
+
+
+    if (frontImage) {
+
+        html += `
+
+                <img
+                    class="pan-photo"
+                    src="${escapeHtml(frontImage)}"
+                    alt="PAN Front"
+                >
+
+        `;
+
+    }
+
+    else {
+
+        html += `
+
+                <div class="no-photo">
+
+                    No PAN front image.
+
+                </div>
+
+        `;
+
+    }
+
+
+    html += `
+
+            </div>
+
+
+            <div
+                class="pan-photo-box"
+            >
+
+                <h4>
+                    PAN Back
+                </h4>
+
+    `;
+
+
+    if (backImage) {
+
+        html += `
+
+                <img
+                    class="pan-photo"
+                    src="${escapeHtml(backImage)}"
+                    alt="PAN Back"
+                >
+
+        `;
+
+    }
+
+    else {
+
+        html += `
+
+                <div class="no-photo">
+
+                    No PAN back image.
+
+                </div>
+
+        `;
+
+    }
+
+
+    html += `
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    /* PENDING ACTIONS */
+/* =========================================================
+   PENDING ACTIONS
+========================================================= */
+
+if (
+    String(row.status || "")
+        .toLowerCase() === "pending"
+) {
+
+    html += `
+
+        <div
+            class="editor-buttons"
+            style="margin-top:20px;"
+        >
+
+            <button
+                class="approve-btn"
+                onclick="
+                    approveVerification(
+                        '${escapeHtml(row.id)}'
+                    );
+
+                    closeViewModal();
+                "
+            >
+                ✓ Approve
+            </button>
+
+
+            <button
+                class="reject-btn"
+                onclick="
+                    closeViewModal();
+
+                    openRejectModal(
+                        '${escapeHtml(row.id)}'
+                    );
+                "
+            >
+                ✕ Reject
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+content.innerHTML = html;
+
+}
+
+
+/* =========================================================
+   APPROVE VERIFICATION
+========================================================= */
+
+async function approveVerification(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to approve this verification?"
+        )
+    ) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient
+
+            .from("business_verifications")
+
+            .update({
+                status: "verified"
+            })
+
+            .eq("id", id);
+
+
+        if (error) {
+            throw error;
         }
 
 
@@ -3057,21 +2817,24 @@ async function verifyBusiness(
         );
 
 
-        await loadAdminData();
+        closeViewModal();
+
+
+        await loadBusinessVerifications();
 
     }
 
     catch (error) {
 
         console.error(
-            "VERIFY ERROR:",
+            "APPROVE VERIFICATION ERROR:",
             error
         );
 
 
         showMessage(
             error.message ||
-            "Could not verify business.",
+            "Could not approve verification.",
             "error"
         );
 
@@ -3084,12 +2847,9 @@ async function verifyBusiness(
    OPEN REJECT MODAL
 ========================================================= */
 
-function openRejectModal(
-    id
-) {
+function openRejectModal(id) {
 
-    rejectingVerificationId =
-        id;
+    rejectingVerificationId = id;
 
 
     document.getElementById(
@@ -3097,13 +2857,9 @@ function openRejectModal(
     ).value = "";
 
 
-    document
-        .getElementById(
-            "rejectModal"
-        )
-        .classList.add(
-            "show"
-        );
+    document.getElementById(
+        "rejectModal"
+    ).classList.add("show");
 
 }
 
@@ -3114,33 +2870,32 @@ function openRejectModal(
 
 function closeRejectModal() {
 
-    rejectingVerificationId =
-        null;
+    rejectingVerificationId = null;
 
 
-    document
-        .getElementById(
-            "rejectModal"
-        )
-        .classList.remove(
-            "show"
-        );
+    document.getElementById(
+        "rejectReason"
+    ).value = "";
+
+
+    document.getElementById(
+        "rejectModal"
+    ).classList.remove("show");
 
 }
 
 
 /* =========================================================
-   CONFIRM REJECT VERIFICATION
+   CONFIRM REJECT
 ========================================================= */
 
 async function confirmRejectVerification() {
 
-    if (
-        !rejectingVerificationId
-    ) {
+    if (!rejectingVerificationId) {
 
-        alert(
-            "Verification not selected."
+        showMessage(
+            "No verification selected.",
+            "error"
         );
 
         return;
@@ -3149,18 +2904,16 @@ async function confirmRejectVerification() {
 
 
     const reason =
-        document
-            .getElementById(
-                "rejectReason"
-            )
-            .value
-            .trim();
+        document.getElementById(
+            "rejectReason"
+        ).value.trim();
 
 
     if (!reason) {
 
-        alert(
-            "Please enter rejection reason."
+        showMessage(
+            "Please enter rejection reason.",
+            "error"
         );
 
         return;
@@ -3170,88 +2923,35 @@ async function confirmRejectVerification() {
 
     try {
 
-        const {
-            data: verification,
-            error
-        } =
-        await supabaseClient
+        /*
+         * Your database status values are:
+         *
+         * pending
+         * verified
+         * rejected
+         *
+         * Therefore we use "rejected".
+         */
 
-            .from(
-                "business_verifications"
-            )
+        const {
+            error
+        } = await supabaseClient
+
+            .from("business_verifications")
 
             .update({
-
-                status:
-                    "rejected",
-
-                rejection_reason:
-                    reason,
-
-                updated_at:
-                    new Date().toISOString()
-
+                status: "rejected"
             })
 
             .eq(
                 "id",
                 rejectingVerificationId
-            )
-
-            .select()
-
-            .single();
+            );
 
 
-        if (error)
+        if (error) {
             throw error;
-
-
-        /*
-           Update user's profile too.
-        */
-
-        if (
-            verification &&
-            verification.user_id
-        ) {
-
-            const {
-                error:
-                    profileError
-            } =
-            await supabaseClient
-
-                .from(
-                    "profiles"
-                )
-
-                .update({
-
-                    account_status:
-                        "rejected"
-
-                })
-
-                .eq(
-                    "id",
-                    verification.user_id
-                );
-
-
-            if (profileError) {
-
-                console.error(
-                    "PROFILE REJECT ERROR:",
-                    profileError
-                );
-
-            }
-
         }
-
-
-        closeRejectModal();
 
 
         showMessage(
@@ -3260,14 +2960,17 @@ async function confirmRejectVerification() {
         );
 
 
-        await loadAdminData();
+        closeRejectModal();
+
+
+        await loadBusinessVerifications();
 
     }
 
     catch (error) {
 
         console.error(
-            "REJECT ERROR:",
+            "REJECT VERIFICATION ERROR:",
             error
         );
 
@@ -3284,172 +2987,121 @@ async function confirmRejectVerification() {
 
 
 /* =========================================================
-   SEARCH
+   CLOSE VIEW MODAL
 ========================================================= */
 
-function applyFilters() {
+function closeViewModal() {
 
-    const search =
-        document
-            .getElementById(
-                "searchInput"
-            )
-            .value
-            .toLowerCase()
-            .trim();
+    document.getElementById(
+        "viewModal"
+    ).classList.remove("show");
+
+}
 
 
-    const type =
-        document
-            .getElementById(
-                "typeFilter"
-            )
-            .value;
+/* =========================================================
+   SEARCH FILTER EVENT
+========================================================= */
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
 
 
-    const status =
-        document
-            .getElementById(
-                "statusFilter"
-            )
-            .value;
+if (searchInput) {
 
-
-    const filtered =
-        allUsers.filter(
-            user => {
-
-                const text = (
-
-                    (user.full_name || "") +
-
-                    " " +
-
-                    (user.email || "") +
-
-                    " " +
-
-                    (user.mobile || "")
-
-                ).toLowerCase();
-
-
-                const searchMatch =
-                    !search ||
-                    text.includes(search);
-
-
-                const typeMatch =
-                    type === "all" ||
-                    user.user_type === type;
-
-
-                const statusMatch =
-                    status === "all" ||
-                    user.account_status === status;
-
-
-                return (
-                    searchMatch &&
-                    typeMatch &&
-                    statusMatch
-                );
-
-            }
-        );
-
-
-    displayUsers(
-        filtered
+    searchInput.addEventListener(
+        "input",
+        filterUsers
     );
 
 }
 
 
 /* =========================================================
-   FILTER EVENTS
-=========================================
-*/
+   TYPE FILTER EVENT
+========================================================= */
 
-
-document
-    .getElementById(
-        "searchInput"
-    )
-    .addEventListener(
-        "input",
-        applyFilters
-    );
-
-
-document
-    .getElementById(
+const typeFilter =
+    document.getElementById(
         "typeFilter"
-    )
-    .addEventListener(
-        "change",
-        applyFilters
     );
 
 
-document
-    .getElementById(
+if (typeFilter) {
+
+    typeFilter.addEventListener(
+        "change",
+        filterUsers
+    );
+
+}
+
+
+/* =========================================================
+   STATUS FILTER EVENT
+========================================================= */
+
+const statusFilter =
+    document.getElementById(
         "statusFilter"
-    )
-    .addEventListener(
-        "change",
-        applyFilters
     );
+
+
+if (statusFilter) {
+
+    statusFilter.addEventListener(
+        "change",
+        filterUsers
+    );
+
+}
 
 
 /* =========================================================
    CLOSE MODALS WHEN CLICKING OUTSIDE
 ========================================================= */
 
-document
-    .getElementById(
-        "viewModal"
-    )
-    .addEventListener(
-        "click",
-        function(event) {
+window.addEventListener(
+    "click",
+    function(event) {
 
-            if (
-                event.target ===
-                this
-            ) {
-
-                closeViewModal();
-
-            }
-
-        }
-    );
+        const viewModal =
+            document.getElementById(
+                "viewModal"
+            );
 
 
-document
-    .getElementById(
-        "rejectModal"
-    )
-    .addEventListener(
-        "click",
-        function(event) {
+        const rejectModal =
+            document.getElementById(
+                "rejectModal"
+            );
 
-            if (
-                event.target ===
-                this
-            ) {
 
-                closeRejectModal();
+        if (
+            event.target === viewModal
+        ) {
 
-            }
+            closeViewModal();
 
         }
-    );
+
+
+        if (
+            event.target === rejectModal
+        ) {
+
+            closeRejectModal();
+
+        }
+
+    }
+);
 
 
 /* =========================================================
-   START ADMIN PAGE
+   PAGE LOAD
 ========================================================= */
 
 document.addEventListener(
@@ -3466,4 +3118,4 @@ document.addEventListener(
 </body>
 
 </html>
-
+    
