@@ -671,9 +671,12 @@ togglePassword.addEventListener(
    LOGIN
 ========================= */
 
-document
+
+    
+
+    document
 .getElementById("loginForm")
-.addEventListener("submit", function(e) {
+.addEventListener("submit", async function(e) {
 
     e.preventDefault();
 
@@ -683,11 +686,11 @@ document
         .trim();
 
     const passwordValue =
-        password.value;
+        document.getElementById("password")
+        .value;
 
     const loginBtn =
         document.getElementById("loginBtn");
-
 
     if (!email || !passwordValue) {
 
@@ -697,62 +700,44 @@ document
         );
 
         return;
-
     }
 
+    loginBtn.disabled = true;
+    loginBtn.textContent = "LOGGING IN...";
 
     try {
 
-    const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: passwordValue
-        });
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: passwordValue
+            });
 
-    if (error) {
-        throw error;
-    }
-
-    showMessage(
-        "Login successful! Redirecting...",
-        "success"
-    );
-
-    setTimeout(() => {
-        window.location.href = "index.html";
-    }, 1000);
-
-} catch (error) {
-
-    showMessage(
-        error.message,
-        "error"
-    );
-
-} finally {
-
-    loginBtn.disabled = false;
-
-    loginBtn.textContent = "LOGIN";
-}
-    /*
-       SUPABASE LOGIN
-       WILL BE CONNECTED HERE.
-    */
-
-    setTimeout(() => {
-
-        loginBtn.disabled = false;
-
-        loginBtn.textContent =
-            "LOGIN";
+        if (error) {
+            throw error;
+        }
 
         showMessage(
-            "Login system is ready to connect with Supabase.",
+            "Login successful! Redirecting...",
             "success"
         );
 
-    }, 1000);
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1000);
+
+    } catch (error) {
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = "LOGIN";
+    }
 
 });
 
