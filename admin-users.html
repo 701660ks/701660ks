@@ -2321,87 +2321,114 @@ function displayVerifications(
                 </td>
 
 
-                <td>
+                
 
-                    ${escapeHtml(
-                        formatDate(
-                            row.created_at
-                        )
-                    )}
+           <td>
 
-                </td>
+    <div class="actions">
 
-
-                <td>
-
-                    <div
-                        class="actions"
-                    >
-
-                        <button
-                            class="view-btn"
-                            onclick="
-                                viewVerification(
-                                    '${escapeHtml(row.id)}'
-                                )
-                            "
-                        >
-                            👁 View
-                        </button>
+        <!-- VIEW -->
+        <button
+            class="view-btn"
+            onclick="
+                viewVerification(
+                    '${escapeHtml(row.id)}'
+                )
+            "
+        >
+            👁 View
+        </button>
 
 
-                        ${
-                            statusLower === "pending"
-
-                            ?
-
-                            `
-
-                            <button
-                                class="approve-btn"
-                                onclick="
-                                    approveVerification(
-                                        '${escapeHtml(row.id)}'
-                                    )
-                                "
-                            >
-                                ✓ Approve
-                            </button>
-
-
-                            <button
-                                class="reject-btn"
-                                onclick="
-                                    openRejectModal(
-                                        '${escapeHtml(row.id)}'
-                                    )
-                                "
-                            >
-                                ✕ Reject
-                            </button><button
-    class="delete-btn"
-    onclick="
-        deleteVerification(
-            '${escapeHtml(row.id)}'
-        )
-    "
->
-    🗑 Delete
-</button>
+        <!-- VERIFIED RECORD -->
+        ${
+            statusLower === "verified"
+            ?
+            `
+            <button
+                class="edit-btn"
+                onclick="
+                    updateVerification(
+                        '${escapeHtml(row.id)}'
+                    )
+                "
+            >
+                ✏️ Update
+            </button>
+            `
+            :
+            ""
+        }
 
 
-                            `
+        <!-- PENDING RECORD -->
+        ${
+            statusLower === "pending"
+            ?
+            `
+            <select
+                onchange="
+                    changeVerificationStatus(
+                        '${escapeHtml(row.id)}',
+                        this.value
+                    )
+                "
+                style="
+                    padding:8px;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                    font-size:12px;
+                "
+            >
 
-                            :
+                <option value="">
+                    Change Status
+                </option>
 
-                            ""
-                        }
+                <option value="pending">
+                    Pending
+                </option>
 
-                    </div>
+                <option value="rejected">
+                    Rejected
+                </option>
 
-                </td>
+                <option value="approved">
+                    Approved
+                </option>
 
-            `;
+                <option value="active">
+                    Active
+                </option>
+
+            </select>
+            `
+            :
+            ""
+        }
+
+
+        <!-- DELETE FOR ALL -->
+        <button
+            class="delete-btn"
+            onclick="
+                deleteVerification(
+                    '${escapeHtml(row.id)}'
+                )
+            "
+        >
+            🗑 Delete
+        </button>
+
+    </div>
+
+</td>
+
+               
+
+
+               
+            
 
 
             table.appendChild(tr);
@@ -2415,6 +2442,89 @@ function displayVerifications(
 /* =========================================================
    VIEW BUSINESS VERIFICATION
 ========================================================= */
+
+
+
+
+async function changeVerificationStatus(id, newStatus) {
+
+    if (!newStatus) {
+        return;
+    }
+
+    try {
+
+        const { data: verification, error: getError } =
+            await supabaseClient
+                .from("business_verifications")
+                .select("user_id")
+                .eq("id", id)
+                .single();
+
+        if (getError) {
+            throw getError;
+        }
+
+
+        // Update business verification
+        const { error: verificationError } =
+            await supabaseClient
+                .from("business_verifications")
+                .update({
+                    status: newStatus
+                })
+                .eq("id", id);
+
+        if (verificationError) {
+            throw verificationError;
+        }
+
+
+        // Update profile status
+        const { error: profileError } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    account_status: newStatus
+                })
+                .eq("id", verification.user_id);
+
+        if (profileError) {
+            throw profileError;
+        }
+
+
+        showMessage(
+            "Status updated successfully.",
+            "success"
+        );
+
+
+        await loadUsers();
+
+        await loadBusinessVerifications();
+
+    } catch (error) {
+
+        console.error(
+            "STATUS UPDATE ERROR:",
+            error
+        );
+
+        showMessage(
+            error.message ||
+            "Could not update status.",
+            "error"
+        );
+    }
+}
+
+function updateVerification(id) {
+
+    viewVerification(id);
+
+}
+
 
 async function viewVerification(id) {
 
