@@ -3727,138 +3727,165 @@ async function saveVerificationUpdate(
    DELETE VERIFICATION
 ========================================================= */
 
-async function deleteVerification(
-    id
-) {
 
-    const confirmed =
-        confirm(
-            "Are you sure you want to permanently delete this business verification?"
+      async function deleteVerification(id) {
+
+    if (!id) {
+        showMessage(
+            "Verification ID is missing.",
+            "error"
         );
+        return;
+    }
 
+    const confirmed = confirm(
+        "Are you sure you want to permanently delete this business verification?"
+    );
 
     if (!confirmed) {
         return;
     }
 
-
     try {
 
-        /*
-         * GET USER ID FIRST
-         */
+        console.log(
+            "Deleting business verification:",
+            id
+        );
 
+        /*
+         * 1. GET VERIFICATION
+         */
         const {
             data: verification,
-            error:
-                getError
-        } =
-        await supabaseClient
-            .from(
-                "business_verifications"
-            )
-            .select(
-                "id,user_id"
-            )
-            .eq(
-                "id",
-                id
-            )
-            .single();
-
+            error: getError
+        } = await supabaseClient
+            .from("business_verifications")
+            .select("id,user_id")
+            .eq("id", id)
+            .maybeSingle();
 
         if (getError) {
-            throw getError;
+            throw new Error(
+                "Could not find verification: " +
+                getError.message
+            );
         }
 
+        if (!verification) {
+            throw new Error(
+                "Business verification not found."
+            );
+        }
+
+        console.log(
+            "Verification found:",
+            verification
+        );
 
         /*
-         * DELETE VERIFICATION
+         * 2. DELETE BUSINESS VERIFICATION
          */
-
         const {
-            error:
-                deleteError
-        } =
-        await supabaseClient
-            .from(
-                "business_verifications"
-            )
+            error: deleteError
+        } = await supabaseClient
+            .from("business_verifications")
             .delete()
-            .eq(
-                "id",
-                id
-            );
-
+            .eq("id", id);
 
         if (deleteError) {
-            throw deleteError;
+            console.error(
+                "DELETE BUSINESS ERROR:",
+                deleteError
+            );
+
+            throw new Error(
+                "Could not delete business verification: " +
+                deleteError.message
+            );
         }
 
-
         /*
-         * RESET USER
+         * 3. RESET PROFILE STATUS
          */
-
-        if (
-            verification?.user_id
-        ) {
+        if (verification.user_id) {
 
             const {
-                error:
-                    profileError
-            } =
-            await supabaseClient
+                error: profileError
+            } = await supabaseClient
                 .from("profiles")
                 .update({
-                    account_status:
-                        "pending"
+                    account_status: "pending"
                 })
                 .eq(
                     "id",
                     verification.user_id
                 );
 
-
             if (profileError) {
-                throw profileError;
-            }
 
+                console.error(
+                    "PROFILE RESET ERROR:",
+                    profileError
+                );
+
+                /*
+                 * Verification was already deleted.
+                 * Tell admin about the profile problem.
+                 */
+                throw new Error(
+                    "Verification deleted, but user status could not be reset: " +
+                    profileError.message
+                );
+            }
         }
 
+        /*
+         * 4. REMOVE FROM LOCAL ARRAY
+         */
+        allVerifications =
+            allVerifications.filter(
+                function(row) {
+                    return String(row.id) !==
+                           String(id);
+                }
+            );
 
-        showMessage(
-            "Business verification deleted and user status reset to pending.",
-            "success"
+        /*
+         * 5. REFRESH TABLES
+         */
+        displayVerifications(
+            allVerifications
         );
-
-
-        closeViewModal();
-
 
         await loadUsers();
 
-        await loadBusinessVerifications();
+        showMessage(
+            "Business verification deleted successfully. User status reset to pending.",
+            "success"
+        );
 
-    }
+        closeViewModal();
 
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "DELETE VERIFICATION ERROR:",
             error
         );
 
-
         showMessage(
-            error.message ||
+            error?.message ||
             "Could not delete business verification.",
             "error"
         );
-
     }
-
 }
+
+        
+
+
+     
 
 
 /* =========================================================
