@@ -2138,6 +2138,9 @@ async function loadBusinessVerifications() {
 }
 
 
+
+
+
 /* =========================================================
    DISPLAY BUSINESS VERIFICATIONS
 ========================================================= */
@@ -2375,7 +2378,17 @@ function displayVerifications(
                                 "
                             >
                                 ✕ Reject
-                            </button>
+                            </button><button
+    class="delete-btn"
+    onclick="
+        deleteVerification(
+            '${escapeHtml(row.id)}'
+        )
+    "
+>
+    🗑 Delete
+</button>
+
 
                             `
 
@@ -3089,8 +3102,84 @@ async function confirmRejectVerification() {
 
     }
 
+
+
 }
 
+
+async function deleteVerification(id) {
+
+    const confirmed = confirm(
+        "Are you sure you want to permanently delete this business verification?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        // Get the user ID before deleting
+        const { data: verification, error: getError } =
+            await supabaseClient
+                .from("business_verifications")
+                .select("user_id")
+                .eq("id", id)
+                .single();
+
+        if (getError) {
+            throw getError;
+        }
+
+        // Delete verification
+        const { error: deleteError } =
+            await supabaseClient
+                .from("business_verifications")
+                .delete()
+                .eq("id", id);
+
+        if (deleteError) {
+            throw deleteError;
+        }
+
+        // Reset the profile to pending
+        if (verification?.user_id) {
+
+            const { error: profileError } =
+                await supabaseClient
+                    .from("profiles")
+                    .update({
+                        account_status: "pending"
+                    })
+                    .eq("id", verification.user_id);
+
+            if (profileError) {
+                throw profileError;
+            }
+        }
+
+        showMessage(
+            "Business verification deleted and user status reset to pending.",
+            "success"
+        );
+
+        await loadUsers();
+        await loadBusinessVerifications();
+
+    } catch (error) {
+
+        console.error(
+            "DELETE VERIFICATION ERROR:",
+            error
+        );
+
+        showMessage(
+            error.message ||
+            "Could not delete business verification.",
+            "error"
+        );
+    }
+}
 
 /* =========================================================
    CLOSE VIEW MODAL
