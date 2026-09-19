@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS UNDEFINED - Business Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--nav:#0f172a;--primary:#6c4df6;--blue:#2563eb;--green:#16a34a;--red:#ef4444;--bg:#f5f7fb;--text:#172033;--muted:#667085;--line:#e7eaf0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{border:0;cursor:pointer}
+.header{position:sticky;top:0;z-index:50;background:rgba(15,23,42,.98);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 4px 18px rgba(15,23,42,.16)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#7c5cff,#2563eb);display:grid;place-items:center;font-weight:900;box-shadow:0 5px 15px rgba(108,77,246,.35)}
+.brand-text strong{display:block;font-size:17px;letter-spacing:.4px}
+.brand-text span{display:block;font-size:11px;color:#cbd5e1;margin-top:2px}
+.header-actions{display:flex;align-items:center;gap:8px}
+.icon-btn,.logout-btn{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:10px;padding:10px 12px}
+.logout-btn{background:#ef4444;border-color:#ef4444;font-weight:700}
+.user-pill{background:#fff;color:#111827;border-radius:999px;padding:9px 13px;font-size:13px;font-weight:700;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{max-width:1400px;margin:auto;padding:24px}
+.hero{background:linear-gradient(135deg,#111827,#283b67);color:#fff;border-radius:18px;padding:26px;margin-bottom:22px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.hero h1{font-size:28px;margin-bottom:7px}.hero p{color:#dbe4f0;font-size:14px}
+.hero-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{background:#fff;border-radius:15px;padding:18px;box-shadow:0 4px 16px rgba(16,24,40,.06);border:1px solid #eef0f4}
+.stat small{color:var(--muted);font-size:12px}.stat strong{display:block;font-size:25px;margin-top:8px}
+.section{background:#fff;border:1px solid #edf0f4;border-radius:16px;padding:20px;margin-bottom:22px;box-shadow:0 4px 16px rgba(16,24,40,.05)}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.section-head h2{font-size:20px}.section-head p{color:var(--muted);font-size:12px;margin-top:3px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:#344054}.field input,.field select,.field textarea{width:100%;border:1px solid #d9dee8;border-radius:10px;padding:11px 12px;background:#fff;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(108,77,246,.1)}.field textarea{min-height:105px;resize:vertical}.full{grid-column:1/-1}.file-note{font-size:11px;color:var(--muted);margin-top:5px}.form-actions{display:flex;gap:9px;margin-top:17px;flex-wrap:wrap}
+.primary{background:var(--primary);color:#fff;padding:11px 16px;border-radius:10px;font-weight:800}.secondary{background:#eef2f7;color:#263244;padding:11px 16px;border-radius:10px;font-weight:700}.danger{background:var(--red);color:#fff;padding:8px 11px;border-radius:8px;font-weight:700}.edit{background:#2563eb;color:#fff;padding:8px 11px;border-radius:8px;font-weight:700}.view{background:#0ea5e9;color:#fff;padding:8px 11px;border-radius:8px;font-weight:700}.status{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:800}.status-pending{background:#fff4cc;color:#8a5b00}.status-confirmed{background:#dbeafe;color:#1d4ed8}.status-packed{background:#ede9fe;color:#6d28d9}.status-shipped{background:#cffafe;color:#0e7490}.status-out_for_delivery{background:#ffedd5;color:#c2410c}.status-delivered{background:#dcfce7;color:#166534}.status-cancelled{background:#fee2e2;color:#991b1b}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:950px}th,td{padding:12px 13px;text-align:left;border-bottom:1px solid #eef0f4;font-size:13px;vertical-align:top}th{background:#f8fafc;font-size:11px;text-transform:uppercase;letter-spacing:.3px;color:#667085}tr:last-child td{border-bottom:0}.product-thumb{width:52px;height:52px;object-fit:cover;border-radius:9px;border:1px solid #e5e7eb}.muted{color:var(--muted)}.actions{display:flex;gap:6px;flex-wrap:wrap}.search-row{display:flex;gap:10px;margin-bottom:13px}.search-row input{flex:1;border:1px solid #d9dee8;border-radius:10px;padding:11px 12px}.empty{text-align:center;padding:28px;color:var(--muted)}
+.drawer{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:100;display:none;justify-content:flex-end}.drawer.show{display:flex}.drawer-box{width:min(340px,90vw);background:#fff;height:100%;padding:20px;box-shadow:-8px 0 30px rgba(0,0,0,.18)}.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.menu-link{display:block;padding:13px;border-radius:10px;color:#172033;text-decoration:none;margin-bottom:7px}.menu-link:hover{background:#f1f3f7}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:200;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-box{background:#fff;width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:16px;padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.close{background:#eef2f7;border-radius:9px;padding:8px 11px}.timeline{display:grid;gap:10px}.timeline-item{display:flex;gap:12px;padding:13px;border:1px solid #e7eaf0;border-radius:11px}.dot{width:12px;height:12px;border-radius:50%;background:var(--primary);margin-top:4px;flex:none}.toast{position:fixed;right:18px;bottom:18px;z-index:300;display:none;padding:13px 16px;border-radius:10px;color:#fff;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,.18)}.toast.show{display:block}.toast.ok{background:#16a34a}.toast.err{background:#dc2626}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.hero{align-items:flex-start}.form-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.header{padding:11px 13px}.brand-text span{display:none}.logo-mark{width:38px;height:38px}.user-pill{max-width:110px}.logout-btn{padding:9px}.container{padding:14px}.hero{padding:20px;display:block}.hero-badge{display:inline-block;margin-top:14px}.grid{grid-template-columns:1fr 1fr}.stat{padding:14px}.stat strong{font-size:21px}.section{padding:15px}.section-head h2{font-size:18px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.search-row{display:block}.search-row button{width:100%;margin-top:8px}.header-actions{gap:5px}.icon-btn{padding:9px}.brand-text strong{font-size:15px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="logo-mark">JS</div>
+    <div class="brand-text"><strong>JS UNDEFINED</strong><span>BUSINESS PARTNER</span></div>
+  </div>
+  <div class="header-actions">
+    <div id="userPill" class="user-pill">Loading...</div>
+    <button class="icon-btn" id="searchTopBtn" title="Search products">🔎</button>
+    <button class="icon-btn" id="menuBtn" title="Menu">☰</button>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div><h1>Business Dashboard</h1><p>Manage your B2B products, update your catalogue and track customer orders.</p></div>
+    <div class="hero-badge">✓ VERIFIED BUSINESS</div>
+  </section>
+
+  <section class="grid">
+    <div class="stat"><small>Total Products</small><strong id="productCount">0</strong></div>
+    <div class="stat"><small>Active Products</small><strong id="activeProductCount">0</strong></div>
+    <div class="stat"><small>Total Orders</small><strong id="orderCount">0</strong></div>
+    <div class="stat"><small>Pending Orders</small><strong id="pendingOrderCount">0</strong></div>
+  </section>
+
+  <section class="section" id="productEditorSection">
+    <div class="section-head"><div><h2 id="productEditorTitle">Add Product</h2><p>Publish products for your B2B buyers.</p></div></div>
+    <div class="form-grid">
+      <div class="field"><label>Product Type *</label><input id="productType" placeholder="e.g. Electronics"></div>
+      <div class="field"><label>Product Sub Type *</label><input id="productSubType" placeholder="e.g. Mobile Accessories"></div>
+      <div class="field"><label>For *</label><select id="productFor"><option value="business">Business</option><option value="retailer">Retailer</option><option value="wholesaler">Wholesaler</option><option value="all">All B2B</option></select></div>
+      <div class="field"><label>Product Name *</label><input id="productName" placeholder="Product name"></div>
+      <div class="field"><label>Price *</label><input id="price" type="number" min="0" step="0.01" placeholder="Selling price"></div>
+      <div class="field"><label>Discount (%)</label><input id="discount" type="number" min="0" max="100" step="0.01" value="0" placeholder="0"></div>
+      <div class="field"><label>Original Price</label><input id="originalPrice" type="number" min="0" step="0.01" placeholder="Original price"></div>
+      <div class="field"><label>Bulk Quantity</label><input id="bulkQuantity" type="number" min="0" step="1" placeholder="e.g. 100"></div>
+      <div class="field"><label>Minimum Quantity *</label><input id="minimumQuantity" type="number" min="1" step="1" value="1" placeholder="e.g. 10"></div>
+      <div class="field full"><label>Product Images</label><input id="productImages" type="file" accept="image/jpeg,image/png,image/webp" multiple><div class="file-note">Upload up to 6 images. Existing images remain when editing unless you upload new ones.</div></div>
+      <div class="field full"><label>Description</label><textarea id="description" placeholder="Describe the product, quality, packaging, delivery details..."></textarea></div>
+      <div class="field full"><label>More Info</label><textarea id="moreInfo" placeholder="Specifications, sizes, colours, material, warranty, notes..."></textarea></div>
+    </div>
+    <div class="form-actions"><button class="primary" id="saveProductBtn">💾 Save Product</button><button class="secondary" id="cancelEditBtn" style="display:none">Cancel Edit</button></div>
+  </section>
+
+  <section class="section" id="productsSection">
+    <div class="section-head"><div><h2>My Products</h2><p>Add, update or remove products from your catalogue.</p></div></div>
+    <div class="search-row"><input id="productSearch" placeholder="Search product name, type or sub type..."><button class="secondary" id="productSearchBtn">🔎 Search</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Image</th><th>Product</th><th>Type</th><th>For</th><th>Price</th><th>Discount</th><th>Min Qty</th><th>Status</th><th>Actions</th></tr></thead><tbody id="productsBody"><tr><td colspan="9" class="empty">Loading products...</td></tr></tbody></table></div>
+  </section>
+
+  <section class="section" id="ordersSection">
+    <div class="section-head"><div><h2>Orders</h2><p>Orders placed for your products.</p></div></div>
+    <div class="search-row"><input id="orderSearch" placeholder="Search order ID, user ID or product..."><button class="secondary" id="orderSearchBtn">🔎 Search</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Order ID</th><th>User ID</th><th>Product Name</th><th>Price</th><th>Buying Qty</th><th>Total</th><th>Payment</th><th>Status</th><th>Track</th></tr></thead><tbody id="ordersBody"><tr><td colspan="9" class="empty">Loading orders...</td></tr></tbody></table></div>
+  </section>
+</main>
+
+<div class="drawer" id="drawer"><div class="drawer-box">
+  <div class="drawer-head"><strong>Menu</strong><button class="close" id="closeMenu">✕</button></div>
+  <a class="menu-link" href="#productEditorSection" id="menuAdd">➕ Add Product</a>
+  <a class="menu-link" href="#productsSection">📦 My Products</a>
+  <a class="menu-link" href="#ordersSection">🧾 Orders</a>
+  <a class="menu-link" href="#ordersSection">🚚 Track Orders</a>
+  <a class="menu-link" href="index.html">🏠 Home</a>
+</div></div>
+
+<div class="modal" id="trackModal"><div class="modal-box">
+  <div class="modal-head"><div><h2>Track Order</h2><p id="trackOrderTitle" class="muted"></p></div><button class="close" id="closeTrack">✕</button></div>
+  <div id="trackingContent"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function(){
+  let currentUser=null, products=[], orders=[], editingProductId=null;
+  const $=id=>document.getElementById(id);
+  const escapeHtml=v=>String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const money=v=>Number.isFinite(Number(v))?"₹"+Number(v).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}):"₹0.00";
+  function showToast(message,ok=true){const t=$("toast");t.textContent=message;t.className="toast show "+(ok?"ok":"err");setTimeout(()=>t.className="toast",3000)}
+  function statusClass(s){return "status-"+String(s||"pending").toLowerCase().replace(/\s+/g,"_")}
+  function formatDate(v){if(!v)return "-";const d=new Date(v);return Number.isNaN(d.getTime())?"-":d.toLocaleString("en-IN")}
+  async function getCurrentUser(){
+    const {data,error}=await supabaseClient.auth.getUser();if(error)throw error;if(!data.user)throw new Error("Please login first.");
+    currentUser=data.user;
+    const {data:p,error:pe}=await supabaseClient.from("profiles").select("id,full_name,email,user_type,account_status").eq("id",currentUser.id).maybeSingle();
+    if(pe)throw pe;if(!p)throw new Error("Profile not found.");
+    const type=String(p.user_type||"").toLowerCase(),status=String(p.account_status||"").toLowerCase();
+    if(!["b2b","wholesaler"].includes(type))throw new Error("This page is only for B2B business users.");
+    if(!["approved","active"].includes(status))throw new Error("Your business account is not approved yet.");
+    $("userPill").textContent=p.full_name||p.email||"Business User";
+  }
+  async function loadProducts(){
+    const {data,error}=await supabaseClient.from("products").select("*").eq("seller_id",currentUser.id).order("created_at",{ascending:false});
+    if(error)throw error;products=data||[];renderProducts();updateStats();
+  }
+  function renderProducts(){
+    const q=$("productSearch").value.trim().toLowerCase(),rows=products.filter(p=>!q||[p.name,p.product_type,p.product_sub_type,p.target_for].some(v=>String(v||"").toLowerCase().includes(q))),body=$("productsBody");
+    if(!rows.length){body.innerHTML='<tr><td colspan="9" class="empty">No products found.</td></tr>';return}
+    body.innerHTML=rows.map(p=>{
+      const imgs=Array.isArray(p.image_urls)?p.image_urls:[],thumb=imgs[0]?`<img class="product-thumb" src="${escapeHtml(imgs[0])}" alt="">`:'<div class="product-thumb"></div>';
+      return `<tr><td>${thumb}</td><td><strong>${escapeHtml(p.name)}</strong><div class="muted">${escapeHtml(p.product_sub_type||"")}</div></td><td>${escapeHtml(p.product_type||"-")}</td><td>${escapeHtml(p.target_for||"-")}</td><td>${money(p.price)}</td><td>${Number(p.discount||0)}%</td><td>${escapeHtml(p.minimum_quantity??"-")}</td><td><span class="status ${p.is_active!==false?"status-delivered":"status-cancelled"}">${p.is_active!==false?"Active":"Inactive"}</span></td><td><div class="actions"><button class="edit" data-edit="${escapeHtml(p.id)}">Edit</button><button class="danger" data-delete="${escapeHtml(p.id)}">Delete</button></div></td></tr>`
+    }).join("");
+  }
+  function updateStats(){ $("productCount").textContent=products.length;$("activeProductCount").textContent=products.filter(p=>p.is_active!==false).length;$("orderCount").textContent=orders.length;$("pendingOrderCount").textContent=orders.filter(o=>["pending","confirmed","packed"].includes(String(o.status||"").toLowerCase())).length }
+  function clearProductForm(){editingProductId=null;$("productEditorTitle").textContent="Add Product";$("saveProductBtn").textContent="💾 Save Product";$("cancelEditBtn").style.display="none";["productType","productSubType","productName","price","originalPrice","bulkQuantity","description","moreInfo"].forEach(id=>$(id).value="");$("productFor").value="business";$("discount").value="0";$("minimumQuantity").value="1";$("productImages").value=""}
+  function fillProductForm(p){editingProductId=p.id;$("productEditorTitle").textContent="Update Product";$("saveProductBtn").textContent="💾 Update Product";$("cancelEditBtn").style.display="inline-block";$("productType").value=p.product_type||"";$("productSubType").value=p.product_sub_type||"";$("productFor").value=p.target_for||"business";$("productName").value=p.name||"";$("price").value=p.price??"";$("discount").value=p.discount??0;$("originalPrice").value=p.original_price??"";$("bulkQuantity").value=p.bulk_quantity??"";$("minimumQuantity").value=p.minimum_quantity??1;$("description").value=p.description||"";$("moreInfo").value=p.more_info||"";$("productImages").value="";$("productEditorSection").scrollIntoView({behavior:"smooth"})}
+  async function uploadImages(files){
+    if(!files.length)return[];if(files.length>6)throw new Error("Please select maximum 6 images.");
+    const urls=[];for(const file of files){if(!file.type.startsWith("image/"))throw new Error("Only image files are allowed.");if(file.size>5*1024*1024)throw new Error("Each image must be 5 MB or smaller.");const ext=(file.name.split(".").pop()||"jpg").toLowerCase(),path=`${currentUser.id}/${crypto.randomUUID()}.${ext}`;const {error}=await supabaseClient.storage.from("product-images").upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;const {data}=supabaseClient.storage.from("product-images").getPublicUrl(path);urls.push(data.publicUrl)}return urls;
+  }
+  async function saveProduct(){
+    const name=$("productName").value.trim(),productType=$("productType").value.trim(),subType=$("productSubType").value.trim(),price=Number($("price").value),discount=Number($("discount").value||0),originalPrice=$("originalPrice").value===""?null:Number($("originalPrice").value),bulkQuantity=$("bulkQuantity").value===""?null:Number($("bulkQuantity").value),minimumQuantity=Number($("minimumQuantity").value);
+    if(!name||!productType||!subType)throw new Error("Product type, sub type and name are required.");if(!Number.isFinite(price)||price<0)throw new Error("Enter a valid price.");if(!Number.isFinite(discount)||discount<0||discount>100)throw new Error("Discount must be between 0 and 100.");if(!Number.isInteger(minimumQuantity)||minimumQuantity<1)throw new Error("Minimum quantity must be at least 1.");
+    $("saveProductBtn").disabled=true;try{
+      const newImages=await uploadImages([...$("productImages").files]),existing=editingProductId?products.find(p=>p.id===editingProductId):null;
+      const payload={seller_id:currentUser.id,product_type:productType,product_sub_type:subType,target_for:$("productFor").value,name,price,discount,original_price:originalPrice,description:$("description").value.trim(),bulk_quantity:bulkQuantity,minimum_quantity:minimumQuantity,more_info:$("moreInfo").value.trim(),is_active:true,image_urls:newImages.length?newImages:(existing?.image_urls||[])};
+      const result=editingProductId?await supabaseClient.from("products").update(payload).eq("id",editingProductId).eq("seller_id",currentUser.id):await supabaseClient.from("products").insert(payload);
+      if(result.error)throw result.error;showToast(editingProductId?"Product updated.":"Product saved.");clearProductForm();await loadProducts();
+    }finally{$("saveProductBtn").disabled=false}
+  }
+  async function deleteProduct(id){const p=products.find(x=>x.id===id);if(!p)return;if(!confirm(`Delete "${p.name}"?`))return;const {error}=await supabaseClient.from("products").delete().eq("id",id).eq("seller_id",currentUser.id);if(error)throw error;showToast("Product deleted.");await loadProducts()}
+  async function loadOrders(){const {data,error}=await supabaseClient.from("orders").select("*").eq("seller_id",currentUser.id).order("created_at",{ascending:false});if(error)throw error;orders=data||[];renderOrders();updateStats()}
+  function renderOrders(){const q=$("orderSearch").value.trim().toLowerCase(),rows=orders.filter(o=>!q||[o.id,o.order_number,o.user_id,o.product_name,o.payment_mode,o.status].some(v=>String(v||"").toLowerCase().includes(q))),body=$("ordersBody");if(!rows.length){body.innerHTML='<tr><td colspan="9" class="empty">No orders found.</td></tr>';return}body.innerHTML=rows.map(o=>`<tr><td><strong>${escapeHtml(o.order_number||o.id)}</strong><div class="muted">${formatDate(o.created_at)}</div></td><td class="muted">${escapeHtml(o.user_id||"-")}</td><td>${escapeHtml(o.product_name||"-")}</td><td>${money(o.price)}</td><td>${escapeHtml(o.buying_quantity??"-")}</td><td>${money(o.total_price??(Number(o.price||0)*Number(o.buying_quantity||0)))}</td><td>${escapeHtml(o.payment_mode||"-")}</td><td><span class="status ${statusClass(o.status)}">${escapeHtml(o.status||"pending")}</span></td><td><button class="view" data-track="${escapeHtml(o.id)}">🚚 Track</button></td></tr>`).join("")}
+  async function updateOrderStatus(id,status){const {error}=await supabaseClient.from("orders").update({status}).eq("id",id).eq("seller_id",currentUser.id);if(error)throw error;showToast("Order status updated.");await loadOrders()}
+  function openTracking(order){$("trackOrderTitle").textContent=`Order ${order.order_number||order.id}`;const steps=["pending","confirmed","packed","shipped","out_for_delivery","delivered"],current=String(order.status||"pending").toLowerCase(),currentIndex=steps.indexOf(current);$("trackingContent").innerHTML=`<div style="background:#f8fafc;padding:14px;border-radius:11px;margin-bottom:15px"><div><strong>Product:</strong> ${escapeHtml(order.product_name||"-")}</div><div style="margin-top:6px"><strong>Quantity:</strong> ${escapeHtml(order.buying_quantity??"-")}</div><div style="margin-top:6px"><strong>Payment:</strong> ${escapeHtml(order.payment_mode||"-")}</div></div><div class="field" style="margin-bottom:15px"><label>Update Order Status</label><select id="trackStatus">${steps.map(s=>`<option value="${s}" ${s===current?"selected":""}>${s.replaceAll("_"," ")}</option>`).join("")}<option value="cancelled" ${current==="cancelled"?"selected":""}>cancelled</option></select><button class="primary" id="saveTrackStatus" style="margin-top:9px">Update Status</button></div><div class="timeline">${steps.map((s,i)=>`<div class="timeline-item"><div class="dot" style="${i<=currentIndex&&current!=="cancelled"?"opacity:1":"opacity:.25"}"></div><div><strong>${s.replaceAll("_"," ").toUpperCase()}</strong><div class="muted">${i<currentIndex?"Completed":i===currentIndex?"Current status":"Waiting"}</div></div></div>`).join("")}${current==="cancelled"?'<div class="timeline-item"><div class="dot"></div><div><strong>CANCELLED</strong><div class="muted">Order was cancelled.</div></div></div>':""}</div>`;$("trackModal").classList.add("show");$("saveTrackStatus").onclick=async()=>{try{await updateOrderStatus(order.id,$("trackStatus").value);$("trackModal").classList.remove("show")}catch(e){showToast(e.message||"Could not update order.",false)} }}
+  $("saveProductBtn").onclick=async()=>{try{await saveProduct()}catch(e){console.error(e);showToast(e.message||"Could not save product.",false)}};$("cancelEditBtn").onclick=clearProductForm;$("productSearchBtn").onclick=renderProducts;$("productSearch").oninput=renderProducts;$("orderSearchBtn").onclick=renderOrders;$("orderSearch").oninput=renderOrders;
+  $("productsBody").onclick=async e=>{const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");try{if(edit){const p=products.find(x=>x.id===edit.dataset.edit);if(p)fillProductForm(p)}if(del)await deleteProduct(del.dataset.delete)}catch(err){console.error(err);showToast(err.message||"Action failed.",false)}};
+  $("ordersBody").onclick=e=>{const b=e.target.closest("[data-track]");if(b){const o=orders.find(x=>x.id===b.dataset.track);if(o)openTracking(o)}};$("menuBtn").onclick=()=>$("drawer").classList.add("show");$("closeMenu").onclick=()=>$("drawer").classList.remove("show");$("menuAdd").onclick=()=>{$("drawer").classList.remove("show");clearProductForm()};$("searchTopBtn").onclick=()=>{$("productsSection").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("productSearch").focus(),400)};$("closeTrack").onclick=()=>$("trackModal").classList.remove("show");$("trackModal").onclick=e=>{if(e.target.id==="trackModal")$("trackModal").classList.remove("show")};$("logoutBtn").onclick=async()=>{await supabaseClient.auth.signOut();window.location.href="index.html"};
+  try{await getCurrentUser();await Promise.all([loadProducts(),loadOrders()])}catch(e){console.error("BUSINESS DASHBOARD ERROR:",e);showToast(e.message||"Could not load dashboard.",false);setTimeout(()=>{window.location.href="index.html"},1800)}
+});
+</script>
+</body>
+</html>
+  
