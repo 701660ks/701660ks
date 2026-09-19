@@ -2778,102 +2778,73 @@ content.innerHTML = html;
 /* =========================================================
    APPROVE VERIFICATION
 ========================================================= */
+
 async function approveVerification(id) {
 
-    if (
-        !confirm(
-            "Are you sure you want to approve this verification?"
-        )
-    ) {
+    if (!confirm("Are you sure you want to approve this verification?")) {
         return;
     }
 
     try {
 
-        /* GET VERIFICATION */
+        // 1. Get the verification record
+        const { data: verification, error: getError } =
+            await supabaseClient
+                .from("business_verifications")
+                .select("user_id")
+                .eq("id", id)
+                .single();
 
-        const {
-            data: verification,
-            error: verificationError
-        } = await supabaseClient
-            .from("business_verifications")
-            .select("id, user_id")
-            .eq("id", id)
-            .single();
+        if (getError) {
+            throw getError;
+        }
+
+        // 2. Mark business verification as verified
+        const { error: verificationError } =
+            await supabaseClient
+                .from("business_verifications")
+                .update({
+                    status: "verified"
+                })
+                .eq("id", id);
 
         if (verificationError) {
             throw verificationError;
         }
 
-        if (!verification) {
-            throw new Error(
-                "Business verification not found."
-            );
+        // 3. Update the user's profile
+        const { error: profileError } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    account_status: "approved"
+                })
+                .eq("id", verification.user_id);
+
+        if (profileError) {
+            throw profileError;
         }
-
-
-        /* UPDATE BUSINESS VERIFICATION */
-
-        const {
-            error: verificationUpdateError
-        } = await supabaseClient
-            .from("business_verifications")
-            .update({
-                status: "verified"
-            })
-            .eq("id", id);
-
-        if (verificationUpdateError) {
-            throw verificationUpdateError;
-        }
-
-
-        /* UPDATE PROFILE */
-
-        const {
-            error: profileUpdateError
-        } = await supabaseClient
-            .from("profiles")
-            .update({
-                account_status: "approved"
-            })
-            .eq("id", verification.user_id);
-
-        if (profileUpdateError) {
-            throw profileUpdateError;
-        }
-
 
         showMessage(
-            "Business approved and user account updated successfully.",
+            "Verification approved. User profile updated.",
             "success"
         );
 
+        await loadUsers();
+        await loadBusinessVerifications();
 
         closeViewModal();
 
-        await loadUsers();
+    } catch (error) {
 
-        await loadBusinessVerifications();
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "APPROVE VERIFICATION ERROR:",
-            error
-        );
+        console.error(error);
 
         showMessage(
-            error.message ||
-            "Could not approve verification.",
+            error.message || "Approval failed.",
             "error"
         );
-
     }
 }
-
 
 /* =========================================================
    OPEN REJECT MODAL
