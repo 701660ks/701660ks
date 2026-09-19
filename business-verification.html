@@ -1,475 +1,484 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>Business Verification</title>
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<title>Business Verification</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
 
-<style>
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        }
 
-* {
-    box-sizing: border-box;
-}
+        h1 {
+            margin-top: 0;
+            font-size: 28px;
+        }
 
-body {
-    margin: 0;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-}
+        .description {
+            color: #666;
+            margin-bottom: 25px;
+        }
 
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.08);
-}
+        .field {
+            margin-bottom: 20px;
+        }
 
-h1 {
-    margin-top: 0;
-}
+        .field label.title {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
 
-.subtitle {
-    color: #666;
-    line-height: 1.5;
-}
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 9px;
+            font-size: 16px;
+            background: white;
+        }
 
-.field {
-    margin-bottom: 20px;
-}
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
 
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
+        .verification-options {
+            display: flex;
+            gap: 12px;
+        }
 
-input[type="text"],
-textarea,
-input[type="file"] {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-}
+        .verification-option {
+            flex: 1;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+        }
 
-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
+        .verification-option.selected {
+            border-color: #198754;
+            background: #f0fff5;
+        }
 
-.options {
-    display: flex;
-    gap: 10px;
-}
+        .verification-option input {
+            margin-right: 8px;
+        }
 
-.option {
-    flex: 1;
-    padding: 15px;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-}
+        .hidden {
+            display: none !important;
+        }
 
-.option.active {
-    border-color: #198754;
-    background: #f0fff5;
-}
+        .upload-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
 
-.option input {
-    width: auto;
-}
+        .upload-card label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-.option label {
-    display: inline;
-}
+        .help {
+            font-size: 13px;
+            color: #777;
+            margin-top: 7px;
+        }
 
-.hidden {
-    display: none !important;
-}
+        .error {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: 7px;
+        }
 
-.error {
-    color: #dc3545;
-    font-size: 14px;
-    margin-top: 6px;
-}
+        .main-error {
+            display: none;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background: #ffecec;
+            color: #b00020;
+        }
 
-#pageError {
-    display: none;
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    background: #ffe8e8;
-    color: #b00020;
-}
+        button {
+            width: 100%;
+            border: 0;
+            border-radius: 9px;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+            background: #198754;
+            cursor: pointer;
+        }
 
-.upload-box {
-    padding: 15px;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
 
-small {
-    display: block;
-    color: #777;
-    margin-top: 7px;
-    line-height: 1.4;
-}
+        .success {
+            text-align: center;
+            padding: 35px 10px;
+        }
 
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    background: #198754;
-    color: white;
-    font-size: 17px;
-    font-weight: bold;
-}
+        .success-icon {
+            font-size: 60px;
+            color: #198754;
+        }
 
-button:disabled {
-    background: #999;
-}
+        .success h2 {
+            margin-bottom: 10px;
+        }
 
-.status {
-    text-align: center;
-    padding: 30px 10px;
-}
-
-.status-icon {
-    font-size: 55px;
-}
-
-</style>
-
+        .debug {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+            background: #f7f7f7;
+            border-radius: 6px;
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
 
-
 <div class="container">
 
+    <!-- ==================================================
+         FORM
+    =================================================== -->
 
-<!-- =====================================================
-     FORM
-===================================================== -->
+    <div id="verificationForm">
 
-<div id="formBox">
+        <h1>Business Verification</h1>
 
-<h1>Business Verification</h1>
+        <p class="description">
+            Please provide your business details for verification.
+        </p>
 
-<p class="subtitle">
-Please provide your business information.
-</p>
+        <div id="mainError" class="main-error"></div>
 
 
-<div id="pageError"></div>
+        <!-- ==================================================
+             GST / PAN SELECTION
+        =================================================== -->
+
+        <div class="field">
 
+            <label class="title">
+                Do you have GST?
+            </label>
 
-<!-- =====================================================
-     GST / PAN
-===================================================== -->
+            <div class="verification-options">
 
-<div class="field">
+                <label
+                    class="verification-option selected"
+                    id="gstOption"
+                >
+                    <input
+                        type="radio"
+                        name="verificationType"
+                        id="gstRadio"
+                        value="GST"
+                        checked
+                    >
+                    I have GST
+                </label>
 
-<label>
-Do you have GST?
-</label>
 
+                <label
+                    class="verification-option"
+                    id="panOption"
+                >
+                    <input
+                        type="radio"
+                        name="verificationType"
+                        id="panRadio"
+                        value="PAN"
+                    >
+                    I don't have GST
+                </label>
 
-<div class="options">
+            </div>
 
+        </div>
 
-<div
-    class="option active"
-    id="gstBox"
->
 
-<input
-    type="radio"
-    name="verificationType"
-    id="gstRadio"
-    value="GST"
-    checked
->
+        <!-- ==================================================
+             GST SECTION
+        =================================================== -->
 
-<label for="gstRadio">
-I have GST
-</label>
+        <div id="gstSection">
 
-</div>
+            <div class="field">
 
+                <label
+                    class="title"
+                    for="gstNumber"
+                >
+                    GST Number
+                </label>
 
-<div
-    class="option"
-    id="panBox"
->
+                <input
+                    type="text"
+                    id="gstNumber"
+                    maxlength="15"
+                    autocomplete="off"
+                    placeholder="Enter 15 digit GST number"
+                >
 
-<input
-    type="radio"
-    name="verificationType"
-    id="panRadio"
-    value="PAN"
->
+                <div
+                    id="gstError"
+                    class="error"
+                ></div>
 
-<label for="panRadio">
-I don't have GST
-</label>
+            </div>
 
-</div>
+        </div>
 
 
-</div>
+        <!-- ==================================================
+             PAN SECTION
+        =================================================== -->
 
-</div>
+        <div
+            id="panSection"
+            class="hidden"
+        >
 
+            <div class="field">
 
-<!-- =====================================================
-     GST
-===================================================== -->
+                <label
+                    class="title"
+                    for="panNumber"
+                >
+                    PAN Number
+                </label>
 
-<div
-    id="gstSection"
-    class="field"
->
+                <input
+                    type="text"
+                    id="panNumber"
+                    maxlength="10"
+                    autocomplete="off"
+                    placeholder="Enter PAN number"
+                >
 
-<label for="gstNumber">
-GST Number
-</label>
+                <div
+                    id="panError"
+                    class="error"
+                ></div>
 
-<input
-    type="text"
-    id="gstNumber"
-    maxlength="15"
-    placeholder="Enter GST number"
->
+            </div>
 
-<div
-    id="gstError"
-    class="error"
-></div>
 
-</div>
+            <!-- PAN FRONT -->
 
+            <div class="upload-card">
 
-<!-- =====================================================
-     PAN
-===================================================== -->
+                <label for="panFront">
+                    PAN Card Front Side
+                </label>
 
-<div
-    id="panSection"
-    class="hidden"
->
+                <input
+                    type="file"
+                    id="panFront"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                >
 
+                <div class="help">
+                    JPG, PNG or WEBP. Maximum 5 MB.
+                </div>
 
-<div class="field">
+                <div
+                    id="frontError"
+                    class="error"
+                ></div>
 
-<label for="panNumber">
-PAN Number
-</label>
+            </div>
 
-<input
-    type="text"
-    id="panNumber"
-    maxlength="10"
-    placeholder="Enter PAN number"
->
 
-<div
-    id="panError"
-    class="error"
-></div>
+            <!-- PAN BACK -->
 
-</div>
+            <div class="upload-card">
 
+                <label for="panBack">
+                    PAN Card Back Side
+                </label>
 
-<!-- PAN FRONT -->
+                <input
+                    type="file"
+                    id="panBack"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                >
 
-<div class="upload-box">
+                <div class="help">
+                    JPG, PNG or WEBP. Maximum 5 MB.
+                </div>
 
-<label for="panFront">
-PAN Card Front Side
-</label>
+                <div
+                    id="backError"
+                    class="error"
+                ></div>
 
-<input
-    type="file"
-    id="panFront"
-    accept="image/jpeg,image/png,image/webp"
->
+            </div>
 
-<small>
-Upload front side. JPG, PNG or WEBP. Maximum 5 MB.
-</small>
+        </div>
 
-<div
-    id="frontError"
-    class="error"
-></div>
 
-</div>
+        <!-- ==================================================
+             BUSINESS NAME
+        =================================================== -->
 
+        <div class="field">
 
-<!-- PAN BACK -->
+            <label
+                class="title"
+                for="businessName"
+            >
+                Business Name
+            </label>
 
-<div class="upload-box">
+            <input
+                type="text"
+                id="businessName"
+                placeholder="Enter business name"
+            >
 
-<label for="panBack">
-PAN Card Back Side
-</label>
+        </div>
 
-<input
-    type="file"
-    id="panBack"
-    accept="image/jpeg,image/png,image/webp"
->
 
-<small>
-Upload back side. JPG, PNG or WEBP. Maximum 5 MB.
-</small>
+        <!-- ==================================================
+             BUSINESS ADDRESS
+        =================================================== -->
 
-<div
-    id="backError"
-    class="error"
-></div>
+        <div class="field">
 
-</div>
+            <label
+                class="title"
+                for="businessAddress"
+            >
+                Business Address
+            </label>
 
+            <textarea
+                id="businessAddress"
+                placeholder="Enter complete business address"
+            ></textarea>
 
-</div>
+        </div>
 
 
-<!-- =====================================================
-     BUSINESS NAME
-===================================================== -->
+        <!-- ==================================================
+             SUBMIT
+        =================================================== -->
 
-<div class="field">
+        <button
+            type="button"
+            id="submitButton"
+        >
+            Submit Verification
+        </button>
 
-<label for="businessName">
-Business Name
-</label>
 
-<input
-    type="text"
-    id="businessName"
-    placeholder="Enter business name"
->
+        <div
+            id="debugMessage"
+            class="debug"
+        ></div>
 
-</div>
+    </div>
 
 
-<!-- =====================================================
-     ADDRESS
-===================================================== -->
+    <!-- ==================================================
+         SUCCESS
+    =================================================== -->
 
-<div class="field">
+    <div
+        id="successScreen"
+        class="success hidden"
+    >
 
-<label for="businessAddress">
-Business Address
-</label>
+        <div class="success-icon">
+            ✓
+        </div>
 
-<textarea
-    id="businessAddress"
-    placeholder="Enter complete business address"
-></textarea>
+        <h2>
+            Verification Submitted Successfully
+        </h2>
 
-</div>
+        <p>
+            Your business account is being verified.
+        </p>
 
-
-<!-- =====================================================
-     BUTTON
-===================================================== -->
-
-<button
-    id="submitButton"
-    type="button"
->
-
-Continue
-
-</button>
-
-
-</div>
-
-
-<!-- =====================================================
-     STATUS
-===================================================== -->
-
-<div
-    id="statusBox"
-    class="status hidden"
->
-
-<div
-    id="statusIcon"
-    class="status-icon"
->
-✓
-</div>
-
-<h2 id="statusTitle">
-Verification Submitted Successfully
-</h2>
-
-<p id="statusMessage">
-Your business account is being verified.
-</p>
-
-</div>
-
+    </div>
 
 </div>
 
 
 <script>
 
-
-/* =====================================================
-   1. SUPABASE CONFIG
-===================================================== */
+/* =========================================================
+   1. SUPABASE CONFIGURATION
+   ========================================================= */
 
 /*
-IMPORTANT:
+   IMPORTANT:
+   Put YOUR Supabase URL and YOUR public anon/publishable key.
 
-Replace these two values.
-
-Use your Supabase Project URL
-and your public anon/publishable key.
-
-DO NOT use service_role / secret key.
+   Do NOT put service_role/secret key here.
 */
 
 const SUPABASE_URL =
     "YOUR_SUPABASE_PROJECT_URL";
 
-const SUPABASE_KEY =
+const SUPABASE_ANON_KEY =
     "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY";
 
+
+/* =========================================================
+   2. CREATE SUPABASE CLIENT
+   ========================================================= */
 
 const supabaseClient =
     window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_KEY
+        SUPABASE_ANON_KEY
     );
 
 
-/* =====================================================
-   2. ELEMENTS
-===================================================== */
+/* =========================================================
+   3. GET HTML ELEMENTS
+   ========================================================= */
 
 const gstRadio =
     document.getElementById("gstRadio");
@@ -477,11 +486,11 @@ const gstRadio =
 const panRadio =
     document.getElementById("panRadio");
 
-const gstBox =
-    document.getElementById("gstBox");
+const gstOption =
+    document.getElementById("gstOption");
 
-const panBox =
-    document.getElementById("panBox");
+const panOption =
+    document.getElementById("panOption");
 
 const gstSection =
     document.getElementById("gstSection");
@@ -510,23 +519,8 @@ const businessAddress =
 const submitButton =
     document.getElementById("submitButton");
 
-const formBox =
-    document.getElementById("formBox");
-
-const statusBox =
-    document.getElementById("statusBox");
-
-const statusIcon =
-    document.getElementById("statusIcon");
-
-const statusTitle =
-    document.getElementById("statusTitle");
-
-const statusMessage =
-    document.getElementById("statusMessage");
-
-const pageError =
-    document.getElementById("pageError");
+const mainError =
+    document.getElementById("mainError");
 
 const gstError =
     document.getElementById("gstError");
@@ -540,47 +534,62 @@ const frontError =
 const backError =
     document.getElementById("backError");
 
+const verificationForm =
+    document.getElementById("verificationForm");
 
-/* =====================================================
-   3. ERROR
-===================================================== */
+const successScreen =
+    document.getElementById("successScreen");
 
-function showError(message) {
 
-    pageError.textContent =
+/* =========================================================
+   4. SHOW ERROR
+   ========================================================= */
+
+function showMainError(message) {
+
+    mainError.textContent =
         message;
 
-    pageError.style.display =
+    mainError.style.display =
         "block";
 
 }
 
 
-/* =====================================================
-   4. GST / PAN SWITCH
-===================================================== */
+/* =========================================================
+   5. CLEAR ERRORS
+   ========================================================= */
 
-function switchType() {
+function clearErrors() {
 
-    pageError.style.display =
+    mainError.textContent = "";
+
+    mainError.style.display =
         "none";
 
-    gstError.textContent =
-        "";
+    gstError.textContent = "";
 
-    panError.textContent =
-        "";
+    panError.textContent = "";
 
-    frontError.textContent =
-        "";
+    frontError.textContent = "";
 
-    backError.textContent =
-        "";
+    backError.textContent = "";
+
+}
+
+
+/* =========================================================
+   6. GST / PAN SWITCH
+   ========================================================= */
+
+function updateVerificationType() {
+
+    clearErrors();
 
 
     if (panRadio.checked) {
 
-        /* PAN */
+        /* PAN SELECTED */
 
         gstSection.classList.add(
             "hidden"
@@ -590,19 +599,17 @@ function switchType() {
             "hidden"
         );
 
-        gstBox.classList.remove(
-            "active"
+        gstOption.classList.remove(
+            "selected"
         );
 
-        panBox.classList.add(
-            "active"
+        panOption.classList.add(
+            "selected"
         );
-
-        gstNumber.value = "";
 
     } else {
 
-        /* GST */
+        /* GST SELECTED */
 
         gstSection.classList.remove(
             "hidden"
@@ -612,150 +619,144 @@ function switchType() {
             "hidden"
         );
 
-        gstBox.classList.add(
-            "active"
+        gstOption.classList.add(
+            "selected"
         );
 
-        panBox.classList.remove(
-            "active"
+        panOption.classList.remove(
+            "selected"
         );
-
-        panNumber.value = "";
-
-        panFront.value = "";
-
-        panBack.value = "";
 
     }
 
 }
 
 
-/* =====================================================
-   5. RADIO EVENTS
-===================================================== */
+/* =========================================================
+   7. RADIO EVENTS
+   ========================================================= */
 
 gstRadio.addEventListener(
     "change",
-    switchType
+    updateVerificationType
 );
 
 panRadio.addEventListener(
     "change",
-    switchType
+    updateVerificationType
 );
 
 
-/* =====================================================
-   6. INPUT FORMATTING
-===================================================== */
+/* =========================================================
+   8. GST INPUT
+   ========================================================= */
 
 gstNumber.addEventListener(
     "input",
-    function() {
+    function () {
 
         this.value =
             this.value
-            .toUpperCase()
-            .replace(
-                /[^A-Z0-9]/g,
-                ""
-            )
-            .substring(
-                0,
-                15
-            );
+                .toUpperCase()
+                .replace(
+                    /[^A-Z0-9]/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    15
+                );
 
     }
 );
 
+
+/* =========================================================
+   9. PAN INPUT
+   ========================================================= */
 
 panNumber.addEventListener(
     "input",
-    function() {
+    function () {
 
         this.value =
             this.value
-            .toUpperCase()
-            .replace(
-                /[^A-Z0-9]/g,
-                ""
-            )
-            .substring(
-                0,
-                10
-            );
+                .toUpperCase()
+                .replace(
+                    /[^A-Z0-9]/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    10
+                );
 
     }
 );
 
 
-/* =====================================================
-   7. GET USER
-===================================================== */
+/* =========================================================
+   10. GET CURRENT USER
+   ========================================================= */
 
-async function getUser() {
+async function getCurrentUser() {
 
-    const result =
+    const {
+        data,
+        error
+    } =
         await supabaseClient.auth.getUser();
 
-    if (result.error) {
+
+    if (error) {
 
         console.error(
-            result.error
+            "Auth error:",
+            error
         );
 
-        return null;
+        throw new Error(
+            "Unable to check login."
+        );
+
     }
 
-    return result.data.user;
+
+    if (!data.user) {
+
+        throw new Error(
+            "Please login before submitting verification."
+        );
+
+    }
+
+
+    return data.user;
+
 }
 
 
-/* =====================================================
-   8. SHOW STATUS
-===================================================== */
+/* =========================================================
+   11. VALIDATE IMAGE
+   ========================================================= */
 
-function showStatus(
-    icon,
-    title,
-    message
+function validateImage(
+    file,
+    side
 ) {
-
-    formBox.classList.add(
-        "hidden"
-    );
-
-    statusBox.classList.remove(
-        "hidden"
-    );
-
-    statusIcon.textContent =
-        icon;
-
-    statusTitle.textContent =
-        title;
-
-    statusMessage.textContent =
-        message;
-
-}
-
-
-/* =====================================================
-   9. IMAGE VALIDATION
-===================================================== */
-
-function checkImage(file) {
 
     if (!file) {
 
-        return "Please select an image.";
+        return (
+            "Please select PAN " +
+            side +
+            " image."
+        );
 
     }
 
 
-    const allowed = [
+    const allowedTypes = [
         "image/jpeg",
         "image/png",
         "image/webp"
@@ -763,12 +764,16 @@ function checkImage(file) {
 
 
     if (
-        !allowed.includes(
+        !allowedTypes.includes(
             file.type
         )
     ) {
 
-        return "Only JPG, PNG or WEBP images are allowed.";
+        return (
+            "PAN " +
+            side +
+            " must be JPG, PNG or WEBP."
+        );
 
     }
 
@@ -778,21 +783,25 @@ function checkImage(file) {
         5 * 1024 * 1024
     ) {
 
-        return "Image must be smaller than 5 MB.";
+        return (
+            "PAN " +
+            side +
+            " image must be less than 5 MB."
+        );
 
     }
 
 
-    return null;
+    return "";
 
 }
 
 
-/* =====================================================
-   10. UPLOAD IMAGE
-===================================================== */
+/* =========================================================
+   12. UPLOAD PAN IMAGE
+   ========================================================= */
 
-async function uploadImage(
+async function uploadPanImage(
     file,
     userId,
     side
@@ -800,418 +809,545 @@ async function uploadImage(
 
     const extension =
         file.name
-        .split(".")
-        .pop()
-        .toLowerCase();
+            .split(".")
+            .pop()
+            .toLowerCase();
 
 
-    const fileName =
+    const uniqueName =
         Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10) +
         "_" +
         side +
         "." +
         extension;
 
 
-    const path =
+    const filePath =
         "pan/" +
         userId +
         "/" +
-        fileName;
+        uniqueName;
 
 
-    const result =
+    console.log(
+        "Uploading:",
+        filePath
+    );
+
+
+    const {
+        data,
+        error
+    } =
         await supabaseClient
-        .storage
-        .from("pan-documents")
-        .upload(
-            path,
-            file,
-            {
-                upsert: false
-            }
+            .storage
+            .from("pan-documents")
+            .upload(
+                filePath,
+                file,
+                {
+                    cacheControl: "3600",
+                    upsert: false,
+                    contentType: file.type
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Storage error:",
+            error
         );
 
-
-    if (result.error) {
-
-        throw result.error;
+        throw new Error(
+            "PAN " +
+            side +
+            " upload failed: " +
+            error.message
+        );
 
     }
 
 
-    return path;
+    console.log(
+        "Upload successful:",
+        data
+    );
+
+
+    return filePath;
 
 }
 
 
-/* =====================================================
-   11. SUBMIT
-===================================================== */
+/* =========================================================
+   13. SUBMIT FORM
+   ========================================================= */
 
 submitButton.addEventListener(
     "click",
-    async function() {
-
-
-        /* Clear messages */
-
-        pageError.style.display =
-            "none";
-
-        gstError.textContent =
-            "";
-
-        panError.textContent =
-            "";
-
-        frontError.textContent =
-            "";
-
-        backError.textContent =
-            "";
-
-
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "Please wait...";
-
-
-        let frontPath =
-            null;
-
-        let backPath =
-            null;
-
-
-        try {
-
-
-            /* =============================================
-               USER
-            ============================================== */
-
-            const user =
-                await getUser();
-
-
-            if (!user) {
-
-                showError(
-                    "Please login first."
-                );
-
-                return;
-
-            }
-
-
-            /* =============================================
-               TYPE
-            ============================================== */
-
-            const type =
-                panRadio.checked
-                    ? "PAN"
-                    : "GST";
-
-
-            /* =============================================
-               GST
-            ============================================== */
-
-            const gst =
-                gstNumber.value
-                .trim()
-                .toUpperCase();
-
-
-            if (
-                type === "GST"
-            ) {
-
-
-                const gstPattern =
-                    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
-
-
-                if (
-                    !gstPattern.test(
-                        gst
-                    )
-                ) {
-
-                    gstError.textContent =
-                        "Enter a valid 15-character GST number.";
-
-                    return;
-
-                }
-
-            }
-
-
-            /* =============================================
-               PAN
-            ============================================== */
-
-            const pan =
-                panNumber.value
-                .trim()
-                .toUpperCase();
-
-
-            if (
-                type === "PAN"
-            ) {
-
-
-                const panPattern =
-                    /^[A-Z]{5}[0-9]{4}[A-Z]$/;
-
-
-                if (
-                    !panPattern.test(
-                        pan
-                    )
-                ) {
-
-                    panError.textContent =
-                        "Enter a valid 10-character PAN number.";
-
-                    return;
-
-                }
-
-
-                /* FRONT */
-
-                const frontMessage =
-                    checkImage(
-                        panFront.files[0]
-                    );
-
-
-                if (frontMessage) {
-
-                    frontError.textContent =
-                        frontMessage;
-
-                    return;
-
-                }
-
-
-                /* BACK */
-
-                const backMessage =
-                    checkImage(
-                        panBack.files[0]
-                    );
-
-
-                if (backMessage) {
-
-                    backError.textContent =
-                        backMessage;
-
-                    return;
-
-                }
-
-            }
-
-
-            /* =============================================
-               BUSINESS
-            ============================================== */
-
-            const name =
-                businessName.value.trim();
-
-
-            const address =
-                businessAddress.value.trim();
-
-
-            if (!name) {
-
-                showError(
-                    "Please enter business name."
-                );
-
-                return;
-
-            }
-
-
-            if (!address) {
-
-                showError(
-                    "Please enter business address."
-                );
-
-                return;
-
-            }
-
-
-            /* =============================================
-               UPLOAD PAN
-            ============================================== */
-
-            if (
-                type === "PAN"
-            ) {
-
-
-                submitButton.textContent =
-                    "Uploading front image...";
-
-
-                frontPath =
-                    await uploadImage(
-                        panFront.files[0],
-                        user.id,
-                        "front"
-                    );
-
-
-                submitButton.textContent =
-                    "Uploading back image...";
-
-
-                backPath =
-                    await uploadImage(
-                        panBack.files[0],
-                        user.id,
-                        "back"
-                    );
-
-            }
-
-
-            /* =============================================
-               DATABASE
-            ============================================== */
-
-            submitButton.textContent =
-                "Saving...";
-
-
-            const record = {
-
-                user_id:
-                    user.id,
-
-                verification_type:
-                    type,
-
-                gst_number:
-                    type === "GST"
-                        ? gst
-                        : null,
-
-                pan_number:
-                    type === "PAN"
-                        ? pan
-                        : null,
-
-                pan_front_path:
-                    frontPath,
-
-                pan_back_path:
-                    backPath,
-
-                business_name:
-                    name,
-
-                business_address:
-                    address,
-
-                status:
-                    "pending"
-
-            };
-
-
-            const result =
-                await supabaseClient
-                .from(
-                    "business_verifications"
-                )
-                .insert(
-                    record
-                );
-
-
-            if (result.error) {
-
-                console.error(
-                    result.error
-                );
-
-                showError(
-                    result.error.message
-                );
-
-                return;
-
-            }
-
-
-            /* =============================================
-               SUCCESS
-            ============================================== */
-
-            showStatus(
-                "✓",
-                "Verification Submitted Successfully",
-                "Your business account is being verified."
-            );
-
-
-        } catch (error) {
-
-
-            console.error(
-                "ERROR:",
-                error
-            );
-
-
-            showError(
-                error.message ||
-                "Something went wrong."
-            );
-
-
-        } finally {
-
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Continue";
-
-        }
-
-    }
+    submitVerification
 );
 
 
-/* =====================================================
-   12. INITIAL
-===================================================== */
+/* =========================================================
+   14. MAIN SUBMIT FUNCTION
+   ========================================================= */
 
-switchType();
+async function submitVerification() {
 
+    clearErrors();
+
+
+    submitButton.disabled =
+        true;
+
+    submitButton.textContent =
+        "Please wait...";
+
+
+    let frontPath = null;
+
+    let backPath = null;
+
+
+    try {
+
+
+        /* ================================================
+           GET USER
+        ================================================= */
+
+        const user =
+            await getCurrentUser();
+
+
+        console.log(
+            "Logged in user:",
+            user.id
+        );
+
+
+        /* ================================================
+           GET TYPE
+        ================================================= */
+
+        const verificationType =
+            panRadio.checked
+                ? "PAN"
+                : "GST";
+
+
+        console.log(
+            "Verification type:",
+            verificationType
+        );
+
+
+        /* ================================================
+           GET VALUES
+        ================================================= */
+
+        const gst =
+            gstNumber.value
+                .trim()
+                .toUpperCase();
+
+
+        const pan =
+            panNumber.value
+                .trim()
+                .toUpperCase();
+
+
+        const name =
+            businessName.value
+                .trim();
+
+
+        const address =
+            businessAddress.value
+                .trim();
+
+
+        /* ================================================
+           BUSINESS VALIDATION
+        ================================================= */
+
+        if (!name) {
+
+            showMainError(
+                "Please enter your business name."
+            );
+
+            return;
+
+        }
+
+
+        if (!address) {
+
+            showMainError(
+                "Please enter your business address."
+            );
+
+            return;
+
+        }
+
+        /* =================================================
+           GST VALIDATION
+        ================================================== */
+
+        if (verificationType === "GST") {
+
+            const gstPattern =
+                /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+
+            if (!gstPattern.test(gst)) {
+
+                gstError.textContent =
+                    "Please enter a valid 15-character GST number.";
+
+                return;
+            }
+        }
+
+
+        /* =================================================
+           PAN VALIDATION
+        ================================================== */
+
+        if (verificationType === "PAN") {
+
+            const panPattern =
+                /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+
+            if (!panPattern.test(pan)) {
+
+                panError.textContent =
+                    "Please enter a valid 10-character PAN number.";
+
+                return;
+            }
+
+
+            /* =============================================
+               PAN FRONT IMAGE
+            ============================================== */
+
+            const frontFile =
+                panFront.files[0];
+
+            if (!frontFile) {
+
+                frontError.textContent =
+                    "Please upload PAN front side.";
+
+                return;
+            }
+
+
+            /* =============================================
+               PAN BACK IMAGE
+            ============================================== */
+
+            const backFile =
+                panBack.files[0];
+
+            if (!backFile) {
+
+                backError.textContent =
+                    "Please upload PAN back side.";
+
+                return;
+            }
+
+
+            /* =============================================
+               CHECK FRONT IMAGE
+            ============================================== */
+
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
+
+
+            if (!allowedTypes.includes(frontFile.type)) {
+
+                frontError.textContent =
+                    "Front image must be JPG, PNG or WEBP.";
+
+                return;
+            }
+
+
+            if (frontFile.size > 5 * 1024 * 1024) {
+
+                frontError.textContent =
+                    "Front image must be smaller than 5 MB.";
+
+                return;
+            }
+
+
+            /* =============================================
+               CHECK BACK IMAGE
+            ============================================== */
+
+            if (!allowedTypes.includes(backFile.type)) {
+
+                backError.textContent =
+                    "Back image must be JPG, PNG or WEBP.";
+
+                return;
+            }
+
+
+            if (backFile.size > 5 * 1024 * 1024) {
+
+                backError.textContent =
+                    "Back image must be smaller than 5 MB.";
+
+                return;
+            }
+
+
+            /* =============================================
+               UPLOAD FRONT IMAGE
+            ============================================== */
+
+            submitButton.textContent =
+                "Uploading PAN front...";
+
+
+            const frontExtension =
+                frontFile.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+
+            const frontPath =
+                "pan/" +
+                user.id +
+                "/" +
+                Date.now() +
+                "_front." +
+                frontExtension;
+
+
+            const frontUpload =
+                await supabaseClient
+                    .storage
+                    .from("pan-documents")
+                    .upload(
+                        frontPath,
+                        frontFile,
+                        {
+                            upsert: false,
+                            contentType: frontFile.type
+                        }
+                    );
+
+
+            if (frontUpload.error) {
+
+                throw new Error(
+                    "PAN front upload failed: " +
+                    frontUpload.error.message
+                );
+            }
+
+
+            /* =============================================
+               UPLOAD BACK IMAGE
+            ============================================== */
+
+            submitButton.textContent =
+                "Uploading PAN back...";
+
+
+            const backExtension =
+                backFile.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+
+            const backPath =
+                "pan/" +
+                user.id +
+                "/" +
+                Date.now() +
+                "_back." +
+                backExtension;
+
+
+            const backUpload =
+                await supabaseClient
+                    .storage
+                    .from("pan-documents")
+                    .upload(
+                        backPath,
+                        backFile,
+                        {
+                            upsert: false,
+                            contentType: backFile.type
+                        }
+                    );
+
+
+            if (backUpload.error) {
+
+                throw new Error(
+                    "PAN back upload failed: " +
+                    backUpload.error.message
+                );
+            }
+
+
+            /* SAVE PATHS */
+
+            frontPathForDatabase =
+                frontPath;
+
+            backPathForDatabase =
+                backPath;
+        }
+
+
+        /* =================================================
+           SAVE DATABASE RECORD
+        ================================================== */
+
+        submitButton.textContent =
+            "Saving verification...";
+
+
+        const verificationData = {
+
+            user_id: user.id,
+
+            verification_type:
+                verificationType,
+
+            gst_number:
+                verificationType === "GST"
+                    ? gst
+                    : null,
+
+            pan_number:
+                verificationType === "PAN"
+                    ? pan
+                    : null,
+
+            pan_front_path:
+                verificationType === "PAN"
+                    ? frontPathForDatabase
+                    : null,
+
+            pan_back_path:
+                verificationType === "PAN"
+                    ? backPathForDatabase
+                    : null,
+
+            business_name:
+                name,
+
+            business_address:
+                address,
+
+            status:
+                "pending"
+        };
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("business_verifications")
+                .insert(
+                    verificationData
+                )
+                .select()
+                .single();
+
+
+        if (error) {
+
+            console.error(
+                "Supabase database error:",
+                error
+            );
+
+            throw new Error(
+                "Could not save verification: " +
+                error.message
+            );
+        }
+
+
+        /* =================================================
+           SUCCESS
+        ================================================== */
+
+        verificationForm.classList.add(
+            "hidden"
+        );
+
+        successScreen.classList.remove(
+            "hidden"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Verification error:",
+            error
+        );
+
+
+        showMainError(
+            error.message ||
+            "Something went wrong. Please try again."
+        );
+
+
+    } finally {
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Submit Verification";
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIAL PAGE
+========================================================= */
+
+updateVerificationType();
 
 </script>
 
 </body>
 
 </html>
+
+
+   
