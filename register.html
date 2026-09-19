@@ -635,7 +635,7 @@ input:focus {
 </div>
 
 <script>
-<script>
+
 
 /* =========================
    SHOW MESSAGE
@@ -1137,7 +1137,20 @@ document
 });
 
 </script>
+<script>
+window.addEventListener("error", function (event) {
+    alert("JAVASCRIPT ERROR:\n" + event.message);
+});
 
+window.addEventListener("unhandledrejection", function (event) {
+    alert(
+        "SUPABASE/ASYNC ERROR:\n" +
+        (event.reason?.message || event.reason)
+    );
+});
+
+console.log("REGISTER PAGE LOADED");
+console.log("supabaseClient:", typeof supabaseClient);
 </script>
 </body>
 </html>
