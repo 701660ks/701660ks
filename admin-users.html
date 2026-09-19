@@ -898,7 +898,7 @@ placeholder="Example: PAN document is not clear."
 
 <button
 class="reject-btn"
-onclick="confirmReject()">
+onclick="confirmRejectVerification()">
 
 Reject Verification
 
@@ -931,8 +931,7 @@ let allUsers = [];
 let allVerifications = [];
 
 let editingUserId = null;
-
-let rejectingId = null;
+let rejectingVerificationId = null;
 
 
 /* =========================================================
@@ -1011,7 +1010,7 @@ function formatDate(value) {
    STATUS
 ========================================================= */
 
-function statusClass(status) {
+function getStatusClass(status) {
 
     status =
         String(status || "")
