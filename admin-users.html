@@ -230,6 +230,132 @@ button:disabled {
 
 }
 
+
+/* =====================================
+   USER EDITOR
+===================================== */
+
+.user-editor {
+
+    background: white;
+
+    margin-top: 25px;
+
+    padding: 25px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+}
+
+
+.user-editor h2 {
+
+    margin-bottom: 20px;
+
+    font-size: 22px;
+}
+
+
+.editor-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 18px;
+}
+
+
+.editor-field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.editor-field input,
+.editor-field select {
+
+    width: 100%;
+
+    height: 45px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+
+.editor-field input:focus,
+.editor-field select:focus {
+
+    border-color: #6c4df6;
+
+    box-shadow:
+        0 0 0 3px rgba(108,77,246,.10);
+}
+
+
+.editor-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 22px;
+
+    flex-wrap: wrap;
+}
+
+
+.save-user-btn {
+
+    background: #6c4df6;
+
+    color: white;
+}
+
+
+.new-user-btn {
+
+    background: #16a34a;
+
+    color: white;
+}
+
+
+.cancel-user-btn {
+
+    background: #e5e7eb;
+
+    color: #222;
+}
+
+
+@media(max-width:700px) {
+
+    .editor-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
 </style>
 
 </head>
@@ -410,6 +536,164 @@ Loading users...
 </tbody>
 
 </table>
+
+</div>
+
+
+<!-- =====================================
+     ADD / EDIT USER SECTION
+===================================== -->
+
+<div class="user-editor">
+
+    <h2 id="editorTitle">
+        Add New User
+    </h2>
+
+    <div class="editor-grid">
+
+        <!-- FULL NAME -->
+
+        <div class="editor-field">
+
+            <label>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="editFullName"
+                placeholder="Enter full name"
+            >
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="editor-field">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="editEmail"
+                placeholder="Enter email"
+            >
+
+        </div>
+
+
+        <!-- MOBILE -->
+
+        <div class="editor-field">
+
+            <label>
+                Mobile
+            </label>
+
+            <input
+                type="text"
+                id="editMobile"
+                placeholder="Enter mobile number"
+            >
+
+        </div>
+
+
+        <!-- USER TYPE -->
+
+        <div class="editor-field">
+
+            <label>
+                User Type
+            </label>
+
+            <select id="editUserType">
+
+                <option value="user">
+                    User
+                </option>
+
+                <option value="wholesaler">
+                    Wholesaler
+                </option>
+
+                <option value="b2b">
+                    B2B
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="editor-field">
+
+            <label>
+                Account Status
+            </label>
+
+            <select id="editStatus">
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="pending_admin">
+                    Pending
+                </option>
+
+                <option value="approved">
+                    Approved
+                </option>
+
+                <option value="rejected">
+                    Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="editor-buttons">
+
+        <button
+            class="save-user-btn"
+            onclick="saveUser()">
+
+            💾 Save User
+
+        </button>
+
+
+        <button
+            class="new-user-btn"
+            onclick="newUser()">
+
+            ➕ New User
+
+        </button>
+
+
+        <button
+            class="cancel-user-btn"
+            onclick="cancelEdit()">
+
+            Cancel
+
+        </button>
+
+    </div>
 
 </div>
 
@@ -833,7 +1117,226 @@ function escapeHtml(value) {
 // ==============================
 
 loadAdminData();
+function displayUsers(users) {
 
+    const tableBody =
+        document.querySelector("#usersTable");
+
+    if (!tableBody) {
+
+        console.error(
+            "usersTable not found"
+        );
+
+        return;
+    }
+
+
+    // ==============================
+    // COUNTERS
+    // ==============================
+
+    const total =
+        users.length;
+
+    const pending =
+        users.filter(
+            u =>
+                u.account_status ===
+                "pending_admin"
+        ).length;
+
+    const approved =
+        users.filter(
+            u =>
+                u.account_status ===
+                    "approved" ||
+                u.account_status ===
+                    "active"
+        ).length;
+
+    const rejected =
+        users.filter(
+            u =>
+                u.account_status ===
+                "rejected"
+        ).length;
+
+
+    document.getElementById(
+        "totalUsers"
+    ).innerText = total;
+
+
+    document.getElementById(
+        "pendingUsers"
+    ).innerText = pending;
+
+
+    document.getElementById(
+        "approvedUsers"
+    ).innerText = approved;
+
+
+    document.getElementById(
+        "rejectedUsers"
+    ).innerText = rejected;
+
+
+    // ==============================
+    // NO USERS
+    // ==============================
+
+    if (!users.length) {
+
+        tableBody.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    style="
+                        text-align:center;
+                        padding:25px;
+                    "
+                >
+                    No users found
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tableBody.innerHTML = "";
+
+
+    // ==============================
+    // USERS
+    // ==============================
+
+    users.forEach(user => {
+
+        const row =
+            document.createElement("tr");
+
+
+        let statusClass = "";
+
+
+        if (
+            user.account_status ===
+            "pending_admin"
+        ) {
+
+            statusClass =
+                "pending";
+
+        }
+
+        else if (
+            user.account_status ===
+                "approved" ||
+            user.account_status ===
+                "active"
+        ) {
+
+            statusClass =
+                "approved";
+
+        }
+
+        else if (
+            user.account_status ===
+            "rejected"
+        ) {
+
+            statusClass =
+                "rejected";
+        }
+
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHtml(
+                    user.full_name || ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    user.email || ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    user.mobile || ""
+                )}
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    user.user_type || ""
+                )}
+            </td>
+
+            <td>
+
+                <span class="status ${statusClass}">
+
+                    ${escapeHtml(
+                        user.account_status || ""
+                    )}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                ${
+                    user.created_at
+                    ? new Date(
+                        user.created_at
+                    ).toLocaleDateString()
+                    : ""
+                }
+
+            </td>
+
+            <td>
+
+                <div class="actions">
+
+                    <button
+                        class="view-btn"
+                        onclick="editUser('${user.id}')">
+
+                        ✏️ Edit
+
+                    </button>
+
+
+                    <button
+                        class="reject-btn"
+                        onclick="deleteUser('${user.id}')">
+
+                        🗑️ Delete
+
+                    </button>
+
+                </div>
+
+            </td>
+        `;
+
+
+        tableBody.appendChild(row);
+
+    });
+
+}
 </script>
 </body>
 </html>
