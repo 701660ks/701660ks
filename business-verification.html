@@ -193,48 +193,125 @@
         <!-- ==================================================
              GST / PAN SELECTION
         =================================================== -->
+<div class="field">
 
-        <div class="field">
+    <label class="title">
+        Do you have GST?
+    </label>
 
-            <label class="title">
-                Do you have GST?
-            </label>
+    <div class="verification-options">
 
-            <div class="verification-options">
+        <label
+            class="verification-option selected"
+            id="gstOption"
+        >
+            <input
+                type="radio"
+                name="verificationType"
+                value="GST"
+                checked
+                onchange="changeVerificationType('GST')"
+            >
 
-                <label
-                    class="verification-option selected"
-                    id="gstOption"
-                >
-                    <input
-                        type="radio"
-                        name="verificationType"
-                        id="gstRadio"
-                        value="GST"
-                        checked
-                    >
-                    I have GST
-                </label>
-
-
-                <label
-                    class="verification-option"
-                    id="panOption"
-                >
-                    <input
-                        type="radio"
-                        name="verificationType"
-                        id="panRadio"
-                        value="PAN"
-                    >
-                    I don't have GST
-                </label>
-
-            </div>
-
-        </div>
+            I have GST
+        </label>
 
 
+        <label
+            class="verification-option"
+            id="panOption"
+        >
+            <input
+                type="radio"
+                name="verificationType"
+                value="PAN"
+                onchange="changeVerificationType('PAN')"
+            >
+
+            I don't have GST
+        </label>
+
+    </div>
+
+</div>
+
+
+<!-- GST -->
+
+<div id="gstSection">
+
+    <div class="field">
+
+        <label class="title">
+            GST Number
+        </label>
+
+        <input
+            type="text"
+            id="gstNumber"
+            maxlength="15"
+            placeholder="Enter GST number"
+        >
+
+    </div>
+
+</div>
+
+
+<!-- PAN -->
+
+<div
+    id="panSection"
+    style="display:none;"
+>
+
+    <div class="field">
+
+        <label class="title">
+            PAN Number
+        </label>
+
+        <input
+            type="text"
+            id="panNumber"
+            maxlength="10"
+            placeholder="Enter PAN number"
+        >
+
+    </div>
+
+
+    <div class="upload-card">
+
+        <label>
+            PAN Card Front Side
+        </label>
+
+        <input
+            type="file"
+            id="panFront"
+            accept="image/*"
+        >
+
+    </div>
+
+
+    <div class="upload-card">
+
+        <label>
+            PAN Card Back Side
+        </label>
+
+        <input
+            type="file"
+            id="panBack"
+            accept="image/*"
+        >
+
+    </div>
+
+</div>
+        
         <!-- ==================================================
              GST SECTION
         =================================================== -->
@@ -1342,6 +1419,52 @@ async function submitVerification() {
 ========================================================= */
 
 updateVerificationType();
+
+</script>
+
+<script>
+
+function changeVerificationType(type) {
+
+    var gstSection =
+        document.getElementById("gstSection");
+
+    var panSection =
+        document.getElementById("panSection");
+
+    var gstOption =
+        document.getElementById("gstOption");
+
+    var panOption =
+        document.getElementById("panOption");
+
+
+    if (type === "PAN") {
+
+        gstSection.style.display = "none";
+
+        panSection.style.display = "block";
+
+        gstOption.classList.remove("selected");
+
+        panOption.classList.add("selected");
+
+    }
+
+
+    if (type === "GST") {
+
+        gstSection.style.display = "block";
+
+        panSection.style.display = "none";
+
+        gstOption.classList.add("selected");
+
+        panOption.classList.remove("selected");
+
+    }
+
+}
 
 </script>
 
