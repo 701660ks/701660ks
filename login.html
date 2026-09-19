@@ -719,8 +719,19 @@ togglePassword.addEventListener(
             });
 
         if (error) {
-            throw error;
-        }
+
+    if (
+        error.message
+            .toLowerCase()
+            .includes("email not confirmed")
+    ) {
+        throw new Error(
+            "Your email is not confirmed. Please confirm your email or create a new account."
+        );
+    }
+
+    throw error;
+}
 
         showMessage(
             "Login successful! Redirecting...",
