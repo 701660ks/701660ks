@@ -2164,26 +2164,18 @@ async function deleteUser(id) {
 /* =========================================================
    BUSINESS VERIFICATION SYSTEM
 ========================================================= */
-
 async function loadBusinessVerifications() {
 
-    const table =
-        document.getElementById("verificationTable");
+    const table = document.getElementById("verificationTable");
 
     if (!table) {
-        console.error(
-            "verificationTable not found."
-        );
+        console.error("verificationTable not found");
         return;
     }
 
     table.innerHTML = `
         <tr>
-            <td colspan="7"
-                style="
-                    text-align:center;
-                    padding:25px;
-                ">
+            <td colspan="7" style="text-align:center;padding:25px;">
                 Loading business verifications...
             </td>
         </tr>
@@ -2191,25 +2183,39 @@ async function loadBusinessVerifications() {
 
     try {
 
+        if (typeof supabaseClient === "undefined") {
+            throw new Error(
+                "supabaseClient is not available. Check supabase.js."
+            );
+        }
+
+        console.log("Loading business verifications...");
+
         const {
             data,
             error
         } = await supabaseClient
             .from("business_verifications")
             .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+            .order("created_at", {
+                ascending: false
+            });
 
         if (error) {
+            console.error(
+                "SUPABASE BUSINESS VERIFICATION ERROR:",
+                error
+            );
+
             throw error;
         }
 
-        allVerifications =
-            data || [];
+        console.log(
+            "Business verifications:",
+            data
+        );
+
+        allVerifications = data || [];
 
         displayVerifications(
             allVerifications
@@ -2218,7 +2224,7 @@ async function loadBusinessVerifications() {
     } catch (error) {
 
         console.error(
-            "BUSINESS VERIFICATION ERROR:",
+            "LOAD BUSINESS VERIFICATIONS ERROR:",
             error
         );
 
@@ -2226,19 +2232,33 @@ async function loadBusinessVerifications() {
             <tr>
                 <td colspan="7"
                     style="
+                        text-align:center;
+                        padding:25px;
                         color:#991b1b;
-                        padding:20px;
                     ">
-                    ❌ ${escapeHtml(
-                        error.message ||
-                        "Could not load business verifications."
+
+                    <strong>
+                        ❌ Could not load business verifications
+                    </strong>
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error?.message ||
+                        "Unknown Supabase error"
                     )}
+
                 </td>
             </tr>
         `;
+
+        showMessage(
+            error?.message ||
+            "Could not load business verifications.",
+            "error"
+        );
     }
 }
-
 
 /* =========================================================
    DISPLAY BUSINESS VERIFICATIONS
