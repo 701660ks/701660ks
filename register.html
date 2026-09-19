@@ -933,35 +933,38 @@ document
 
             /* AUTH USER */
 
-            const {
-                data: authData,
-                error: authError
-            } =
-            await supabaseClient.auth.signUp({
+            
+          const {
+    data: authData,
+    error: authError
+} = await supabaseClient.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+        data: {
+            full_name: fullName,
+            mobile: mobile,
+            user_type: userType
+        }
+    }
+});
 
-                email: email,
+if (authError) {
+    throw authError;
+}
 
-                password: password,
+if (!authData.user) {
+    throw new Error("User was not created.");
+}
 
-                options: {
+showMessage(
+    "Account created successfully!",
+    "success"
+);
 
-                    data: {
-
-                        full_name: fullName,
-
-                        mobile: mobile,
-
-                        user_type: userType
-
-                    }
-
-                }
-
-            });
-
-
-            if (authError)
-                throw authError;
+setTimeout(() => {
+    window.location.href = "login.html";
+}, 2000);
 
 
             /* PROFILE INSERT */
