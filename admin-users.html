@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -35,15 +35,33 @@
 
 body {
 
-    font-family:
-        Arial,
-        sans-serif;
+    font-family: Arial, sans-serif;
 
-    background:
-        #f5f6fa;
+    background: #f5f6fa;
 
-    color:
-        #222;
+    color: #222;
+
+}
+
+button {
+
+    border: none;
+
+    padding: 9px 13px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+}
+
+button:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
 
 }
 
@@ -54,40 +72,31 @@ body {
 
 .header {
 
-    background:
-        #111827;
+    background: #111827;
 
-    color:
-        white;
+    color: white;
 
-    padding:
-        18px 25px;
+    padding: 18px 25px;
 
-    display:
-        flex;
+    display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
-    align-items:
-        center;
+    align-items: center;
 
 }
 
 .logo {
 
-    font-size:
-        22px;
+    font-size: 22px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
 }
 
 .admin-title {
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
@@ -98,28 +107,23 @@ body {
 
 .container {
 
-    max-width:
-        1400px;
+    max-width: 1400px;
 
-    margin:
-        auto;
+    margin: auto;
 
-    padding:
-        25px;
+    padding: 25px;
 
 }
 
 h1 {
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
 }
 
 h2 {
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
 }
 
@@ -130,47 +134,37 @@ h2 {
 
 .message {
 
-    display:
-        none;
+    display: none;
 
-    padding:
-        13px 15px;
+    padding: 13px 15px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
 .message.show {
 
-    display:
-        block;
+    display: block;
 
 }
 
 .message.success {
 
-    background:
-        #dcfce7;
+    background: #dcfce7;
 
-    color:
-        #166534;
+    color: #166534;
 
 }
 
 .message.error {
 
-    background:
-        #fee2e2;
+    background: #fee2e2;
 
-    color:
-        #991b1b;
+    color: #991b1b;
 
 }
 
@@ -181,56 +175,43 @@ h2 {
 
 .stats {
 
-    display:
-        grid;
+    display: grid;
 
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
-    gap:
-        15px;
+    gap: 15px;
 
-    margin-bottom:
-        25px;
+    margin-bottom: 25px;
 
 }
 
 .card {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    box-shadow:
-        0 3px 12px rgba(0,0,0,.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
 
 }
 
 .card-title {
 
-    color:
-        #666;
+    color: #666;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
 .card-number {
 
-    font-size:
-        28px;
+    font-size: 28px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
-    margin-top:
-        8px;
+    margin-top: 8px;
 
 }
 
@@ -241,26 +222,19 @@ h2 {
 
 .filters {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
-    display:
-        flex;
+    display: flex;
 
-    gap:
-        12px;
+    gap: 12px;
 
-    flex-wrap:
-        wrap;
+    flex-wrap: wrap;
 
 }
 
@@ -268,27 +242,21 @@ input,
 select,
 textarea {
 
-    padding:
-        12px;
+    padding: 12px;
 
-    border:
-        1px solid #ddd;
+    border: 1px solid #ddd;
 
-    border-radius:
-        8px;
+    border-radius: 8px;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
 .search {
 
-    flex:
-        1;
+    flex: 1;
 
-    min-width:
-        220px;
+    min-width: 220px;
 
 }
 
@@ -299,61 +267,48 @@ textarea {
 
 .table-container {
 
-    background:
-        white;
+    background: white;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    overflow-x:
-        auto;
+    overflow-x: auto;
 
-    box-shadow:
-        0 3px 12px rgba(0,0,0,.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
 
-    margin-bottom:
-        25px;
+    margin-bottom: 25px;
 
 }
 
 table {
 
-    width:
-        100%;
+    width: 100%;
 
-    border-collapse:
-        collapse;
+    border-collapse: collapse;
 
 }
 
 th,
 td {
 
-    padding:
-        14px;
+    padding: 14px;
 
-    text-align:
-        left;
+    text-align: left;
 
-    border-bottom:
-        1px solid #eee;
+    border-bottom: 1px solid #eee;
 
 }
 
 th {
 
-    background:
-        #f8f9fb;
+    background: #f8f9fb;
 
-    font-size:
-        13px;
+    font-size: 13px;
 
 }
 
 td {
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
@@ -364,50 +319,39 @@ td {
 
 .status {
 
-    display:
-        inline-block;
+    display: inline-block;
 
-    padding:
-        6px 10px;
+    padding: 6px 10px;
 
-    border-radius:
-        20px;
+    border-radius: 20px;
 
-    font-size:
-        12px;
+    font-size: 12px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
 }
 
 .pending {
 
-    background:
-        #fff3cd;
+    background: #fff3cd;
 
-    color:
-        #856404;
+    color: #856404;
 
 }
 
 .approved {
 
-    background:
-        #d1fae5;
+    background: #d1fae5;
 
-    color:
-        #065f46;
+    color: #065f46;
 
 }
 
 .rejected {
 
-    background:
-        #fee2e2;
+    background: #fee2e2;
 
-    color:
-        #991b1b;
+    color: #991b1b;
 
 }
 
@@ -416,95 +360,53 @@ td {
    BUTTONS
 ========================================================= */
 
-button {
-
-    border:
-        none;
-
-    padding:
-        8px 12px;
-
-    border-radius:
-        7px;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        600;
-
-}
-
-button:disabled {
-
-    opacity:
-        .5;
-
-    cursor:
-        not-allowed;
-
-}
-
 .actions {
 
-    display:
-        flex;
+    display: flex;
 
-    gap:
-        6px;
+    gap: 6px;
 
-    flex-wrap:
-        wrap;
+    flex-wrap: wrap;
 
 }
 
 .approve-btn {
 
-    background:
-        #16a34a;
+    background: #16a34a;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .reject-btn {
 
-    background:
-        #dc2626;
+    background: #dc2626;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .edit-btn {
 
-    background:
-        #6c4df6;
+    background: #6c4df6;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .delete-btn {
 
-    background:
-        #ef4444;
+    background: #ef4444;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .view-btn {
 
-    background:
-        #2563eb;
+    background: #2563eb;
 
-    color:
-        white;
+    color: white;
 
 }
 
@@ -515,207 +417,121 @@ button:disabled {
 
 .section {
 
-    background:
-        white;
+    background: white;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    margin-top:
-        25px;
+    margin-top: 25px;
 
-    box-shadow:
-        0 3px 12px rgba(0,0,0,.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
 
 }
 
 .section-title {
 
-    display:
-        flex;
+    display: flex;
 
-    justify-content:
-        space-between;
+    justify-content: space-between;
 
-    align-items:
-        center;
+    align-items: center;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
 }
 
 .section-title h2 {
 
-    margin:
-        0;
+    margin: 0;
 
 }
 
 
 /* =========================================================
-   EDITOR
+   USER EDITOR
 ========================================================= */
 
 .user-editor {
 
-    background:
-        white;
+    background: white;
 
-    margin-top:
-        25px;
+    margin-top: 25px;
 
-    padding:
-        25px;
+    padding: 25px;
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
-    box-shadow:
-        0 3px 12px rgba(0,0,0,.08);
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
 
 }
 
 .editor-grid {
 
-    display:
-        grid;
+    display: grid;
 
-    grid-template-columns:
-        repeat(2,1fr);
+    grid-template-columns: repeat(2,1fr);
 
-    gap:
-        18px;
+    gap: 18px;
 
 }
 
 .editor-field label {
 
-    display:
-        block;
+    display: block;
 
-    margin-bottom:
-        7px;
+    margin-bottom: 7px;
 
-    font-size:
-        13px;
+    font-size: 13px;
 
-    font-weight:
-        600;
+    font-weight: 600;
 
 }
 
 .editor-field input,
 .editor-field select {
 
-    width:
-        100%;
+    width: 100%;
 
-    height:
-        45px;
+    height: 45px;
 
-    padding:
-        0 12px;
+    padding: 0 12px;
 
 }
 
 .editor-buttons {
 
-    display:
-        flex;
+    display: flex;
 
-    gap:
-        10px;
+    gap: 10px;
 
-    margin-top:
-        22px;
+    margin-top: 22px;
 
-    flex-wrap:
-        wrap;
+    flex-wrap: wrap;
 
 }
 
 .save-user-btn {
 
-    background:
-        #6c4df6;
+    background: #6c4df6;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .new-user-btn {
 
-    background:
-        #16a34a;
+    background: #16a34a;
 
-    color:
-        white;
+    color: white;
 
 }
 
 .cancel-user-btn {
 
-    background:
-        #e5e7eb;
+    background: #e5e7eb;
 
-    color:
-        #222;
-
-}
-
-
-/* =========================================================
-   VERIFICATION DETAILS
-========================================================= */
-
-.verification-details {
-
-    background:
-        #f8fafc;
-
-    padding:
-        15px;
-
-    border-radius:
-        10px;
-
-    margin-top:
-        10px;
-
-}
-
-.verification-details div {
-
-    margin-bottom:
-        7px;
-
-}
-
-.verification-details strong {
-
-    display:
-        inline-block;
-
-    min-width:
-        130px;
-
-}
-
-.document-link {
-
-    color:
-        #2563eb;
-
-    text-decoration:
-        none;
-
-    font-weight:
-        bold;
+    color: #222;
 
 }
 
@@ -726,91 +542,163 @@ button:disabled {
 
 .modal {
 
-    display:
-        none;
+    display: none;
 
-    position:
-        fixed;
+    position: fixed;
 
-    inset:
-        0;
+    inset: 0;
 
-    background:
-        rgba(0,0,0,.65);
+    background: rgba(0,0,0,.65);
 
-    z-index:
-        9999;
+    z-index: 9999;
 
-    align-items:
-        center;
+    align-items: center;
 
-    justify-content:
-        center;
+    justify-content: center;
 
-    padding:
-        20px;
+    padding: 20px;
 
 }
 
 .modal.show {
 
-    display:
-        flex;
+    display: flex;
 
 }
 
 .modal-box {
 
-    background:
-        white;
+    background: white;
 
-    width:
-        100%;
+    width: 100%;
 
-    max-width:
-        600px;
+    max-width: 700px;
 
-    max-height:
-        90vh;
+    max-height: 90vh;
 
-    overflow-y:
-        auto;
+    overflow-y: auto;
 
-    border-radius:
-        14px;
+    border-radius: 14px;
 
-    padding:
-        25px;
-
-}
-
-.modal-box h2 {
-
-    margin-bottom:
-        20px;
+    padding: 25px;
 
 }
 
 .modal-close {
 
-    float:
-        right;
+    float: right;
 
-    background:
-        #e5e7eb;
+    background: #e5e7eb;
+
+    color: #222;
 
 }
 
+.verification-details {
+
+    background: #f8fafc;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    margin-top: 10px;
+
+}
+
+.detail-row {
+
+    margin-bottom: 10px;
+
+}
+
+.detail-label {
+
+    font-weight: bold;
+
+    display: inline-block;
+
+    min-width: 130px;
+
+}
+
+
+/* =========================================================
+   PAN PHOTOS
+========================================================= */
+
+.pan-photo-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-top: 15px;
+
+}
+
+.pan-photo-box {
+
+    border: 1px solid #ddd;
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    background: white;
+
+}
+
+.pan-photo-box h4 {
+
+    margin-bottom: 10px;
+
+}
+
+.pan-photo {
+
+    width: 100%;
+
+    max-height: 300px;
+
+    object-fit: contain;
+
+    border-radius: 8px;
+
+    border: 1px solid #ddd;
+
+    background: #f5f5f5;
+
+}
+
+.no-photo {
+
+    padding: 25px 10px;
+
+    text-align: center;
+
+    color: #777;
+
+    background: #f5f6fa;
+
+    border-radius: 8px;
+
+}
+
+
+/* =========================================================
+   REJECTION
+========================================================= */
+
 .reject-reason {
 
-    width:
-        100%;
+    width: 100%;
 
-    min-height:
-        100px;
+    min-height: 110px;
 
-    margin-top:
-        10px;
+    margin-top: 10px;
 
 }
 
@@ -823,16 +711,14 @@ button:disabled {
 
     .stats {
 
-        grid-template-columns:
-            repeat(2,1fr);
+        grid-template-columns: repeat(2,1fr);
 
     }
 
     th,
     td {
 
-        white-space:
-            nowrap;
+        white-space: nowrap;
 
     }
 
@@ -842,8 +728,13 @@ button:disabled {
 
     .editor-grid {
 
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
+
+    }
+
+    .pan-photo-grid {
+
+        grid-template-columns: 1fr;
 
     }
 
@@ -853,15 +744,19 @@ button:disabled {
 
     .stats {
 
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
 
     }
 
     .container {
 
-        padding:
-            15px;
+        padding: 15px;
+
+    }
+
+    .header {
+
+        padding: 15px;
 
     }
 
@@ -870,7 +765,6 @@ button:disabled {
 </style>
 
 </head>
-
 
 <body>
 
@@ -903,7 +797,7 @@ button:disabled {
 
 
 <!-- =====================================================
-     USER STATISTICS
+     STATISTICS
 ===================================================== -->
 
 <div class="stats">
@@ -971,7 +865,7 @@ button:disabled {
 
 
 <!-- =====================================================
-     USER FILTERS
+     FILTERS
 ===================================================== -->
 
 <div class="filters">
@@ -1011,10 +905,6 @@ button:disabled {
             All Status
         </option>
 
-        <!-- IMPORTANT:
-             pending_admin has been changed to pending
-        -->
-
         <option value="pending">
             Pending
         </option>
@@ -1048,33 +938,19 @@ button:disabled {
 
 <tr>
 
-<th>
-    Name
-</th>
+<th>Name</th>
 
-<th>
-    Email
-</th>
+<th>Email</th>
 
-<th>
-    Mobile
-</th>
+<th>Mobile</th>
 
-<th>
-    Type
-</th>
+<th>Type</th>
 
-<th>
-    Status
-</th>
+<th>Status</th>
 
-<th>
-    Registered
-</th>
+<th>Registered</th>
 
-<th>
-    Action
-</th>
+<th>Action</th>
 
 </tr>
 
@@ -1247,7 +1123,6 @@ Cancel
 
 </div>
 
-
 <!-- =====================================================
      BUSINESS VERIFICATIONS
 ===================================================== -->
@@ -1335,6 +1210,43 @@ Refresh
 
 
 <!-- =====================================================
+     VIEW VERIFICATION MODAL
+===================================================== -->
+
+<div
+    id="viewModal"
+    class="modal">
+
+<div class="modal-box">
+
+<button
+    class="modal-close"
+    onclick="closeViewModal()">
+
+✕
+
+</button>
+
+
+<h2>
+    Business Verification
+</h2>
+
+
+<div
+    id="viewVerificationContent">
+
+Loading...
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
      REJECTION MODAL
 ===================================================== -->
 
@@ -1370,8 +1282,7 @@ Refresh
 ></textarea>
 
 
-<div
-    class="editor-buttons">
+<div class="editor-buttons">
 
 <button
     class="reject-btn"
@@ -1398,6 +1309,7 @@ Cancel
 
 
 <script>
+
 /* =========================================================
    GLOBAL VARIABLES
 ========================================================= */
@@ -1420,17 +1332,14 @@ function showMessage(text, type = "success") {
     const box =
         document.getElementById("message");
 
-    box.textContent =
-        text;
+    box.textContent = text;
 
     box.className =
         "message show " + type;
 
-
     setTimeout(() => {
 
-        box.className =
-            "message";
+        box.className = "message";
 
     }, 5000);
 
@@ -1444,17 +1353,22 @@ function showMessage(text, type = "success") {
 function escapeHtml(value) {
 
     return String(value ?? "")
+
         .replace(/&/g, "&amp;")
+
         .replace(/</g, "&lt;")
+
         .replace(/>/g, "&gt;")
+
         .replace(/"/g, "&quot;")
+
         .replace(/'/g, "&#039;");
 
 }
 
 
 /* =========================================================
-   GET STATUS CLASS
+   STATUS CLASS
 ========================================================= */
 
 function getStatusClass(status) {
@@ -1510,9 +1424,7 @@ async function loadAdminData() {
         }
 
 
-        /* ================================================
-           CHECK ADMIN
-        ================================================ */
+        /* CHECK ADMIN */
 
         const {
             data: adminProfile,
@@ -1544,9 +1456,7 @@ async function loadAdminData() {
         }
 
 
-        /* ================================================
-           LOAD USERS
-        ================================================ */
+        /* LOAD USERS */
 
         const {
             data: users,
@@ -1576,21 +1486,16 @@ async function loadAdminData() {
         );
 
 
-        /* ================================================
-           LOAD BUSINESS VERIFICATIONS
-        ================================================ */
-
         await loadBusinessVerifications();
 
-
     }
+
     catch (error) {
 
         console.error(
             "ADMIN ERROR:",
             error
         );
-
 
         showMessage(
             error.message ||
@@ -1614,10 +1519,6 @@ function displayUsers(users) {
             "usersTable"
         );
 
-
-    /* ================================================
-       COUNTERS
-    ================================================ */
 
     const total =
         users.length;
@@ -1673,10 +1574,6 @@ function displayUsers(users) {
         rejected;
 
 
-    /* ================================================
-       EMPTY
-    ================================================ */
-
     if (!users.length) {
 
         tableBody.innerHTML = `
@@ -1685,7 +1582,7 @@ function displayUsers(users) {
 
                 <td
                     colspan="7"
-                    style="text-align:center"
+                    style="text-align:center;padding:25px"
                 >
 
                     No users found
@@ -1704,46 +1601,34 @@ function displayUsers(users) {
     tableBody.innerHTML = "";
 
 
-    /* ================================================
-       ROWS
-    ================================================ */
-
     users.forEach(user => {
 
         const row =
             document.createElement("tr");
 
 
-        const status =
-            user.account_status ||
-            "active";
-
-
         const statusClass =
             getStatusClass(
-                status
+                user.account_status
             );
 
 
-        let approvalButtons =
-            "";
+        let approvalButtons = "";
 
-
-        /*
-           IMPORTANT:
-           pending_admin changed to pending
-        */
 
         if (
             (
                 user.user_type ===
-                    "wholesaler" ||
+                "wholesaler" ||
+
                 user.user_type ===
-                    "b2b"
+                "b2b"
             )
+
             &&
-            status ===
-                "pending"
+
+            user.account_status ===
+            "pending"
         ) {
 
             approvalButtons = `
@@ -1778,13 +1663,11 @@ function displayUsers(users) {
                 )}
             </td>
 
-
             <td>
                 ${escapeHtml(
                     user.email
                 )}
             </td>
-
 
             <td>
                 ${escapeHtml(
@@ -1792,13 +1675,11 @@ function displayUsers(users) {
                 )}
             </td>
 
-
             <td>
                 ${escapeHtml(
                     user.user_type
                 )}
             </td>
-
 
             <td>
 
@@ -1807,13 +1688,12 @@ function displayUsers(users) {
                 >
 
                     ${escapeHtml(
-                        status
+                        user.account_status
                     )}
 
                 </span>
 
             </td>
-
 
             <td>
 
@@ -1828,7 +1708,6 @@ function displayUsers(users) {
                 }
 
             </td>
-
 
             <td>
 
@@ -1861,133 +1740,9 @@ function displayUsers(users) {
         `;
 
 
-        tableBody.appendChild(
-            row
-        );
+        tableBody.appendChild(row);
 
     });
-
-}
-
-
-/* =========================================================
-   APPROVE USER
-========================================================= */
-
-async function approveUser(id) {
-
-    if (
-        !confirm(
-            "Approve this user?"
-        )
-    )
-        return;
-
-
-    try {
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("profiles")
-            .update({
-
-                account_status:
-                    "approved"
-
-            })
-            .eq(
-                "id",
-                id
-            );
-
-
-        if (error)
-            throw error;
-
-
-        showMessage(
-            "User approved successfully.",
-            "success"
-        );
-
-
-        await loadAdminData();
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            error.message ||
-            "Could not approve user.",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   REJECT USER
-========================================================= */
-
-async function rejectUser(id) {
-
-    if (
-        !confirm(
-            "Reject this user?"
-        )
-    )
-        return;
-
-
-    try {
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("profiles")
-            .update({
-
-                account_status:
-                    "rejected"
-
-            })
-            .eq(
-                "id",
-                id
-            );
-
-
-        if (error)
-            throw error;
-
-
-        showMessage(
-            "User rejected.",
-            "success"
-        );
-
-
-        await loadAdminData();
-
-    }
-    catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            error.message ||
-            "Could not reject user.",
-            "error"
-        );
-
-    }
 
 }
 
@@ -2000,25 +1755,20 @@ function editUser(id) {
 
     const user =
         allUsers.find(
-            item =>
-                item.id === id
+            item => item.id === id
         );
 
 
     if (!user) {
 
-        showMessage(
-            "User not found.",
-            "error"
-        );
+        alert("User not found.");
 
         return;
 
     }
 
 
-    editingUserId =
-        id;
+    editingUserId = id;
 
 
     document.getElementById(
@@ -2048,24 +1798,19 @@ function editUser(id) {
     document.getElementById(
         "editUserType"
     ).value =
-        user.user_type ||
-        "user";
+        user.user_type || "user";
 
 
     document.getElementById(
         "editStatus"
     ).value =
-        user.account_status ||
-        "active";
+        user.account_status || "active";
 
 
     document
-        .querySelector(
-            ".user-editor"
-        )
+        .querySelector(".user-editor")
         .scrollIntoView({
-            behavior:
-                "smooth"
+            behavior: "smooth"
         });
 
 }
@@ -2077,9 +1822,7 @@ function editUser(id) {
 
 function newUser() {
 
-    editingUserId =
-        null;
-
+    editingUserId = null;
 
     document.getElementById(
         "editorTitle"
@@ -2089,20 +1832,17 @@ function newUser() {
 
     document.getElementById(
         "editFullName"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "editEmail"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "editMobile"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
@@ -2168,9 +1908,8 @@ async function saveUser() {
 
     if (!fullName) {
 
-        showMessage(
-            "Please enter full name.",
-            "error"
+        alert(
+            "Please enter full name."
         );
 
         return;
@@ -2180,9 +1919,8 @@ async function saveUser() {
 
     if (!email) {
 
-        showMessage(
-            "Please enter email.",
-            "error"
+        alert(
+            "Please enter email."
         );
 
         return;
@@ -2190,81 +1928,60 @@ async function saveUser() {
     }
 
 
-    const button =
-        document.getElementById(
-            "saveUserBtn"
-        );
+    if (editingUserId) {
 
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
 
-    button.disabled =
-        true;
+                full_name:
+                    fullName,
 
+                email:
+                    email,
 
-    try {
+                mobile:
+                    mobile,
 
-        /* ==============================================
-           EDIT
-        ============================================== */
+                user_type:
+                    userType,
 
-        if (editingUserId) {
+                account_status:
+                    status
 
-            const {
-                error
-            } =
-            await supabaseClient
-                .from("profiles")
-                .update({
-
-                    full_name:
-                        fullName,
-
-                    email:
-                        email,
-
-                    mobile:
-                        mobile,
-
-                    user_type:
-                        userType,
-
-                    account_status:
-                        status
-
-                })
-                .eq(
-                    "id",
-                    editingUserId
-                );
-
-
-            if (error)
-                throw error;
-
-
-            showMessage(
-                "User updated successfully.",
-                "success"
+            })
+            .eq(
+                "id",
+                editingUserId
             );
 
 
-            cancelEdit();
+        if (error) {
 
-
-            await loadAdminData();
-
+            alert(
+                "Update error: " +
+                error.message
+            );
 
             return;
 
         }
 
 
-        /* ==============================================
-           NEW USER
-        ============================================== */
+        showMessage(
+            "User updated successfully.",
+            "success"
+        );
+
+    }
+
+    else {
 
         const {
-            data: insertedUser,
-            error: insertError
+            error
         } =
         await supabaseClient
             .from("profiles")
@@ -2285,19 +2002,19 @@ async function saveUser() {
                 account_status:
                     status
 
-            })
-            .select()
-            .single();
+            });
 
 
-        if (insertError)
-            throw insertError;
+        if (error) {
 
+            alert(
+                "Insert error: " +
+                error.message
+            );
 
-        console.log(
-            "New user:",
-            insertedUser
-        );
+            return;
+
+        }
 
 
         showMessage(
@@ -2305,40 +2022,126 @@ async function saveUser() {
             "success"
         );
 
-
-        cancelEdit();
-
-
-        await loadAdminData();
-
     }
-    catch (error) {
-
-        console.error(
-            "SAVE USER ERROR:",
-            error
-        );
 
 
-        showMessage(
-            error.message ||
-            "Could not save user.",
-            "error"
-        );
+    cancelEdit();
 
-    }
-    finally {
-
-        button.disabled =
-            false;
-
-    }
+    await loadAdminData();
 
 }
 
 
 /* =========================================================
-   DELETE USER
+   APPROVE USER
+========================================================= */
+
+async function approveUser(id) {
+
+    if (
+        !confirm(
+            "Approve this user?"
+        )
+    )
+        return;
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .update({
+
+            account_status:
+                "approved"
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if (error) {
+
+        alert(
+            "Approve error: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    showMessage(
+        "User approved successfully.",
+        "success"
+    );
+
+
+    await loadAdminData();
+
+}
+
+
+/* =========================================================
+   REJECT USER
+========================================================= */
+
+async function rejectUser(id) {
+
+    if (
+        !confirm(
+            "Reject this user?"
+        )
+    )
+        return;
+
+
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .update({
+
+            account_status:
+                "rejected"
+
+        })
+        .eq(
+            "id",
+            id
+        );
+
+
+    if (error) {
+
+        alert(
+            "Reject error: " +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    showMessage(
+        "User rejected.",
+        "success"
+    );
+
+
+    await loadAdminData();
+
+}
+
+
+/* =========================================================
+   DELETE USER PROFILE
 ========================================================= */
 
 async function deleteUser(id) {
@@ -2351,46 +2154,40 @@ async function deleteUser(id) {
         return;
 
 
-    try {
-
-        const {
-            error
-        } =
-        await supabaseClient
-            .from("profiles")
-            .delete()
-            .eq(
-                "id",
-                id
-            );
-
-
-        if (error)
-            throw error;
-
-
-        showMessage(
-            "User deleted.",
-            "success"
+    const {
+        error
+    } =
+    await supabaseClient
+        .from("profiles")
+        .delete()
+        .eq(
+            "id",
+            id
         );
 
 
-        await loadAdminData();
+    if (error) {
 
-    }
-    catch (error) {
-
-        console.error(error);
-
-        showMessage(
-            error.message ||
-            "Could not delete user.",
-            "error"
+        alert(
+            "Delete error: " +
+            error.message
         );
 
+        return;
+
     }
+
+
+    showMessage(
+        "User deleted.",
+        "success"
+    );
+
+
+    await loadAdminData();
 
 }
+
 
 /* =========================================================
    LOAD BUSINESS VERIFICATIONS
@@ -2398,19 +2195,20 @@ async function deleteUser(id) {
 
 async function loadBusinessVerifications() {
 
-    const tableBody =
+    const table =
         document.getElementById(
             "verificationTable"
         );
 
 
-    tableBody.innerHTML = `
+    table.innerHTML = `
 
         <tr>
 
-            <td colspan="7">
+            <td colspan="7"
+                style="text-align:center;padding:20px">
 
-                Loading business verifications...
+                Loading...
 
             </td>
 
@@ -2426,15 +2224,17 @@ async function loadBusinessVerifications() {
             error
         } =
         await supabaseClient
+
             .from(
                 "business_verifications"
             )
+
             .select("*")
+
             .order(
                 "created_at",
                 {
-                    ascending:
-                        false
+                    ascending: false
                 }
             );
 
@@ -2451,24 +2251,26 @@ async function loadBusinessVerifications() {
             allVerifications
         );
 
+
     }
+
     catch (error) {
 
         console.error(
-            "VERIFICATION ERROR:",
+            "VERIFICATION LOAD ERROR:",
             error
         );
 
 
-        tableBody.innerHTML = `
+        table.innerHTML = `
 
             <tr>
 
-                <td colspan="7">
+                <td colspan="7"
+                    style="text-align:center">
 
                     ${escapeHtml(
-                        error.message ||
-                        "Could not load verifications."
+                        error.message
                     )}
 
                 </td>
@@ -2490,7 +2292,7 @@ function displayBusinessVerifications(
     verifications
 ) {
 
-    const tableBody =
+    const table =
         document.getElementById(
             "verificationTable"
         );
@@ -2498,13 +2300,13 @@ function displayBusinessVerifications(
 
     if (!verifications.length) {
 
-        tableBody.innerHTML = `
+        table.innerHTML = `
 
             <tr>
 
                 <td
                     colspan="7"
-                    style="text-align:center"
+                    style="text-align:center;padding:25px"
                 >
 
                     No business verifications found.
@@ -2520,73 +2322,58 @@ function displayBusinessVerifications(
     }
 
 
-    tableBody.innerHTML =
-        "";
+    table.innerHTML = "";
 
 
     verifications.forEach(
         verification => {
 
             const row =
-                document.createElement(
-                    "tr"
-                );
+                document.createElement("tr");
 
 
-            const status =
-                verification.status ||
-                "pending";
+            const number =
+                verification.verification_type ===
+                "GST"
+
+                ?
+
+                verification.gst_number
+
+                :
+
+                verification.pan_number;
 
 
             const statusClass =
                 getStatusClass(
-                    status
+                    verification.status
                 );
 
 
-            let identityNumber =
-                "";
+            let actionButtons = `
+
+                <button
+                    class="view-btn"
+                    onclick="viewVerification('${verification.id}')">
+
+                    View
+
+                </button>
+
+            `;
 
 
             if (
-                verification.verification_type
-                ===
-                "GST"
-            ) {
-
-                identityNumber =
-                    verification.gst_number ||
-                    "-";
-
-            }
-            else {
-
-                identityNumber =
-                    verification.pan_number ||
-                    "-";
-
-            }
-
-
-            let actionButtons =
-                "";
-
-
-            if (
-                status ===
+                verification.status ===
                 "pending"
             ) {
 
-                actionButtons = `
+                actionButtons += `
 
                     <button
                         class="approve-btn"
-                        onclick="
-                            approveBusinessVerification(
-                                '${verification.id}'
-                            )
-                        "
-                    >
+                        onclick="verifyBusiness('${verification.id}')">
 
                         Verify
 
@@ -2595,34 +2382,9 @@ function displayBusinessVerifications(
 
                     <button
                         class="reject-btn"
-                        onclick="
-                            openRejectModal(
-                                '${verification.id}'
-                            )
-                        "
-                    >
+                        onclick="openRejectModal('${verification.id}')">
 
                         Reject
-
-                    </button>
-
-                `;
-
-            }
-            else {
-
-                actionButtons = `
-
-                    <button
-                        class="view-btn"
-                        onclick="
-                            viewVerification(
-                                '${verification.id}'
-                            )
-                        "
-                    >
-
-                        View
 
                     </button>
 
@@ -2663,7 +2425,7 @@ function displayBusinessVerifications(
                 <td>
 
                     ${escapeHtml(
-                        identityNumber
+                        number
                     )}
 
                 </td>
@@ -2672,14 +2434,11 @@ function displayBusinessVerifications(
                 <td>
 
                     <span
-                        class="
-                            status
-                            ${statusClass}
-                        "
+                        class="status ${statusClass}"
                     >
 
                         ${escapeHtml(
-                            status
+                            verification.status
                         )}
 
                     </span>
@@ -2691,12 +2450,17 @@ function displayBusinessVerifications(
 
                     ${
                         verification.created_at
+
                         ?
+
                         new Date(
                             verification.created_at
                         ).toLocaleString()
+
                         :
+
                         ""
+
                     }
 
                 </td>
@@ -2705,20 +2469,6 @@ function displayBusinessVerifications(
                 <td>
 
                     <div class="actions">
-
-                        <button
-                            class="view-btn"
-                            onclick="
-                                viewVerification(
-                                    '${verification.id}'
-                                )
-                            "
-                        >
-
-                            View
-
-                        </button>
-
 
                         ${actionButtons}
 
@@ -2729,9 +2479,7 @@ function displayBusinessVerifications(
             `;
 
 
-            tableBody.appendChild(
-                row
-            );
+            table.appendChild(row);
 
         }
     );
@@ -2740,10 +2488,79 @@ function displayBusinessVerifications(
 
 
 /* =========================================================
+   STORAGE IMAGE URL
+========================================================= */
+
+async function getDocumentUrl(
+    value
+) {
+
+    if (!value)
+        return null;
+
+
+    /*
+       If database already contains
+       a complete URL, use it directly.
+    */
+
+    if (
+        value.startsWith("http://") ||
+        value.startsWith("https://")
+    ) {
+
+        return value;
+
+    }
+
+
+    /*
+       Otherwise assume it is a
+       Supabase Storage file path.
+    */
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+
+        .storage
+
+        .from(
+            "business-documents"
+        )
+
+        .createSignedUrl(
+            value,
+            3600
+        );
+
+
+    if (error) {
+
+        console.error(
+            "IMAGE URL ERROR:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return data?.signedUrl || null;
+
+}
+
+
+/* =========================================================
    VIEW VERIFICATION
 ========================================================= */
 
-function viewVerification(id) {
+async function viewVerification(
+    id
+) {
 
     const verification =
         allVerifications.find(
@@ -2754,9 +2571,8 @@ function viewVerification(id) {
 
     if (!verification) {
 
-        showMessage(
-            "Verification not found.",
-            "error"
+        alert(
+            "Verification not found."
         );
 
         return;
@@ -2764,305 +2580,374 @@ function viewVerification(id) {
     }
 
 
-    const type =
-        verification.verification_type ||
-        "";
-
-
-    let html = `
-
-        <div class="verification-details">
-
-            <div>
-                <strong>
-                    Business:
-                </strong>
-
-                ${escapeHtml(
-                    verification.business_name
-                )}
-
-            </div>
-
-
-            <div>
-                <strong>
-                    Address:
-                </strong>
-
-                ${escapeHtml(
-                    verification.business_address
-                )}
-
-            </div>
-
-
-            <div>
-                <strong>
-                    Type:
-                </strong>
-
-                ${escapeHtml(
-                    type
-                )}
-
-            </div>
-
-    `;
-
-
-    if (type === "GST") {
-
-        html += `
-
-            <div>
-
-                <strong>
-                    GST Number:
-                </strong>
-
-                ${escapeHtml(
-                    verification.gst_number
-                )}
-
-            </div>
-
-        `;
-
-
-        if (
-            verification.gst_document_url
-        ) {
-
-            html += `
-
-                <div>
-
-                    <strong>
-                        GST Document:
-                    </strong>
-
-                    <a
-                        class="document-link"
-                        href="${escapeHtml(
-                            verification.gst_document_url
-                        )}"
-                        target="_blank"
-                    >
-
-                        Open Document
-
-                    </a>
-
-                </div>
-
-            `;
-
-        }
-
-    }
-    else {
-
-        html += `
-
-            <div>
-
-                <strong>
-                    PAN Number:
-                </strong>
-
-                ${escapeHtml(
-                    verification.pan_number
-                )}
-
-            </div>
-
-        `;
-
-
-        if (
-            verification.pan_front_url
-        ) {
-
-            html += `
-
-                <div>
-
-                    <strong>
-                        PAN Front:
-                    </strong>
-
-                    <a
-                        class="document-link"
-                        href="${escapeHtml(
-                            verification.pan_front_url
-                        )}"
-                        target="_blank"
-                    >
-
-                        Open Front Image
-
-                    </a>
-
-                </div>
-
-            `;
-
-        }
-
-
-        if (
-            verification.pan_back_url
-        ) {
-
-            html += `
-
-                <div>
-
-                    <strong>
-                        PAN Back:
-                    </strong>
-
-                    <a
-                        class="document-link"
-                        href="${escapeHtml(
-                            verification.pan_back_url
-                        )}"
-                        target="_blank"
-                    >
-
-                        Open Back Image
-
-                    </a>
-
-                </div>
-
-            `;
-
-        }
-
-    }
-
-
-    html += `
-
-            <div>
-
-                <strong>
-                    Status:
-                </strong>
-
-                ${escapeHtml(
-                    verification.status
-                )}
-
-            </div>
-
-    `;
-
-
-    if (
-        verification.rejection_reason
-    ) {
-
-        html += `
-
-            <div>
-
-                <strong>
-                    Rejection Reason:
-                </strong>
-
-                ${escapeHtml(
-                    verification.rejection_reason
-                )}
-
-            </div>
-
-        `;
-
-    }
-
-
-    html += `
-
-        </div>
-
-    `;
-
-
-    showVerificationModal(
-        html
-    );
-
-}
-
-
-/* =========================================================
-   SIMPLE VERIFICATION VIEW MODAL
-========================================================= */
-
-function showVerificationModal(
-    html
-) {
-
     const modal =
-        document.createElement(
-            "div"
+        document.getElementById(
+            "viewModal"
         );
 
 
-    modal.className =
-        "modal show";
+    const content =
+        document.getElementById(
+            "viewVerificationContent"
+        );
 
 
-    modal.innerHTML = `
-
-        <div class="modal-box">
-
-            <button
-                class="modal-close"
-                onclick="
-                    this.closest('.modal')
-                    .remove()
-                "
-            >
-
-                ✕
-
-            </button>
+    modal.classList.add("show");
 
 
-            <h2>
-                Business Verification
-            </h2>
+    content.innerHTML = `
 
-
-            ${html}
-
-        </div>
+        <p>
+            Loading verification...
+        </p>
 
     `;
 
 
-    document.body.appendChild(
-        modal
-    );
+    try {
+
+        let frontImage = null;
+
+        let backImage = null;
+
+
+        /*
+           Only PAN needs PAN images.
+        */
+
+        if (
+            verification.verification_type ===
+            "PAN"
+        ) {
+
+            frontImage =
+                await getDocumentUrl(
+                    verification.pan_front_url
+                );
+
+
+            backImage =
+                await getDocumentUrl(
+                    verification.pan_back_url
+                );
+
+        }
+
+
+        let documentHTML = "";
+
+
+        if (
+            verification.verification_type ===
+            "PAN"
+        ) {
+
+            documentHTML = `
+
+                <hr
+                    style="
+                        margin:20px 0;
+                        border:0;
+                        border-top:1px solid #ddd;
+                    "
+                >
+
+
+                <h3>
+                    PAN Card Photos
+                </h3>
+
+
+                <div class="pan-photo-grid">
+
+
+                    <div class="pan-photo-box">
+
+                        <h4>
+                            PAN Card Front Side
+                        </h4>
+
+
+                        ${
+                            frontImage
+
+                            ?
+
+                            `
+
+                            <img
+                                class="pan-photo"
+                                src="${escapeHtml(frontImage)}"
+                                alt="PAN Card Front"
+                            >
+
+                            `
+
+                            :
+
+                            `
+
+                            <div class="no-photo">
+
+                                Front photo not available.
+
+                            </div>
+
+                            `
+
+                        }
+
+                    </div>
+
+
+
+                    <div class="pan-photo-box">
+
+                        <h4>
+                            PAN Card Back Side
+                        </h4>
+
+
+                        ${
+                            backImage
+
+                            ?
+
+                            `
+
+                            <img
+                                class="pan-photo"
+                                src="${escapeHtml(backImage)}"
+                                alt="PAN Card Back"
+                            >
+
+                            `
+
+                            :
+
+                            `
+
+                            <div class="no-photo">
+
+                                Back photo not available.
+
+                            </div>
+
+                            `
+
+                        }
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+        }
+
+
+        content.innerHTML = `
+
+            <div class="verification-details">
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Business:
+                    </span>
+
+                    ${escapeHtml(
+                        verification.business_name
+                    )}
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Address:
+                    </span>
+
+                    ${escapeHtml(
+                        verification.business_address
+                    )}
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Type:
+                    </span>
+
+                    ${escapeHtml(
+                        verification.verification_type
+                    )}
+
+                </div>
+
+
+                ${
+                    verification.verification_type ===
+                    "GST"
+
+                    ?
+
+                    `
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            GST Number:
+                        </span>
+
+                        ${escapeHtml(
+                            verification.gst_number
+                        )}
+
+                    </div>
+
+                    `
+
+                    :
+
+                    `
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            PAN Number:
+                        </span>
+
+                        ${escapeHtml(
+                            verification.pan_number
+                        )}
+
+                    </div>
+
+                    `
+                }
+
+
+                <div class="detail-row">
+
+                    <span class="detail-label">
+                        Status:
+                    </span>
+
+                    <span
+                        class="status ${
+                            getStatusClass(
+                                verification.status
+                            )
+                        }"
+                    >
+
+                        ${escapeHtml(
+                            verification.status
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                ${
+                    verification.rejection_reason
+
+                    ?
+
+                    `
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Rejection Reason:
+                        </span>
+
+                        ${escapeHtml(
+                            verification.rejection_reason
+                        )}
+
+                    </div>
+
+                    `
+
+                    :
+
+                    ""
+
+                }
+
+
+                ${
+                    documentHTML
+                }
+
+
+            </div>
+
+        `;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "VIEW ERROR:",
+            error
+        );
+
+
+        content.innerHTML = `
+
+            <div class="message show error">
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+
+        `;
+
+    }
 
 }
 
 
 /* =========================================================
-   APPROVE BUSINESS VERIFICATION
+   CLOSE VIEW MODAL
 ========================================================= */
 
-async function approveBusinessVerification(
-    verificationId
+function closeViewModal() {
+
+    document
+        .getElementById(
+            "viewModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+}
+
+
+/* =========================================================
+   VERIFY BUSINESS
+========================================================= */
+
+async function verifyBusiness(
+    id
 ) {
 
     if (
         !confirm(
-            "Verify this business?"
+            "Are you sure you want to verify this business?"
         )
     )
         return;
@@ -3070,39 +2955,20 @@ async function approveBusinessVerification(
 
     try {
 
-        /* ==============================================
-           FIND VERIFICATION
-        ============================================== */
-
-        const verification =
-            allVerifications.find(
-                item =>
-                    item.id ===
-                    verificationId
-            );
-
-
-        if (!verification) {
-
-            throw new Error(
-                "Verification not found."
-            );
-
-        }
-
-
-        /* ==============================================
-           UPDATE BUSINESS VERIFICATION
-        ============================================== */
+        /*
+           1. Update business verification
+        */
 
         const {
-            error:
-                verificationError
+            data: verification,
+            error
         } =
         await supabaseClient
+
             .from(
                 "business_verifications"
             )
+
             .update({
 
                 status:
@@ -3112,48 +2978,72 @@ async function approveBusinessVerification(
                     null,
 
                 updated_at:
-                    new Date()
-                        .toISOString()
+                    new Date().toISOString()
 
             })
+
             .eq(
                 "id",
-                verificationId
-            );
+                id
+            )
+
+            .select()
+            
+            .single();
 
 
-        if (verificationError)
-            throw verificationError;
+        if (error)
+            throw error;
 
 
-        /* ==============================================
-           UPDATE USER ACCOUNT
-        ============================================== */
+        /*
+           2. Also update profile status
+           if the verification belongs
+           to the user.
+        */
 
-        const {
-            error:
-                profileError
-        } =
-        await supabaseClient
-            .from("profiles")
-            .update({
+        if (
+            verification &&
+            verification.user_id
+        ) {
 
-                account_status:
-                    "approved"
+            const {
+                error:
+                    profileError
+            } =
+            await supabaseClient
 
-            })
-            .eq(
-                "id",
-                verification.user_id
-            );
+                .from(
+                    "profiles"
+                )
+
+                .update({
+
+                    account_status:
+                        "approved"
+
+                })
+
+                .eq(
+                    "id",
+                    verification.user_id
+                );
 
 
-        if (profileError)
-            throw profileError;
+            if (profileError) {
+
+                console.error(
+                    "PROFILE UPDATE ERROR:",
+                    profileError
+                );
+
+            }
+
+        }
 
 
         showMessage(
-            "Business verified. User account approved.",
+            "Business verification approved successfully.",
             "success"
         );
 
@@ -3161,6 +3051,7 @@ async function approveBusinessVerification(
         await loadAdminData();
 
     }
+
     catch (error) {
 
         console.error(
@@ -3185,24 +3076,25 @@ async function approveBusinessVerification(
 ========================================================= */
 
 function openRejectModal(
-    verificationId
+    id
 ) {
 
     rejectingVerificationId =
-        verificationId;
+        id;
 
 
     document.getElementById(
         "rejectReason"
-    ).value =
-        "";
+    ).value = "";
 
 
-    document.getElementById(
-        "rejectModal"
-    ).classList.add(
-        "show"
-    );
+    document
+        .getElementById(
+            "rejectModal"
+        )
+        .classList.add(
+            "show"
+        );
 
 }
 
@@ -3217,17 +3109,19 @@ function closeRejectModal() {
         null;
 
 
-    document.getElementById(
-        "rejectModal"
-    ).classList.remove(
-        "show"
-    );
+    document
+        .getElementById(
+            "rejectModal"
+        )
+        .classList.remove(
+            "show"
+        );
 
 }
 
 
 /* =========================================================
-   CONFIRM REJECTION
+   CONFIRM REJECT VERIFICATION
 ========================================================= */
 
 async function confirmRejectVerification() {
@@ -3236,15 +3130,22 @@ async function confirmRejectVerification() {
         !rejectingVerificationId
     ) {
 
+        alert(
+            "Verification not selected."
+        );
+
         return;
 
     }
 
 
     const reason =
-        document.getElementById(
-            "rejectReason"
-        ).value.trim();
+        document
+            .getElementById(
+                "rejectReason"
+            )
+            .value
+            .trim();
 
 
     if (!reason) {
@@ -3260,32 +3161,16 @@ async function confirmRejectVerification() {
 
     try {
 
-        const verification =
-            allVerifications.find(
-                item =>
-                    item.id ===
-                    rejectingVerificationId
-            );
-
-
-        if (!verification)
-            throw new Error(
-                "Verification not found."
-            );
-
-
-        /* ==============================================
-           REJECT BUSINESS
-        ============================================== */
-
         const {
-            error:
-                verificationError
+            data: verification,
+            error
         } =
         await supabaseClient
+
             .from(
                 "business_verifications"
             )
+
             .update({
 
                 status:
@@ -3295,44 +3180,66 @@ async function confirmRejectVerification() {
                     reason,
 
                 updated_at:
-                    new Date()
-                        .toISOString()
+                    new Date().toISOString()
 
             })
+
             .eq(
                 "id",
                 rejectingVerificationId
-            );
+            )
+
+            .select()
+
+            .single();
 
 
-        if (verificationError)
-            throw verificationError;
+        if (error)
+            throw error;
 
 
-        /* ==============================================
-           REJECT USER ACCOUNT
-        ============================================== */
+        /*
+           Update user's profile too.
+        */
 
-        const {
-            error:
-                profileError
-        } =
-        await supabaseClient
-            .from("profiles")
-            .update({
+        if (
+            verification &&
+            verification.user_id
+        ) {
 
-                account_status:
-                    "rejected"
+            const {
+                error:
+                    profileError
+            } =
+            await supabaseClient
 
-            })
-            .eq(
-                "id",
-                verification.user_id
-            );
+                .from(
+                    "profiles"
+                )
+
+                .update({
+
+                    account_status:
+                        "rejected"
+
+                })
+
+                .eq(
+                    "id",
+                    verification.user_id
+                );
 
 
-        if (profileError)
-            throw profileError;
+            if (profileError) {
+
+                console.error(
+                    "PROFILE REJECT ERROR:",
+                    profileError
+                );
+
+            }
+
+        }
 
 
         closeRejectModal();
@@ -3347,6 +3254,7 @@ async function confirmRejectVerification() {
         await loadAdminData();
 
     }
+
     catch (error) {
 
         console.error(
@@ -3373,77 +3281,63 @@ async function confirmRejectVerification() {
 function applyFilters() {
 
     const search =
-        document.getElementById(
-            "searchInput"
-        )
-        .value
-        .toLowerCase()
-        .trim();
+        document
+            .getElementById(
+                "searchInput"
+            )
+            .value
+            .toLowerCase()
+            .trim();
 
 
     const type =
-        document.getElementById(
-            "typeFilter"
-        ).value;
+        document
+            .getElementById(
+                "typeFilter"
+            )
+            .value;
 
 
     const status =
-        document.getElementById(
-            "statusFilter"
-        ).value;
+        document
+            .getElementById(
+                "statusFilter"
+            )
+            .value;
 
 
     const filtered =
         allUsers.filter(
             user => {
 
-                const name =
-                    String(
-                        user.full_name ||
-                        ""
-                    )
-                    .toLowerCase();
+                const text = (
 
+                    (user.full_name || "") +
 
-                const email =
-                    String(
-                        user.email ||
-                        ""
-                    )
-                    .toLowerCase();
+                    " " +
 
+                    (user.email || "") +
 
-                const mobile =
-                    String(
-                        user.mobile ||
-                        ""
-                    )
-                    .toLowerCase();
+                    " " +
+
+                    (user.mobile || "")
+
+                ).toLowerCase();
 
 
                 const searchMatch =
                     !search ||
-                    name.includes(
-                        search
-                    ) ||
-                    email.includes(
-                        search
-                    ) ||
-                    mobile.includes(
-                        search
-                    );
+                    text.includes(search);
 
 
                 const typeMatch =
                     type === "all" ||
-                    user.user_type ===
-                    type;
+                    user.user_type === type;
 
 
                 const statusMatch =
                     status === "all" ||
-                    user.account_status ===
-                    status;
+                    user.account_status === status;
 
 
                 return (
@@ -3464,8 +3358,10 @@ function applyFilters() {
 
 
 /* =========================================================
-   EVENTS
-========================================================= */
+   FILTER EVENTS
+=========================================
+*/
+
 
 document
     .getElementById(
@@ -3498,7 +3394,53 @@ document
 
 
 /* =========================================================
-   START
+   CLOSE MODALS WHEN CLICKING OUTSIDE
+========================================================= */
+
+document
+    .getElementById(
+        "viewModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                this
+            ) {
+
+                closeViewModal();
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "rejectModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                this
+            ) {
+
+                closeRejectModal();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   START ADMIN PAGE
 ========================================================= */
 
 document.addEventListener(
@@ -3510,11 +3452,9 @@ document.addEventListener(
     }
 );
 
-
 </script>
 
 </body>
 
 </html>
-
 
