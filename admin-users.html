@@ -1,16 +1,31 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>JS UNDEFINED - Admin Users</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>JS UNDEFINED - Admin Panel</title>
+
+
+<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
 
+
 <style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -19,350 +34,806 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f6fa;
-    color: #222;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    background:
+        #f5f6fa;
+
+    color:
+        #222;
+
 }
 
-.header {
-    background: #111827;
-    color: white;
-    padding: 18px 25px;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+
+    background:
+        #111827;
+
+    color:
+        white;
+
+    padding:
+        18px 25px;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
 }
 
 .logo {
-    font-size: 22px;
-    font-weight: bold;
+
+    font-size:
+        22px;
+
+    font-weight:
+        bold;
+
 }
 
 .admin-title {
-    font-size: 14px;
+
+    font-size:
+        14px;
+
 }
 
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
 .container {
-    max-width: 1400px;
-    margin: auto;
-    padding: 25px;
+
+    max-width:
+        1400px;
+
+    margin:
+        auto;
+
+    padding:
+        25px;
+
 }
 
 h1 {
-    margin-bottom: 20px;
+
+    margin-bottom:
+        20px;
+
 }
 
-/* =========================
+h2 {
+
+    margin-bottom:
+        20px;
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+
+    display:
+        none;
+
+    padding:
+        13px 15px;
+
+    margin-bottom:
+        20px;
+
+    border-radius:
+        10px;
+
+    font-size:
+        14px;
+
+}
+
+.message.show {
+
+    display:
+        block;
+
+}
+
+.message.success {
+
+    background:
+        #dcfce7;
+
+    color:
+        #166534;
+
+}
+
+.message.error {
+
+    background:
+        #fee2e2;
+
+    color:
+        #991b1b;
+
+}
+
+
+/* =========================================================
    STATISTICS
-========================= */
+========================================================= */
 
 .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-bottom: 25px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap:
+        15px;
+
+    margin-bottom:
+        25px;
+
 }
 
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
+
+    background:
+        white;
+
+    padding:
+        20px;
+
+    border-radius:
+        12px;
 
     box-shadow:
         0 3px 12px rgba(0,0,0,.08);
+
 }
 
 .card-title {
-    color: #666;
-    font-size: 14px;
+
+    color:
+        #666;
+
+    font-size:
+        14px;
+
 }
 
 .card-number {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 8px;
+
+    font-size:
+        28px;
+
+    font-weight:
+        bold;
+
+    margin-top:
+        8px;
+
 }
 
-/* =========================
+
+/* =========================================================
    FILTERS
-========================= */
+========================================================= */
 
 .filters {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
 
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    background:
+        white;
+
+    padding:
+        20px;
+
+    border-radius:
+        12px;
+
+    margin-bottom:
+        20px;
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+    flex-wrap:
+        wrap;
+
 }
 
 input,
-select {
-    padding: 12px;
+select,
+textarea {
 
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding:
+        12px;
 
-    font-size: 14px;
+    border:
+        1px solid #ddd;
+
+    border-radius:
+        8px;
+
+    font-size:
+        14px;
+
 }
 
 .search {
-    flex: 1;
-    min-width: 220px;
+
+    flex:
+        1;
+
+    min-width:
+        220px;
+
 }
 
-/* =========================
+
+/* =========================================================
    TABLE
-========================= */
+========================================================= */
 
 .table-container {
-    background: white;
 
-    border-radius: 12px;
+    background:
+        white;
 
-    overflow-x: auto;
+    border-radius:
+        12px;
+
+    overflow-x:
+        auto;
 
     box-shadow:
         0 3px 12px rgba(0,0,0,.08);
+
+    margin-bottom:
+        25px;
+
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+
+    width:
+        100%;
+
+    border-collapse:
+        collapse;
+
 }
 
 th,
 td {
-    padding: 15px;
 
-    text-align: left;
+    padding:
+        14px;
 
-    border-bottom: 1px solid #eee;
+    text-align:
+        left;
+
+    border-bottom:
+        1px solid #eee;
+
 }
 
 th {
-    background: #f8f9fb;
-    font-size: 13px;
+
+    background:
+        #f8f9fb;
+
+    font-size:
+        13px;
+
 }
 
 td {
-    font-size: 14px;
+
+    font-size:
+        14px;
+
 }
 
-/* =========================
+
+/* =========================================================
    STATUS
-========================= */
+========================================================= */
 
 .status {
-    display: inline-block;
 
-    padding: 6px 10px;
+    display:
+        inline-block;
 
-    border-radius: 20px;
+    padding:
+        6px 10px;
 
-    font-size: 12px;
+    border-radius:
+        20px;
 
-    font-weight: bold;
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
 }
 
 .pending {
-    background: #fff3cd;
-    color: #856404;
+
+    background:
+        #fff3cd;
+
+    color:
+        #856404;
+
 }
 
 .approved {
-    background: #d1fae5;
-    color: #065f46;
+
+    background:
+        #d1fae5;
+
+    color:
+        #065f46;
+
 }
 
 .rejected {
-    background: #fee2e2;
-    color: #991b1b;
+
+    background:
+        #fee2e2;
+
+    color:
+        #991b1b;
+
 }
 
-/* =========================
+
+/* =========================================================
    BUTTONS
-========================= */
+========================================================= */
 
 button {
-    border: none;
 
-    padding: 8px 12px;
+    border:
+        none;
 
-    border-radius: 7px;
+    padding:
+        8px 12px;
 
-    cursor: pointer;
+    border-radius:
+        7px;
 
-    font-weight: 600;
+    cursor:
+        pointer;
+
+    font-weight:
+        600;
+
 }
 
 button:disabled {
-    opacity: .5;
-    cursor: not-allowed;
+
+    opacity:
+        .5;
+
+    cursor:
+        not-allowed;
+
 }
 
 .actions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
+
+    display:
+        flex;
+
+    gap:
+        6px;
+
+    flex-wrap:
+        wrap;
+
 }
 
 .approve-btn {
-    background: #16a34a;
-    color: white;
+
+    background:
+        #16a34a;
+
+    color:
+        white;
+
 }
 
 .reject-btn {
-    background: #dc2626;
-    color: white;
+
+    background:
+        #dc2626;
+
+    color:
+        white;
+
 }
 
 .edit-btn {
-    background: #6c4df6;
-    color: white;
+
+    background:
+        #6c4df6;
+
+    color:
+        white;
+
 }
 
 .delete-btn {
-    background: #ef4444;
-    color: white;
+
+    background:
+        #ef4444;
+
+    color:
+        white;
+
 }
 
-/* =========================
-   MESSAGE
-========================= */
+.view-btn {
 
-.message {
-    display: none;
+    background:
+        #2563eb;
 
-    padding: 12px 15px;
+    color:
+        white;
 
-    margin-bottom: 20px;
-
-    border-radius: 10px;
-
-    font-size: 14px;
 }
 
-.message.show {
-    display: block;
-}
 
-.message.success {
-    background: #dcfce7;
-    color: #166534;
-}
+/* =========================================================
+   SECTION
+========================================================= */
 
-.message.error {
-    background: #fee2e2;
-    color: #991b1b;
-}
+.section {
 
-/* =========================
-   ADD / EDIT SECTION
-========================= */
+    background:
+        white;
 
-.user-editor {
-    background: white;
+    padding:
+        20px;
 
-    margin-top: 25px;
+    border-radius:
+        12px;
 
-    padding: 25px;
-
-    border-radius: 12px;
+    margin-top:
+        25px;
 
     box-shadow:
         0 3px 12px rgba(0,0,0,.08);
+
 }
 
-.user-editor h2 {
-    margin-bottom: 20px;
+.section-title {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    margin-bottom:
+        20px;
+
+}
+
+.section-title h2 {
+
+    margin:
+        0;
+
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.user-editor {
+
+    background:
+        white;
+
+    margin-top:
+        25px;
+
+    padding:
+        25px;
+
+    border-radius:
+        12px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+
 }
 
 .editor-grid {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2,1fr);
 
-    gap: 18px;
+    gap:
+        18px;
+
 }
 
 .editor-field label {
-    display: block;
 
-    margin-bottom: 7px;
+    display:
+        block;
 
-    font-size: 13px;
+    margin-bottom:
+        7px;
 
-    font-weight: 600;
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
 }
 
 .editor-field input,
 .editor-field select {
-    width: 100%;
 
-    height: 45px;
+    width:
+        100%;
 
-    padding: 0 12px;
+    height:
+        45px;
 
-    border: 1px solid #ddd;
+    padding:
+        0 12px;
 
-    border-radius: 8px;
-
-    font-size: 14px;
-
-    outline: none;
-}
-
-.editor-field input:focus,
-.editor-field select:focus {
-    border-color: #6c4df6;
-
-    box-shadow:
-        0 0 0 3px rgba(108,77,246,.10);
 }
 
 .editor-buttons {
-    display: flex;
 
-    gap: 10px;
+    display:
+        flex;
 
-    margin-top: 22px;
+    gap:
+        10px;
 
-    flex-wrap: wrap;
+    margin-top:
+        22px;
+
+    flex-wrap:
+        wrap;
+
 }
 
 .save-user-btn {
-    background: #6c4df6;
-    color: white;
+
+    background:
+        #6c4df6;
+
+    color:
+        white;
+
 }
 
 .new-user-btn {
-    background: #16a34a;
-    color: white;
+
+    background:
+        #16a34a;
+
+    color:
+        white;
+
 }
 
 .cancel-user-btn {
-    background: #e5e7eb;
-    color: #222;
+
+    background:
+        #e5e7eb;
+
+    color:
+        #222;
+
 }
 
-/* =========================
+
+/* =========================================================
+   VERIFICATION DETAILS
+========================================================= */
+
+.verification-details {
+
+    background:
+        #f8fafc;
+
+    padding:
+        15px;
+
+    border-radius:
+        10px;
+
+    margin-top:
+        10px;
+
+}
+
+.verification-details div {
+
+    margin-bottom:
+        7px;
+
+}
+
+.verification-details strong {
+
+    display:
+        inline-block;
+
+    min-width:
+        130px;
+
+}
+
+.document-link {
+
+    color:
+        #2563eb;
+
+    text-decoration:
+        none;
+
+    font-weight:
+        bold;
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+
+    display:
+        none;
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    background:
+        rgba(0,0,0,.65);
+
+    z-index:
+        9999;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        20px;
+
+}
+
+.modal.show {
+
+    display:
+        flex;
+
+}
+
+.modal-box {
+
+    background:
+        white;
+
+    width:
+        100%;
+
+    max-width:
+        600px;
+
+    max-height:
+        90vh;
+
+    overflow-y:
+        auto;
+
+    border-radius:
+        14px;
+
+    padding:
+        25px;
+
+}
+
+.modal-box h2 {
+
+    margin-bottom:
+        20px;
+
+}
+
+.modal-close {
+
+    float:
+        right;
+
+    background:
+        #e5e7eb;
+
+}
+
+.reject-reason {
+
+    width:
+        100%;
+
+    min-height:
+        100px;
+
+    margin-top:
+        10px;
+
+}
+
+
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media(max-width:800px) {
 
     .stats {
-        grid-template-columns: repeat(2,1fr);
+
+        grid-template-columns:
+            repeat(2,1fr);
+
     }
 
     th,
     td {
-        white-space: nowrap;
+
+        white-space:
+            nowrap;
+
     }
 
 }
@@ -370,7 +841,10 @@ button:disabled {
 @media(max-width:700px) {
 
     .editor-grid {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+
     }
 
 }
@@ -378,11 +852,17 @@ button:disabled {
 @media(max-width:500px) {
 
     .stats {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+
     }
 
     .container {
-        padding: 15px;
+
+        padding:
+            15px;
+
     }
 
 }
@@ -391,7 +871,9 @@ button:disabled {
 
 </head>
 
+
 <body>
+
 
 <header class="header">
 
@@ -408,14 +890,21 @@ button:disabled {
 
 <main class="container">
 
-<h1>User Management</h1>
 
-<div id="message" class="message"></div>
+<h1>
+    User Management
+</h1>
 
 
-<!-- =========================
-     STATISTICS
-========================= -->
+<div
+    id="message"
+    class="message">
+</div>
+
+
+<!-- =====================================================
+     USER STATISTICS
+===================================================== -->
 
 <div class="stats">
 
@@ -426,8 +915,8 @@ button:disabled {
         </div>
 
         <div
-            class="card-number"
-            id="totalUsers">
+            id="totalUsers"
+            class="card-number">
             0
         </div>
 
@@ -441,8 +930,8 @@ button:disabled {
         </div>
 
         <div
-            class="card-number"
-            id="pendingUsers">
+            id="pendingUsers"
+            class="card-number">
             0
         </div>
 
@@ -456,8 +945,8 @@ button:disabled {
         </div>
 
         <div
-            class="card-number"
-            id="approvedUsers">
+            id="approvedUsers"
+            class="card-number">
             0
         </div>
 
@@ -471,8 +960,8 @@ button:disabled {
         </div>
 
         <div
-            class="card-number"
-            id="rejectedUsers">
+            id="rejectedUsers"
+            class="card-number">
             0
         </div>
 
@@ -481,16 +970,16 @@ button:disabled {
 </div>
 
 
-<!-- =========================
-     FILTERS
-========================= -->
+<!-- =====================================================
+     USER FILTERS
+===================================================== -->
 
 <div class="filters">
 
     <input
-        type="text"
         id="searchInput"
         class="search"
+        type="text"
         placeholder="Search name, email or mobile..."
     >
 
@@ -522,7 +1011,11 @@ button:disabled {
             All Status
         </option>
 
-        <option value="pending_admin">
+        <!-- IMPORTANT:
+             pending_admin has been changed to pending
+        -->
+
+        <option value="pending">
             Pending
         </option>
 
@@ -543,9 +1036,9 @@ button:disabled {
 </div>
 
 
-<!-- =========================
-     USER TABLE
-========================= -->
+<!-- =====================================================
+     USERS TABLE
+===================================================== -->
 
 <div class="table-container">
 
@@ -555,24 +1048,45 @@ button:disabled {
 
 <tr>
 
-<th>Name</th>
-<th>Email</th>
-<th>Mobile</th>
-<th>Type</th>
-<th>Status</th>
-<th>Registered</th>
-<th>Action</th>
+<th>
+    Name
+</th>
+
+<th>
+    Email
+</th>
+
+<th>
+    Mobile
+</th>
+
+<th>
+    Type
+</th>
+
+<th>
+    Status
+</th>
+
+<th>
+    Registered
+</th>
+
+<th>
+    Action
+</th>
 
 </tr>
 
 </thead>
+
 
 <tbody id="usersTable">
 
 <tr>
 
 <td colspan="7">
-Loading users...
+    Loading users...
 </td>
 
 </tr>
@@ -584,9 +1098,9 @@ Loading users...
 </div>
 
 
-<!-- =========================
-     ADD / EDIT USER
-========================= -->
+<!-- =====================================================
+     USER EDITOR
+===================================================== -->
 
 <div class="user-editor">
 
@@ -597,152 +1111,335 @@ Loading users...
 
 <div class="editor-grid">
 
-    <div class="editor-field">
 
-        <label>
-            Full Name
-        </label>
+<div class="editor-field">
 
-        <input
-            type="text"
-            id="editFullName"
-            placeholder="Enter full name"
-        >
+<label>
+    Full Name
+</label>
 
-    </div>
+<input
+    id="editFullName"
+    type="text"
+    placeholder="Enter full name"
+>
 
-
-    <div class="editor-field">
-
-        <label>
-            Email
-        </label>
-
-        <input
-            type="email"
-            id="editEmail"
-            placeholder="Enter email"
-        >
-
-    </div>
+</div>
 
 
-    <div class="editor-field">
+<div class="editor-field">
 
-        <label>
-            Mobile
-        </label>
+<label>
+    Email
+</label>
 
-        <input
-            type="text"
-            id="editMobile"
-            placeholder="Enter mobile"
-        >
+<input
+    id="editEmail"
+    type="email"
+    placeholder="Enter email"
+>
 
-    </div>
-
-
-    <div class="editor-field">
-
-        <label>
-            User Type
-        </label>
-
-        <select id="editUserType">
-
-            <option value="user">
-                User
-            </option>
-
-            <option value="wholesaler">
-                Wholesaler
-            </option>
-
-            <option value="b2b">
-                B2B
-            </option>
-
-        </select>
-
-    </div>
+</div>
 
 
-    <div class="editor-field">
+<div class="editor-field">
 
-        <label>
-            Account Status
-        </label>
+<label>
+    Mobile
+</label>
 
-        <select id="editStatus">
+<input
+    id="editMobile"
+    type="text"
+    placeholder="Enter mobile"
+>
 
-            <option value="active">
-                Active
-            </option>
+</div>
 
-            <option value="pending_admin">
-                Pending
-            </option>
 
-            <option value="approved">
-                Approved
-            </option>
+<div class="editor-field">
 
-            <option value="rejected">
-                Rejected
-            </option>
+<label>
+    User Type
+</label>
 
-        </select>
+<select id="editUserType">
 
-    </div>
+<option value="user">
+    User
+</option>
+
+<option value="wholesaler">
+    Wholesaler
+</option>
+
+<option value="b2b">
+    B2B
+</option>
+
+</select>
+
+</div>
+
+
+<div class="editor-field">
+
+<label>
+    Account Status
+</label>
+
+<select id="editStatus">
+
+<option value="active">
+    Active
+</option>
+
+<option value="pending">
+    Pending
+</option>
+
+<option value="approved">
+    Approved
+</option>
+
+<option value="rejected">
+    Rejected
+</option>
+
+</select>
+
+</div>
+
 
 </div>
 
 
 <div class="editor-buttons">
 
-    <button
-        class="save-user-btn"
-        id="saveUserBtn"
-        onclick="saveUser()">
+<button
+    id="saveUserBtn"
+    class="save-user-btn"
+    onclick="saveUser()">
 
-        💾 Save User
+💾 Save User
 
-    </button>
+</button>
 
 
-    <button
-        class="new-user-btn"
-        onclick="newUser()">
+<button
+    class="new-user-btn"
+    onclick="newUser()">
 
-        ➕ New User
+➕ New User
 
-    </button>
+</button>
+
+
+<button
+    class="cancel-user-btn"
+    onclick="cancelEdit()">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     BUSINESS VERIFICATIONS
+===================================================== -->
+
+<div class="section">
+
+<div class="section-title">
+
+<h2>
+    Business Verifications
+</h2>
+
+<button
+    class="view-btn"
+    onclick="loadBusinessVerifications()">
+
+Refresh
+
+</button>
+
+</div>
+
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+    Business
+</th>
+
+<th>
+    User
+</th>
+
+<th>
+    Type
+</th>
+
+<th>
+    GST / PAN
+</th>
+
+<th>
+    Status
+</th>
+
+<th>
+    Submitted
+</th>
+
+<th>
+    Action
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="verificationTable">
+
+<tr>
+
+<td colspan="7">
+    Loading business verifications...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+</main>
+
+
+<!-- =====================================================
+     REJECTION MODAL
+===================================================== -->
+
+<div
+    id="rejectModal"
+    class="modal">
+
+<div class="modal-box">
+
+<button
+    class="modal-close"
+    onclick="closeRejectModal()">
+
+✕
+
+</button>
+
+
+<h2>
+    Reject Verification
+</h2>
+
+
+<p>
+    Please enter the rejection reason.
+</p>
+
+
+<textarea
+    id="rejectReason"
+    class="reject-reason"
+    placeholder="Example: PAN document is not clear."
+></textarea>
+
+
+<div
+    class="editor-buttons">
+
+<button
+    class="reject-btn"
+    onclick="confirmRejectVerification()">
+
+Reject Verification
+
+</button>
+
+
+<button
+    class="cancel-user-btn"
+    onclick="closeRejectModal()">
+
+Cancel
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
 <script>
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
 
 let allUsers = [];
+
+let allVerifications = [];
+
 let editingUserId = null;
 
+let rejectingVerificationId = null;
 
-/* =====================================================
+
+/* =========================================================
    MESSAGE
-===================================================== */
+========================================================= */
 
-function showMessage(text, type) {
+function showMessage(text, type = "success") {
 
     const box =
         document.getElementById("message");
 
-    box.textContent = text;
+    box.textContent =
+        text;
 
     box.className =
         "message show " + type;
 
+
+    setTimeout(() => {
+
+        box.className =
+            "message";
+
+    }, 5000);
+
 }
 
 
-/* =====================================================
+/* =========================================================
    ESCAPE HTML
-===================================================== */
+========================================================= */
 
 function escapeHtml(value) {
 
@@ -756,19 +1453,47 @@ function escapeHtml(value) {
 }
 
 
-/* =====================================================
+/* =========================================================
+   GET STATUS CLASS
+========================================================= */
+
+function getStatusClass(status) {
+
+    if (status === "pending")
+        return "pending";
+
+    if (
+        status === "approved" ||
+        status === "active" ||
+        status === "verified"
+    )
+        return "approved";
+
+    if (status === "rejected")
+        return "rejected";
+
+    return "";
+
+}
+
+
+/* =========================================================
    LOAD ADMIN
-===================================================== */
+========================================================= */
 
 async function loadAdminData() {
 
     try {
 
         const {
-            data: { user },
+            data: {
+                user
+            },
             error: userError
         } =
-        await supabaseClient.auth.getUser();
+        await supabaseClient
+            .auth
+            .getUser();
 
 
         if (userError)
@@ -781,10 +1506,13 @@ async function loadAdminData() {
                 "login.html";
 
             return;
+
         }
 
 
-        /* CHECK ADMIN */
+        /* ================================================
+           CHECK ADMIN
+        ================================================ */
 
         const {
             data: adminProfile,
@@ -812,10 +1540,13 @@ async function loadAdminData() {
             );
 
             return;
+
         }
 
 
-        /* LOAD USERS */
+        /* ================================================
+           LOAD USERS
+        ================================================ */
 
         const {
             data: users,
@@ -836,14 +1567,23 @@ async function loadAdminData() {
             throw usersError;
 
 
-        allUsers = users || [];
+        allUsers =
+            users || [];
 
 
-        displayUsers(allUsers);
+        displayUsers(
+            allUsers
+        );
+
+
+        /* ================================================
+           LOAD BUSINESS VERIFICATIONS
+        ================================================ */
+
+        await loadBusinessVerifications();
 
 
     }
-
     catch (error) {
 
         console.error(
@@ -851,9 +1591,10 @@ async function loadAdminData() {
             error
         );
 
+
         showMessage(
             error.message ||
-            "Could not load users.",
+            "Could not load admin data.",
             "error"
         );
 
@@ -862,9 +1603,9 @@ async function loadAdminData() {
 }
 
 
-/* =====================================================
+/* =========================================================
    DISPLAY USERS
-===================================================== */
+========================================================= */
 
 function displayUsers(users) {
 
@@ -874,7 +1615,9 @@ function displayUsers(users) {
         );
 
 
-    /* COUNTERS */
+    /* ================================================
+       COUNTERS
+    ================================================ */
 
     const total =
         users.length;
@@ -884,7 +1627,7 @@ function displayUsers(users) {
         users.filter(
             user =>
                 user.account_status ===
-                "pending_admin"
+                "pending"
         ).length;
 
 
@@ -908,25 +1651,31 @@ function displayUsers(users) {
 
     document.getElementById(
         "totalUsers"
-    ).textContent = total;
+    ).textContent =
+        total;
 
 
     document.getElementById(
         "pendingUsers"
-    ).textContent = pending;
+    ).textContent =
+        pending;
 
 
     document.getElementById(
         "approvedUsers"
-    ).textContent = approved;
+    ).textContent =
+        approved;
 
 
     document.getElementById(
         "rejectedUsers"
-    ).textContent = rejected;
+    ).textContent =
+        rejected;
 
 
-    /* NO USERS */
+    /* ================================================
+       EMPTY
+    ================================================ */
 
     if (!users.length) {
 
@@ -936,12 +1685,11 @@ function displayUsers(users) {
 
                 <td
                     colspan="7"
-                    style="
-                        text-align:center;
-                        padding:25px;
-                    "
+                    style="text-align:center"
                 >
+
                     No users found
+
                 </td>
 
             </tr>
@@ -949,13 +1697,16 @@ function displayUsers(users) {
         `;
 
         return;
+
     }
 
 
     tableBody.innerHTML = "";
 
 
-    /* CREATE ROWS */
+    /* ================================================
+       ROWS
+    ================================================ */
 
     users.forEach(user => {
 
@@ -963,51 +1714,36 @@ function displayUsers(users) {
             document.createElement("tr");
 
 
-        let statusClass = "";
+        const status =
+            user.account_status ||
+            "active";
 
 
-        if (
-            user.account_status ===
-            "pending_admin"
-        ) {
-
-            statusClass = "pending";
-
-        }
-
-        else if (
-            user.account_status ===
-                "approved" ||
-            user.account_status ===
-                "active"
-        ) {
-
-            statusClass = "approved";
-
-        }
-
-        else if (
-            user.account_status ===
-            "rejected"
-        ) {
-
-            statusClass = "rejected";
-
-        }
+        const statusClass =
+            getStatusClass(
+                status
+            );
 
 
-        let approvalButtons = "";
+        let approvalButtons =
+            "";
 
+
+        /*
+           IMPORTANT:
+           pending_admin changed to pending
+        */
 
         if (
             (
                 user.user_type ===
-                "wholesaler" ||
+                    "wholesaler" ||
                 user.user_type ===
-                "b2b"
-            ) &&
-            user.account_status ===
-            "pending_admin"
+                    "b2b"
+            )
+            &&
+            status ===
+                "pending"
         ) {
 
             approvalButtons = `
@@ -1071,7 +1807,7 @@ function displayUsers(users) {
                 >
 
                     ${escapeHtml(
-                        user.account_status
+                        status
                     )}
 
                 </span>
@@ -1125,34 +1861,164 @@ function displayUsers(users) {
         `;
 
 
-        tableBody.appendChild(row);
+        tableBody.appendChild(
+            row
+        );
 
     });
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   APPROVE USER
+========================================================= */
+
+async function approveUser(id) {
+
+    if (
+        !confirm(
+            "Approve this user?"
+        )
+    )
+        return;
+
+
+    try {
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+
+                account_status:
+                    "approved"
+
+            })
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error)
+            throw error;
+
+
+        showMessage(
+            "User approved successfully.",
+            "success"
+        );
+
+
+        await loadAdminData();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Could not approve user.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REJECT USER
+========================================================= */
+
+async function rejectUser(id) {
+
+    if (
+        !confirm(
+            "Reject this user?"
+        )
+    )
+        return;
+
+
+    try {
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+
+                account_status:
+                    "rejected"
+
+            })
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error)
+            throw error;
+
+
+        showMessage(
+            "User rejected.",
+            "success"
+        );
+
+
+        await loadAdminData();
+
+    }
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Could not reject user.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    EDIT USER
-===================================================== */
+========================================================= */
 
 function editUser(id) {
 
     const user =
         allUsers.find(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
 
     if (!user) {
 
-        alert("User not found.");
+        showMessage(
+            "User not found.",
+            "error"
+        );
 
         return;
+
     }
 
 
-    editingUserId = id;
+    editingUserId =
+        id;
 
 
     document.getElementById(
@@ -1182,29 +2048,91 @@ function editUser(id) {
     document.getElementById(
         "editUserType"
     ).value =
-        user.user_type || "user";
+        user.user_type ||
+        "user";
 
 
     document.getElementById(
         "editStatus"
     ).value =
-        user.account_status || "active";
+        user.account_status ||
+        "active";
 
-
-    /* SCROLL TO EDITOR */
 
     document
-        .querySelector(".user-editor")
+        .querySelector(
+            ".user-editor"
+        )
         .scrollIntoView({
-            behavior: "smooth"
+            behavior:
+                "smooth"
         });
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   NEW USER
+========================================================= */
+
+function newUser() {
+
+    editingUserId =
+        null;
+
+
+    document.getElementById(
+        "editorTitle"
+    ).textContent =
+        "Add New User";
+
+
+    document.getElementById(
+        "editFullName"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "editEmail"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "editMobile"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "editUserType"
+    ).value =
+        "user";
+
+
+    document.getElementById(
+        "editStatus"
+    ).value =
+        "active";
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+========================================================= */
+
+function cancelEdit() {
+
+    newUser();
+
+}
+
+
+/* =========================================================
    SAVE USER
-===================================================== */
+========================================================= */
 
 async function saveUser() {
 
@@ -1240,36 +2168,107 @@ async function saveUser() {
 
     if (!fullName) {
 
-        alert(
-            "Please enter full name."
+        showMessage(
+            "Please enter full name.",
+            "error"
         );
 
         return;
+
     }
 
 
     if (!email) {
 
-        alert(
-            "Please enter email."
+        showMessage(
+            "Please enter email.",
+            "error"
         );
 
         return;
+
     }
 
 
-    /* =================================================
-       EDIT EXISTING USER
-    ================================================= */
+    const button =
+        document.getElementById(
+            "saveUserBtn"
+        );
 
-    if (editingUserId) {
+
+    button.disabled =
+        true;
+
+
+    try {
+
+        /* ==============================================
+           EDIT
+        ============================================== */
+
+        if (editingUserId) {
+
+            const {
+                error
+            } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+
+                    full_name:
+                        fullName,
+
+                    email:
+                        email,
+
+                    mobile:
+                        mobile,
+
+                    user_type:
+                        userType,
+
+                    account_status:
+                        status
+
+                })
+                .eq(
+                    "id",
+                    editingUserId
+                );
+
+
+            if (error)
+                throw error;
+
+
+            showMessage(
+                "User updated successfully.",
+                "success"
+            );
+
+
+            cancelEdit();
+
+
+            await loadAdminData();
+
+
+            return;
+
+        }
+
+
+        /* ==============================================
+           NEW USER
+        ============================================== */
 
         const {
-            error
+            data: insertedUser,
+            error: insertError
         } =
         await supabaseClient
             .from("profiles")
-            .update({
+            .insert({
 
                 full_name:
                     fullName,
@@ -1287,27 +2286,22 @@ async function saveUser() {
                     status
 
             })
-            .eq(
-                "id",
-                editingUserId
-            );
+            .select()
+            .single();
 
 
-        if (error) {
+        if (insertError)
+            throw insertError;
 
-            console.error(error);
 
-            alert(
-                "Update error: " +
-                error.message
-            );
-
-            return;
-        }
+        console.log(
+            "New user:",
+            insertedUser
+        );
 
 
         showMessage(
-            "User updated successfully.",
+            "User added successfully.",
             "success"
         );
 
@@ -1317,329 +2311,1072 @@ async function saveUser() {
 
         await loadAdminData();
 
-        return;
     }
+    catch (error) {
 
-
-    /* =================================================
-       NEW USER
-    ================================================= */
-
-    /*
-       IMPORTANT:
-
-       A profiles row normally belongs to
-       an auth.users row.
-
-       Therefore a normal browser page
-       should NOT create Auth users with
-       the service_role key.
-
-       For now we show the instruction.
-    */
-
-    alert(
-        "To create a completely new login user, " +
-        "you need a Supabase Edge Function using " +
-        "the Admin Auth API. Do not put the " +
-        "service_role key in this HTML file."
-    );
-
-}
-
-
-/* =====================================================
-   NEW USER BUTTON
-===================================================== */
-
-function newUser() {
-
-    editingUserId = null;
-
-
-    document.getElementById(
-        "editorTitle"
-    ).textContent =
-        "Add New User";
-
-
-    document.getElementById(
-        "editFullName"
-    ).value = "";
-
-
-    document.getElementById(
-        "editEmail"
-    ).value = "";
-
-
-    document.getElementById(
-        "editMobile"
-    ).value = "";
-
-
-    document.getElementById(
-        "editUserType"
-    ).value =
-        "user";
-
-
-    document.getElementById(
-        "editStatus"
-    ).value =
-        "active";
-
-
-    document
-        .querySelector(".user-editor")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
-
-}
-
-
-/* =====================================================
-   CANCEL EDIT
-===================================================== */
-
-function cancelEdit() {
-
-    editingUserId = null;
-
-
-    document.getElementById(
-        "editorTitle"
-    ).textContent =
-        "Add New User";
-
-
-    document.getElementById(
-        "editFullName"
-    ).value = "";
-
-
-    document.getElementById(
-        "editEmail"
-    ).value = "";
-
-
-    document.getElementById(
-        "editMobile"
-    ).value = "";
-
-
-    document.getElementById(
-        "editUserType"
-    ).value =
-        "user";
-
-
-    document.getElementById(
-        "editStatus"
-    ).value =
-        "active";
-
-}
-
-
-/* =====================================================
-   APPROVE USER
-===================================================== */
-
-async function approveUser(id) {
-
-    if (
-        !confirm(
-            "Approve this user?"
-        )
-    ) {
-
-        return;
-    }
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .update({
-
-            account_status:
-                "approved"
-
-        })
-        .eq(
-            "id",
-            id
+        console.error(
+            "SAVE USER ERROR:",
+            error
         );
 
 
-    if (error) {
-
-        alert(
-            "Approval error: " +
-            error.message
+        showMessage(
+            error.message ||
+            "Could not save user.",
+            "error"
         );
 
-        return;
     }
+    finally {
 
+        button.disabled =
+            false;
 
-    showMessage(
-        "User approved successfully.",
-        "success"
-    );
-
-
-    await loadAdminData();
+    }
 
 }
 
 
-/* =====================================================
-   REJECT USER
-===================================================== */
-
-async function rejectUser(id) {
-
-    if (
-        !confirm(
-            "Reject this user?"
-        )
-    ) {
-
-        return;
-    }
-
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .update({
-
-            account_status:
-                "rejected"
-
-        })
-        .eq(
-            "id",
-            id
-        );
-
-
-    if (error) {
-
-        alert(
-            "Rejection error: " +
-            error.message
-        );
-
-        return;
-    }
-
-
-    showMessage(
-        "User rejected successfully.",
-        "success"
-    );
-
-
-    await loadAdminData();
-
-}
-
-
-/* =====================================================
+/* =========================================================
    DELETE USER
-===================================================== */
+========================================================= */
 
 async function deleteUser(id) {
 
-    const user =
-        allUsers.find(
-            item => item.id === id
+    if (
+        !confirm(
+            "Delete this user profile?"
+        )
+    )
+        return;
+
+
+    try {
+
+        const {
+            error
+        } =
+        await supabaseClient
+            .from("profiles")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (error)
+            throw error;
+
+
+        showMessage(
+            "User deleted.",
+            "success"
         );
 
 
-    if (!user) {
+        await loadAdminData();
 
-        alert("User not found.");
+    }
+    catch (error) {
 
-        return;
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Could not delete user.",
+            "error"
+        );
+
     }
 
+}
 
-    const confirmed =
-        confirm(
-            "Delete this user's profile?\n\n" +
-            "Name: " +
-            (user.full_name || "") +
-            "\nEmail: " +
-            (user.email || "")
+/* =========================================================
+   LOAD BUSINESS VERIFICATIONS
+========================================================= */
+
+async function loadBusinessVerifications() {
+
+    const tableBody =
+        document.getElementById(
+            "verificationTable"
         );
 
 
-    if (!confirmed) {
-        return;
+    tableBody.innerHTML = `
+
+        <tr>
+
+            <td colspan="7">
+
+                Loading business verifications...
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending:
+                        false
+                }
+            );
+
+
+        if (error)
+            throw error;
+
+
+        allVerifications =
+            data || [];
+
+
+        displayBusinessVerifications(
+            allVerifications
+        );
+
     }
+    catch (error) {
 
-
-    /*
-       This deletes the profile row.
-
-       If profiles.id is linked to auth.users,
-       deleting the Auth account requires an
-       Edge Function / server-side Admin API.
-    */
-
-    const {
-        error
-    } =
-    await supabaseClient
-        .from("profiles")
-        .delete()
-        .eq(
-            "id",
-            id
+        console.error(
+            "VERIFICATION ERROR:",
+            error
         );
 
 
-    if (error) {
+        tableBody.innerHTML = `
 
-        alert(
-            "Delete error: " +
-            error.message
-        );
+            <tr>
 
-        return;
+                <td colspan="7">
+
+                    ${escapeHtml(
+                        error.message ||
+                        "Could not load verifications."
+                    )}
+
+                </td>
+
+            </tr>
+
+        `;
+
     }
-
-
-    showMessage(
-        "Profile deleted successfully.",
-        "success"
-    );
-
-
-    await loadAdminData();
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   DISPLAY BUSINESS VERIFICATIONS
+========================================================= */
+
+function displayBusinessVerifications(
+    verifications
+) {
+
+    const tableBody =
+        document.getElementById(
+            "verificationTable"
+        );
+
+
+    if (!verifications.length) {
+
+        tableBody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="text-align:center"
+                >
+
+                    No business verifications found.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    tableBody.innerHTML =
+        "";
+
+
+    verifications.forEach(
+        verification => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const status =
+                verification.status ||
+                "pending";
+
+
+            const statusClass =
+                getStatusClass(
+                    status
+                );
+
+
+            let identityNumber =
+                "";
+
+
+            if (
+                verification.verification_type
+                ===
+                "GST"
+            ) {
+
+                identityNumber =
+                    verification.gst_number ||
+                    "-";
+
+            }
+            else {
+
+                identityNumber =
+                    verification.pan_number ||
+                    "-";
+
+            }
+
+
+            let actionButtons =
+                "";
+
+
+            if (
+                status ===
+                "pending"
+            ) {
+
+                actionButtons = `
+
+                    <button
+                        class="approve-btn"
+                        onclick="
+                            approveBusinessVerification(
+                                '${verification.id}'
+                            )
+                        "
+                    >
+
+                        Verify
+
+                    </button>
+
+
+                    <button
+                        class="reject-btn"
+                        onclick="
+                            openRejectModal(
+                                '${verification.id}'
+                            )
+                        "
+                    >
+
+                        Reject
+
+                    </button>
+
+                `;
+
+            }
+            else {
+
+                actionButtons = `
+
+                    <button
+                        class="view-btn"
+                        onclick="
+                            viewVerification(
+                                '${verification.id}'
+                            )
+                        "
+                    >
+
+                        View
+
+                    </button>
+
+                `;
+
+            }
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    ${escapeHtml(
+                        verification.business_name
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        verification.user_id
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        verification.verification_type
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        identityNumber
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="
+                            status
+                            ${statusClass}
+                        "
+                    >
+
+                        ${escapeHtml(
+                            status
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        verification.created_at
+                        ?
+                        new Date(
+                            verification.created_at
+                        ).toLocaleString()
+                        :
+                        ""
+                    }
+
+                </td>
+
+
+                <td>
+
+                    <div class="actions">
+
+                        <button
+                            class="view-btn"
+                            onclick="
+                                viewVerification(
+                                    '${verification.id}'
+                                )
+                            "
+                        >
+
+                            View
+
+                        </button>
+
+
+                        ${actionButtons}
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            tableBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VIEW VERIFICATION
+========================================================= */
+
+function viewVerification(id) {
+
+    const verification =
+        allVerifications.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!verification) {
+
+        showMessage(
+            "Verification not found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const type =
+        verification.verification_type ||
+        "";
+
+
+    let html = `
+
+        <div class="verification-details">
+
+            <div>
+                <strong>
+                    Business:
+                </strong>
+
+                ${escapeHtml(
+                    verification.business_name
+                )}
+
+            </div>
+
+
+            <div>
+                <strong>
+                    Address:
+                </strong>
+
+                ${escapeHtml(
+                    verification.business_address
+                )}
+
+            </div>
+
+
+            <div>
+                <strong>
+                    Type:
+                </strong>
+
+                ${escapeHtml(
+                    type
+                )}
+
+            </div>
+
+    `;
+
+
+    if (type === "GST") {
+
+        html += `
+
+            <div>
+
+                <strong>
+                    GST Number:
+                </strong>
+
+                ${escapeHtml(
+                    verification.gst_number
+                )}
+
+            </div>
+
+        `;
+
+
+        if (
+            verification.gst_document_url
+        ) {
+
+            html += `
+
+                <div>
+
+                    <strong>
+                        GST Document:
+                    </strong>
+
+                    <a
+                        class="document-link"
+                        href="${escapeHtml(
+                            verification.gst_document_url
+                        )}"
+                        target="_blank"
+                    >
+
+                        Open Document
+
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+    else {
+
+        html += `
+
+            <div>
+
+                <strong>
+                    PAN Number:
+                </strong>
+
+                ${escapeHtml(
+                    verification.pan_number
+                )}
+
+            </div>
+
+        `;
+
+
+        if (
+            verification.pan_front_url
+        ) {
+
+            html += `
+
+                <div>
+
+                    <strong>
+                        PAN Front:
+                    </strong>
+
+                    <a
+                        class="document-link"
+                        href="${escapeHtml(
+                            verification.pan_front_url
+                        )}"
+                        target="_blank"
+                    >
+
+                        Open Front Image
+
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        if (
+            verification.pan_back_url
+        ) {
+
+            html += `
+
+                <div>
+
+                    <strong>
+                        PAN Back:
+                    </strong>
+
+                    <a
+                        class="document-link"
+                        href="${escapeHtml(
+                            verification.pan_back_url
+                        )}"
+                        target="_blank"
+                    >
+
+                        Open Back Image
+
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    html += `
+
+            <div>
+
+                <strong>
+                    Status:
+                </strong>
+
+                ${escapeHtml(
+                    verification.status
+                )}
+
+            </div>
+
+    `;
+
+
+    if (
+        verification.rejection_reason
+    ) {
+
+        html += `
+
+            <div>
+
+                <strong>
+                    Rejection Reason:
+                </strong>
+
+                ${escapeHtml(
+                    verification.rejection_reason
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    showVerificationModal(
+        html
+    );
+
+}
+
+
+/* =========================================================
+   SIMPLE VERIFICATION VIEW MODAL
+========================================================= */
+
+function showVerificationModal(
+    html
+) {
+
+    const modal =
+        document.createElement(
+            "div"
+        );
+
+
+    modal.className =
+        "modal show";
+
+
+    modal.innerHTML = `
+
+        <div class="modal-box">
+
+            <button
+                class="modal-close"
+                onclick="
+                    this.closest('.modal')
+                    .remove()
+                "
+            >
+
+                ✕
+
+            </button>
+
+
+            <h2>
+                Business Verification
+            </h2>
+
+
+            ${html}
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+}
+
+
+/* =========================================================
+   APPROVE BUSINESS VERIFICATION
+========================================================= */
+
+async function approveBusinessVerification(
+    verificationId
+) {
+
+    if (
+        !confirm(
+            "Verify this business?"
+        )
+    )
+        return;
+
+
+    try {
+
+        /* ==============================================
+           FIND VERIFICATION
+        ============================================== */
+
+        const verification =
+            allVerifications.find(
+                item =>
+                    item.id ===
+                    verificationId
+            );
+
+
+        if (!verification) {
+
+            throw new Error(
+                "Verification not found."
+            );
+
+        }
+
+
+        /* ==============================================
+           UPDATE BUSINESS VERIFICATION
+        ============================================== */
+
+        const {
+            error:
+                verificationError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update({
+
+                status:
+                    "verified",
+
+                rejection_reason:
+                    null,
+
+                updated_at:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "id",
+                verificationId
+            );
+
+
+        if (verificationError)
+            throw verificationError;
+
+
+        /* ==============================================
+           UPDATE USER ACCOUNT
+        ============================================== */
+
+        const {
+            error:
+                profileError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+
+                account_status:
+                    "approved"
+
+            })
+            .eq(
+                "id",
+                verification.user_id
+            );
+
+
+        if (profileError)
+            throw profileError;
+
+
+        showMessage(
+            "Business verified. User account approved.",
+            "success"
+        );
+
+
+        await loadAdminData();
+
+    }
+    catch (error) {
+
+        console.error(
+            "VERIFY ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Could not verify business.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OPEN REJECT MODAL
+========================================================= */
+
+function openRejectModal(
+    verificationId
+) {
+
+    rejectingVerificationId =
+        verificationId;
+
+
+    document.getElementById(
+        "rejectReason"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "rejectModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE REJECT MODAL
+========================================================= */
+
+function closeRejectModal() {
+
+    rejectingVerificationId =
+        null;
+
+
+    document.getElementById(
+        "rejectModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   CONFIRM REJECTION
+========================================================= */
+
+async function confirmRejectVerification() {
+
+    if (
+        !rejectingVerificationId
+    ) {
+
+        return;
+
+    }
+
+
+    const reason =
+        document.getElementById(
+            "rejectReason"
+        ).value.trim();
+
+
+    if (!reason) {
+
+        alert(
+            "Please enter rejection reason."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const verification =
+            allVerifications.find(
+                item =>
+                    item.id ===
+                    rejectingVerificationId
+            );
+
+
+        if (!verification)
+            throw new Error(
+                "Verification not found."
+            );
+
+
+        /* ==============================================
+           REJECT BUSINESS
+        ============================================== */
+
+        const {
+            error:
+                verificationError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update({
+
+                status:
+                    "rejected",
+
+                rejection_reason:
+                    reason,
+
+                updated_at:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "id",
+                rejectingVerificationId
+            );
+
+
+        if (verificationError)
+            throw verificationError;
+
+
+        /* ==============================================
+           REJECT USER ACCOUNT
+        ============================================== */
+
+        const {
+            error:
+                profileError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+
+                account_status:
+                    "rejected"
+
+            })
+            .eq(
+                "id",
+                verification.user_id
+            );
+
+
+        if (profileError)
+            throw profileError;
+
+
+        closeRejectModal();
+
+
+        showMessage(
+            "Business verification rejected.",
+            "success"
+        );
+
+
+        await loadAdminData();
+
+    }
+    catch (error) {
+
+        console.error(
+            "REJECT ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Could not reject verification.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    SEARCH
-===================================================== */
+========================================================= */
 
 function applyFilters() {
 
     const search =
         document.getElementById(
             "searchInput"
-        ).value
+        )
+        .value
         .toLowerCase()
         .trim();
 
@@ -1657,65 +3394,83 @@ function applyFilters() {
 
 
     const filtered =
-        allUsers.filter(user => {
+        allUsers.filter(
+            user => {
 
-            const matchesSearch =
-
-                !search ||
-
-                String(
-                    user.full_name || ""
-                )
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                String(
-                    user.email || ""
-                )
-                .toLowerCase()
-                .includes(search)
-
-                ||
-
-                String(
-                    user.mobile || ""
-                )
-                .toLowerCase()
-                .includes(search);
+                const name =
+                    String(
+                        user.full_name ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-            const matchesType =
-                type === "all" ||
-                user.user_type === type;
+                const email =
+                    String(
+                        user.email ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-            const matchesStatus =
-                status === "all" ||
-                user.account_status === status;
+                const mobile =
+                    String(
+                        user.mobile ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-            return (
-                matchesSearch &&
-                matchesType &&
-                matchesStatus
-            );
+                const searchMatch =
+                    !search ||
+                    name.includes(
+                        search
+                    ) ||
+                    email.includes(
+                        search
+                    ) ||
+                    mobile.includes(
+                        search
+                    );
 
-        });
+
+                const typeMatch =
+                    type === "all" ||
+                    user.user_type ===
+                    type;
 
 
-    displayUsers(filtered);
+                const statusMatch =
+                    status === "all" ||
+                    user.account_status ===
+                    status;
+
+
+                return (
+                    searchMatch &&
+                    typeMatch &&
+                    statusMatch
+                );
+
+            }
+        );
+
+
+    displayUsers(
+        filtered
+    );
 
 }
 
 
-/* =====================================================
-   FILTER EVENTS
-===================================================== */
+/* =========================================================
+   EVENTS
+========================================================= */
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "searchInput"
+    )
     .addEventListener(
         "input",
         applyFilters
@@ -1723,7 +3478,9 @@ document
 
 
 document
-    .getElementById("typeFilter")
+    .getElementById(
+        "typeFilter"
+    )
     .addEventListener(
         "change",
         applyFilters
@@ -1731,36 +3488,33 @@ document
 
 
 document
-    .getElementById("statusFilter")
+    .getElementById(
+        "statusFilter"
+    )
     .addEventListener(
         "change",
         applyFilters
     );
 
 
-/* =====================================================
+/* =========================================================
    START
-===================================================== */
+========================================================= */
 
-loadAdminData();
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadAdminData();
+
+    }
+);
+
 
 </script>
 
 </body>
+
 </html>
-
-    <button
-        class="cancel-user-btn"
-        onclick="cancelEdit()">
-
-        Cancel
-
-    </button>
-
-</div>
-
-</div>
-
-</main>
 
 
