@@ -425,6 +425,36 @@ td {
 
 }
 
+.pan-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.pan-photo-box {
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.pan-photo {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+@media(max-width:700px) {
+
+    .pan-photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
 </style>
 
 </head>
@@ -2039,23 +2069,7 @@ async function deleteUser(id) {
    LOAD BUSINESS VERIFICATIONS
 ========================================================= */
 
-async function loadBusinessVerifications() {
 
-    const table =
-        document.getElementById(
-            "verificationTable"
-        );
-
-
-    table.innerHTML = `
-
-        <tr>
-
-            <td colspan="7">
-
-                Loading business verifications...
-
-            </td>
 
         </tr>
 
@@ -2145,6 +2159,91 @@ async function loadBusinessVerifications() {
    DISPLAY BUSINESS VERIFICATIONS
 ========================================================= */
 
+<script>
+
+/* =========================================================
+   BUSINESS VERIFICATION SYSTEM
+========================================================= */
+
+async function loadBusinessVerifications() {
+
+    const table =
+        document.getElementById("verificationTable");
+
+    if (!table) {
+        console.error(
+            "verificationTable not found."
+        );
+        return;
+    }
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="7"
+                style="
+                    text-align:center;
+                    padding:25px;
+                ">
+                Loading business verifications...
+            </td>
+        </tr>
+    `;
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("business_verifications")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+        if (error) {
+            throw error;
+        }
+
+        allVerifications =
+            data || [];
+
+        displayVerifications(
+            allVerifications
+        );
+
+    } catch (error) {
+
+        console.error(
+            "BUSINESS VERIFICATION ERROR:",
+            error
+        );
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    style="
+                        color:#991b1b;
+                        padding:20px;
+                    ">
+                    ❌ ${escapeHtml(
+                        error.message ||
+                        "Could not load business verifications."
+                    )}
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+/* =========================================================
+   DISPLAY BUSINESS VERIFICATIONS
+========================================================= */
+
 function displayVerifications(
     verifications
 ) {
@@ -2154,6 +2253,9 @@ function displayVerifications(
             "verificationTable"
         );
 
+    if (!table) {
+        return;
+    }
 
     if (
         !verifications ||
@@ -2161,100 +2263,66 @@ function displayVerifications(
     ) {
 
         table.innerHTML = `
-
             <tr>
-
-                <td
-                    colspan="7"
+                <td colspan="7"
                     style="
                         text-align:center;
                         padding:25px;
-                    "
-                >
-
+                    ">
                     No business verifications found.
-
                 </td>
-
             </tr>
-
         `;
 
         return;
-
     }
 
-
     table.innerHTML = "";
-
 
     verifications.forEach(
         function(row) {
 
             const businessName =
-
                 row.business_name ||
-
                 row.company_name ||
-
                 row.shop_name ||
-
                 row.business ||
-
                 "-";
 
 
             const businessType =
-
                 row.business_type ||
-
                 row.user_type ||
-
                 row.type ||
-
                 "-";
 
 
             const gstNumber =
-
                 row.gst_number ||
-
                 row.gst_no ||
-
                 row.gst ||
-
                 "";
 
 
             const panNumber =
-
                 row.pan_number ||
-
                 row.pan_no ||
-
                 row.pan ||
-
                 "";
 
 
             const gstPan =
-
                 gstNumber ||
-
                 panNumber ||
-
                 "-";
 
 
             const status =
-
                 row.status ||
-
                 "pending";
 
 
             const statusLower =
-
                 String(status)
                     .toLowerCase();
 
@@ -2265,229 +2333,352 @@ function displayVerifications(
 
             tr.innerHTML = `
 
+                <!-- BUSINESS -->
                 <td>
-
                     ${escapeHtml(
                         businessName
                     )}
-
                 </td>
 
 
-                <td
-                    class="user-id"
-                >
-
+                <!-- USER -->
+                <td class="user-id">
                     ${escapeHtml(
                         row.user_id || "-"
                     )}
-
                 </td>
 
 
+                <!-- TYPE -->
                 <td>
-
                     ${escapeHtml(
                         businessType
                     )}
-
                 </td>
 
 
+                <!-- GST / PAN -->
                 <td>
-
                     ${escapeHtml(
                         gstPan
                     )}
-
                 </td>
 
 
+                <!-- STATUS -->
                 <td>
-
                     <span
                         class="
                             status
                             ${statusClass(status)}
                         "
                     >
-
                         ${escapeHtml(
                             status
                         )}
-
                     </span>
-
                 </td>
 
 
-                
-
-           <td>
-
-    <div class="actions">
-
-        <!-- VIEW -->
-        <button
-            class="view-btn"
-            onclick="
-                viewVerification(
-                    '${escapeHtml(row.id)}'
-                )
-            "
-        >
-            👁 View
-        </button>
+                <!-- SUBMITTED -->
+                <td>
+                    ${escapeHtml(
+                        formatDate(
+                            row.created_at
+                        )
+                    )}
+                </td>
 
 
-        <!-- VERIFIED RECORD -->
-        ${
-            statusLower === "verified"
-            ?
-            `
-            <button
-                class="edit-btn"
-                onclick="
-                    updateVerification(
-                        '${escapeHtml(row.id)}'
-                    )
-                "
-            >
-                ✏️ Update
-            </button>
-            `
-            :
-            ""
-        }
+                <!-- ACTIONS -->
+                <td>
+
+                    <div class="actions">
+
+                        <!-- VIEW -->
+                        <button
+                            class="view-btn"
+                            onclick="
+                                viewVerification(
+                                    '${escapeHtml(row.id)}'
+                                )
+                            "
+                        >
+                            👁 View
+                        </button>
 
 
-        <!-- PENDING RECORD -->
-        ${
-            statusLower === "pending"
-            ?
-            `
-            <select
-                onchange="
-                    changeVerificationStatus(
-                        '${escapeHtml(row.id)}',
-                        this.value
-                    )
-                "
-                style="
-                    padding:8px;
-                    border:1px solid #ddd;
-                    border-radius:7px;
-                    font-size:12px;
-                "
-            >
-
-                <option value="">
-                    Change Status
-                </option>
-
-                <option value="pending">
-                    Pending
-                </option>
-
-                <option value="rejected">
-                    Rejected
-                </option>
-
-                <option value="approved">
-                    Approved
-                </option>
-
-                <option value="active">
-                    Active
-                </option>
-
-            </select>
-            `
-            :
-            ""
-        }
+                        <!-- VERIFIED = UPDATE -->
+                        ${
+                            statusLower === "verified"
+                            ?
+                            `
+                            <button
+                                class="edit-btn"
+                                onclick="
+                                    updateVerification(
+                                        '${escapeHtml(row.id)}'
+                                    )
+                                "
+                            >
+                                ✏️ Update
+                            </button>
+                            `
+                            :
+                            ""
+                        }
 
 
-        <!-- DELETE FOR ALL -->
-        <button
-            class="delete-btn"
-            onclick="
-                deleteVerification(
-                    '${escapeHtml(row.id)}'
-                )
-            "
-        >
-            🗑 Delete
-        </button>
+                        <!-- PENDING = STATUS MENU -->
+                        ${
+                            statusLower === "pending"
+                            ?
+                            `
+                            <select
+                                onchange="
+                                    changeVerificationStatus(
+                                        '${escapeHtml(row.id)}',
+                                        this.value
+                                    )
+                                "
+                                style="
+                                    padding:8px;
+                                    border:1px solid #ddd;
+                                    border-radius:7px;
+                                    font-size:12px;
+                                "
+                            >
 
-    </div>
+                                <option value="">
+                                    Change Status
+                                </option>
 
-</td>
+                                <option value="pending">
+                                    Pending
+                                </option>
 
-               
+                                <option value="rejected">
+                                    Rejected
+                                </option>
+
+                                <option value="approved">
+                                    Approved
+                                </option>
+
+                                <option value="active">
+                                    Active
+                                </option>
+
+                            </select>
+                            `
+                            :
+                            ""
+                        }
 
 
-               
-            
+                        <!-- DELETE FOR ALL -->
+                        <button
+                            class="delete-btn"
+                            onclick="
+                                deleteVerification(
+                                    '${escapeHtml(row.id)}'
+                                )
+                            "
+                        >
+                            🗑 Delete
+                        </button>
+
+                    </div>
+
+                </td>
+            `;
 
 
             table.appendChild(tr);
 
         }
     );
-
 }
 
 
 /* =========================================================
-   VIEW BUSINESS VERIFICATION
+   CHANGE STATUS
 ========================================================= */
 
-
-
-
-async function changeVerificationStatus(id, newStatus) {
+async function changeVerificationStatus(
+    id,
+    newStatus
+) {
 
     if (!newStatus) {
         return;
     }
 
+
     try {
 
-        const { data: verification, error: getError } =
-            await supabaseClient
-                .from("business_verifications")
-                .select("user_id")
-                .eq("id", id)
-                .single();
+        /*
+         * IMPORTANT
+         *
+         * business_verifications uses:
+         *
+         * pending
+         * verified
+         * rejected
+         *
+         * profiles.account_status uses:
+         *
+         * pending
+         * approved
+         * active
+         * rejected
+         *
+         * Therefore we map the admin selection.
+         */
+
+        let businessStatus;
+        let profileStatus;
+
+
+        if (
+            newStatus === "pending"
+        ) {
+
+            businessStatus =
+                "pending";
+
+            profileStatus =
+                "pending";
+
+        }
+
+
+        else if (
+            newStatus === "rejected"
+        ) {
+
+            businessStatus =
+                "rejected";
+
+            profileStatus =
+                "rejected";
+
+        }
+
+
+        else if (
+            newStatus === "approved"
+        ) {
+
+            businessStatus =
+                "verified";
+
+            profileStatus =
+                "approved";
+
+        }
+
+
+        else if (
+            newStatus === "active"
+        ) {
+
+            businessStatus =
+                "verified";
+
+            profileStatus =
+                "active";
+
+        }
+
+
+        else {
+
+            throw new Error(
+                "Invalid status selected."
+            );
+
+        }
+
+
+        /* GET USER ID */
+
+        const {
+            data: verification,
+            error: getError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select(
+                "id,user_id"
+            )
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
 
         if (getError) {
             throw getError;
         }
 
 
-        // Update business verification
-        const { error: verificationError } =
-            await supabaseClient
-                .from("business_verifications")
-                .update({
-                    status: newStatus
-                })
-                .eq("id", id);
+        if (
+            !verification?.user_id
+        ) {
+
+            throw new Error(
+                "User ID not found for this verification."
+            );
+
+        }
+
+
+        /* UPDATE BUSINESS VERIFICATION */
+
+        const {
+            error:
+                verificationError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update({
+                status:
+                    businessStatus
+            })
+            .eq(
+                "id",
+                id
+            );
+
 
         if (verificationError) {
             throw verificationError;
         }
 
 
-        // Update profile status
-        const { error: profileError } =
-            await supabaseClient
-                .from("profiles")
-                .update({
-                    account_status: newStatus
-                })
-                .eq("id", verification.user_id);
+        /* UPDATE PROFILE */
+
+        const {
+            error:
+                profileError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+                account_status:
+                    profileStatus
+            })
+            .eq(
+                "id",
+                verification.user_id
+            );
+
 
         if (profileError) {
             throw profileError;
@@ -2504,29 +2695,37 @@ async function changeVerificationStatus(id, newStatus) {
 
         await loadBusinessVerifications();
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "STATUS UPDATE ERROR:",
             error
         );
 
+
         showMessage(
             error.message ||
             "Could not update status.",
             "error"
         );
+
+
+        await loadBusinessVerifications();
+
     }
-}
-
-function updateVerification(id) {
-
-    viewVerification(id);
 
 }
 
 
-async function viewVerification(id) {
+/* =========================================================
+   VIEW VERIFICATION
+========================================================= */
+
+async function viewVerification(
+    id
+) {
 
     const modal =
         document.getElementById(
@@ -2538,6 +2737,11 @@ async function viewVerification(id) {
         document.getElementById(
             "viewContent"
         );
+
+
+    if (!modal || !content) {
+        return;
+    }
 
 
     modal.classList.add(
@@ -2556,25 +2760,19 @@ async function viewVerification(id) {
             error
         } =
         await supabaseClient
-
             .from(
                 "business_verifications"
             )
-
             .select("*")
-
             .eq(
                 "id",
                 id
             )
-
             .single();
 
 
         if (error) {
-
             throw error;
-
         }
 
 
@@ -2593,22 +2791,17 @@ async function viewVerification(id) {
 
 
         content.innerHTML = `
-
             <div
                 style="
                     color:#991b1b;
                     padding:20px;
                 "
             >
-
-                ❌ ${
-                    escapeHtml(
-                        error.message
-                    )
-                }
-
+                ❌ ${escapeHtml(
+                    error.message ||
+                    "Could not load verification."
+                )}
             </div>
-
         `;
 
     }
@@ -2617,7 +2810,7 @@ async function viewVerification(id) {
 
 
 /* =========================================================
-   RENDER VERIFICATION DETAILS
+   RENDER VERIFICATION
 ========================================================= */
 
 function renderVerification(
@@ -2630,12 +2823,23 @@ function renderVerification(
         );
 
 
+    if (!content) {
+        return;
+    }
+
+
     let html = `
 
-        <div class="verification-details">
+        <div
+            class="verification-details"
+        >
 
     `;
 
+
+    /*
+     * SHOW NORMAL FIELDS
+     */
 
     Object.keys(row).forEach(
         function(key) {
@@ -2644,22 +2848,33 @@ function renderVerification(
                 row[key];
 
 
-            /* Skip image URLs here */
+            /*
+             * Do not show image fields
+             * in normal details.
+             */
 
             if (
-
                 key === "pan_front_url" ||
-
                 key === "pan_back_url" ||
-
                 key === "pan_front" ||
-
                 key === "pan_back" ||
-
                 key === "pan_front_image" ||
-
                 key === "pan_back_image"
+            ) {
 
+                return;
+
+            }
+
+
+            /*
+             * Don't show empty fields.
+             */
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
             ) {
 
                 return;
@@ -2676,11 +2891,9 @@ function renderVerification(
                     <span
                         class="detail-label"
                     >
-
                         ${escapeHtml(
                             key
                         )}
-
                     </span>
 
                     :
@@ -2697,38 +2910,21 @@ function renderVerification(
     );
 
 
-    html += `
-
-        </div>
-
-    `;
-
-
-    /* PAN IMAGES */
+    /*
+     * PAN IMAGES
+     */
 
     const frontImage =
-
         row.pan_front_url ||
-
         row.pan_front ||
-
         row.pan_front_image ||
-
-        row.pan_card_front ||
-
         "";
 
 
     const backImage =
-
         row.pan_back_url ||
-
         row.pan_back ||
-
         row.pan_back_image ||
-
-        row.pan_card_back ||
-
         "";
 
 
@@ -2763,11 +2959,11 @@ function renderVerification(
 
         html += `
 
-                <img
-                    class="pan-photo"
-                    src="${escapeHtml(frontImage)}"
-                    alt="PAN Front"
-                >
+            <img
+                class="pan-photo"
+                src="${escapeHtml(frontImage)}"
+                alt="PAN Front"
+            >
 
         `;
 
@@ -2777,11 +2973,11 @@ function renderVerification(
 
         html += `
 
-                <div class="no-photo">
-
-                    No PAN front image.
-
-                </div>
+            <div
+                class="no-photo"
+            >
+                No PAN front image.
+            </div>
 
         `;
 
@@ -2808,11 +3004,11 @@ function renderVerification(
 
         html += `
 
-                <img
-                    class="pan-photo"
-                    src="${escapeHtml(backImage)}"
-                    alt="PAN Back"
-                >
+            <img
+                class="pan-photo"
+                src="${escapeHtml(backImage)}"
+                alt="PAN Back"
+            >
 
         `;
 
@@ -2822,11 +3018,11 @@ function renderVerification(
 
         html += `
 
-                <div class="no-photo">
-
-                    No PAN back image.
-
-                </div>
+            <div
+                class="no-photo"
+            >
+                No PAN back image.
+            </div>
 
         `;
 
@@ -2842,58 +3038,99 @@ function renderVerification(
     `;
 
 
-    /* PENDING ACTIONS */
-/* =========================================================
-   PENDING ACTIONS
-========================================================= */
+    /*
+     * PENDING ACTIONS
+     */
 
-if (
-    String(row.status || "")
-        .toLowerCase() === "pending"
-) {
+    if (
+        String(row.status || "")
+            .toLowerCase() === "pending"
+    ) {
+
+        html += `
+
+            <div
+                class="editor-buttons"
+                style="
+                    margin-top:20px;
+                "
+            >
+
+                <button
+                    class="approve-btn"
+                    onclick="
+                        closeViewModal();
+                        approveVerification(
+                            '${escapeHtml(row.id)}'
+                        );
+                    "
+                >
+                    ✓ Approve
+                </button>
+
+
+                <button
+                    class="reject-btn"
+                    onclick="
+                        closeViewModal();
+                        openRejectModal(
+                            '${escapeHtml(row.id)}'
+                        );
+                    "
+                >
+                    ✕ Reject
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /*
+     * VERIFIED UPDATE BUTTON
+     */
+
+    if (
+        String(row.status || "")
+            .toLowerCase() === "verified"
+    ) {
+
+        html += `
+
+            <div
+                class="editor-buttons"
+                style="
+                    margin-top:20px;
+                "
+            >
+
+                <button
+                    class="edit-btn"
+                    onclick="
+                        updateVerification(
+                            '${escapeHtml(row.id)}'
+                        )
+                    "
+                >
+                    ✏️ Update Verification
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
 
     html += `
-
-        <div
-            class="editor-buttons"
-            style="margin-top:20px;"
-        >
-
-            <button
-                class="approve-btn"
-                onclick="
-                    approveVerification(
-                        '${escapeHtml(row.id)}'
-                    );
-
-                    closeViewModal();
-                "
-            >
-                ✓ Approve
-            </button>
-
-
-            <button
-                class="reject-btn"
-                onclick="
-                    closeViewModal();
-
-                    openRejectModal(
-                        '${escapeHtml(row.id)}'
-                    );
-                "
-            >
-                ✕ Reject
-            </button>
-
         </div>
-
     `;
 
-}
 
-
-content.innerHTML = html;
+    content.innerHTML =
+        html;
 
 }
 
@@ -2902,186 +3139,784 @@ content.innerHTML = html;
    APPROVE VERIFICATION
 ========================================================= */
 
-async function approveVerification(id) {
+async function approveVerification(
+    id
+) {
 
-    if (!confirm("Are you sure you want to approve this verification?")) {
+    if (
+        !confirm(
+            "Are you sure you want to approve this verification?"
+        )
+    ) {
+
         return;
+
     }
+
 
     try {
 
-        // 1. Get the verification record
-        const { data: verification, error: getError } =
-            await supabaseClient
-                .from("business_verifications")
-                .select("user_id")
-                .eq("id", id)
-                .single();
+        /*
+         * GET VERIFICATION
+         */
+
+        const {
+            data: verification,
+            error: getError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select(
+                "id,user_id"
+            )
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
 
         if (getError) {
             throw getError;
         }
 
-        // 2. Mark business verification as verified
-        const { error: verificationError } =
-            await supabaseClient
-                .from("business_verifications")
-                .update({
-                    status: "verified"
-                })
-                .eq("id", id);
+
+        if (
+            !verification?.user_id
+        ) {
+
+            throw new Error(
+                "User ID not found."
+            );
+
+        }
+
+
+        /*
+         * BUSINESS VERIFICATION
+         *
+         * approved business =
+         * verified
+         */
+
+        const {
+            error:
+                verificationError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update({
+                status:
+                    "verified"
+            })
+     .eq(
+                "id",
+                id
+            );
+
 
         if (verificationError) {
             throw verificationError;
         }
 
-        // 3. Update the user's profile
-        const { error: profileError } =
-            await supabaseClient
-                .from("profiles")
-                .update({
-                    account_status: "approved"
-                })
-                .eq("id", verification.user_id);
+
+        /*
+         * PROFILE
+         *
+         * approved user =
+         * approved
+         */
+
+        const {
+            error:
+                profileError
+        } =
+        await supabaseClient
+            .from("profiles")
+            .update({
+                account_status:
+                    "approved"
+            })
+            .eq(
+                "id",
+                verification.user_id
+            );
+
 
         if (profileError) {
             throw profileError;
         }
 
+
         showMessage(
-            "Verification approved. User profile updated.",
+            "Verification approved and user profile updated.",
             "success"
         );
 
-        await loadUsers();
-        await loadBusinessVerifications();
 
         closeViewModal();
 
-    } catch (error) {
 
-        console.error(error);
+        await loadUsers();
+
+        await loadBusinessVerifications();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "APPROVE VERIFICATION ERROR:",
+            error
+        );
+
 
         showMessage(
-            error.message || "Approval failed.",
+            error.message ||
+            "Approval failed.",
             "error"
         );
+
     }
+
 }
 
 
+/* =========================================================
+   REAL UPDATE VERIFICATION
+========================================================= */
 
-async function deleteVerification(id) {
-
-    const confirmed = confirm(
-        "Are you sure you want to permanently delete this business verification?"
-    );
-
-    if (!confirmed) {
-        return;
-    }
+async function updateVerification(
+    id
+) {
 
     try {
 
-        // Get the user ID before deleting
-        const { data: verification, error: getError } =
-            await supabaseClient
-                .from("business_verifications")
-                .select("user_id")
-                .eq("id", id)
-                .single();
+        const {
+            data: row,
+            error
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select("*")
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const content =
+            document.getElementById(
+                "viewContent"
+            );
+
+
+        if (!content) {
+            return;
+        }
+
+
+        /*
+         * Fields that should NEVER
+         * be edited from this form.
+         */
+
+        const readOnlyFields = [
+            "id",
+            "user_id",
+            "status",
+            "created_at",
+            "updated_at",
+            "verified_at",
+            "rejected_at",
+            "pan_front_url",
+            "pan_back_url",
+            "pan_front",
+            "pan_back",
+            "pan_front_image",
+            "pan_back_image"
+        ];
+
+
+        let html = `
+
+            <h3>
+                ✏️ Update Business Verification
+            </h3>
+
+            <p
+                style="
+                    color:#666;
+                    font-size:13px;
+                    margin-top:8px;
+                "
+            >
+                Update the business information below.
+            </p>
+
+
+            <div
+                class="editor-grid"
+                style="
+                    margin-top:20px;
+                "
+            >
+
+        `;
+
+
+        Object.keys(row).forEach(
+            function(key) {
+
+                if (
+                    readOnlyFields.includes(key)
+                ) {
+
+                    return;
+
+                }
+
+
+                const value =
+                    row[key];
+
+
+                /*
+                 * Ignore null/undefined
+                 * system fields.
+                 */
+
+                if (
+                    value === null ||
+                    value === undefined
+                ) {
+
+                    return;
+
+                }
+
+
+                /*
+                 * Only allow simple
+                 * editable values.
+                 */
+
+                if (
+                    typeof value === "object"
+                ) {
+
+                    return;
+
+                }
+
+
+                html += `
+
+                    <div
+                        class="editor-field"
+                    >
+
+                        <label>
+                            ${escapeHtml(key)}
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="verification_edit_${escapeHtml(key)}"
+                            value="${escapeHtml(value)}"
+                            data-field="${escapeHtml(key)}"
+                        >
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        html += `
+
+            </div>
+
+
+            <div
+                class="editor-buttons"
+            >
+
+                <button
+                    class="save-user-btn"
+                    onclick="
+                        saveVerificationUpdate(
+                            '${escapeHtml(id)}'
+                        )
+                    "
+                >
+                    💾 Save Changes
+                </button>
+
+
+                <button
+                    class="cancel-user-btn"
+                    onclick="
+                        viewVerification(
+                            '${escapeHtml(id)}'
+                        )
+                    "
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+        `;
+
+
+        content.innerHTML =
+            html;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "UPDATE VERIFICATION ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Could not open update form.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE VERIFICATION UPDATE
+========================================================= */
+
+async function saveVerificationUpdate(
+    id
+) {
+
+    try {
+
+        /*
+         * Get original row.
+         */
+
+        const {
+            data: original,
+            error:
+                getError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select("*")
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
 
         if (getError) {
             throw getError;
         }
 
-        // Delete verification
-        const { error: deleteError } =
-            await supabaseClient
-                .from("business_verifications")
-                .delete()
-                .eq("id", id);
+
+        const readOnlyFields = [
+            "id",
+            "user_id",
+            "status",
+            "created_at",
+            "updated_at",
+            "verified_at",
+            "rejected_at",
+            "pan_front_url",
+            "pan_back_url",
+            "pan_front",
+            "pan_back",
+            "pan_front_image",
+            "pan_back_image"
+        ];
+
+
+        const updateData = {};
+
+
+        Object.keys(original).forEach(
+            function(key) {
+
+                if (
+                    readOnlyFields.includes(key)
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    original[key] === null ||
+                    original[key] === undefined
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    typeof original[key] === "object"
+                ) {
+
+                    return;
+
+                }
+
+
+                const input =
+                    document.getElementById(
+                        "verification_edit_" +
+                        key
+                    );
+
+
+                if (!input) {
+                    return;
+                }
+
+
+                let value =
+                    input.value.trim();
+
+
+                /*
+                 * Preserve numeric values.
+                 */
+
+                if (
+                    typeof original[key] ===
+                    "number"
+                ) {
+
+                    if (
+                        value === ""
+                    ) {
+
+                        value = null;
+
+                    }
+
+                    else {
+
+                        value =
+                            Number(value);
+
+                        if (
+                            Number.isNaN(value)
+                        ) {
+
+                            throw new Error(
+                                key +
+                                " must be a number."
+                            );
+
+                        }
+
+                    }
+
+                }
+
+
+                updateData[key] =
+                    value;
+
+            }
+        );
+
+
+        if (
+            Object.keys(updateData)
+                .length === 0
+        ) {
+
+            throw new Error(
+                "No editable fields found."
+            );
+
+        }
+
+
+        /*
+         * SAVE
+         */
+
+        const {
+            error:
+                updateError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update(
+                updateData
+            )
+            .eq(
+                "id",
+                id
+            );
+
+
+        if (updateError) {
+            throw updateError;
+        }
+
+
+        showMessage(
+            "Business verification updated successfully.",
+            "success"
+        );
+
+
+        closeViewModal();
+
+
+        await loadBusinessVerifications();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "SAVE VERIFICATION UPDATE ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Could not update verification.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DELETE VERIFICATION
+========================================================= */
+
+async function deleteVerification(
+    id
+) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to permanently delete this business verification?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        /*
+         * GET USER ID FIRST
+         */
+
+        const {
+            data: verification,
+            error:
+                getError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select(
+                "id,user_id"
+            )
+            .eq(
+                "id",
+                id
+            )
+            .single();
+
+
+        if (getError) {
+            throw getError;
+        }
+
+
+        /*
+         * DELETE VERIFICATION
+         */
+
+        const {
+            error:
+                deleteError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
 
         if (deleteError) {
             throw deleteError;
         }
 
-        // Reset the profile to pending
-        if (verification?.user_id) {
 
-            const { error: profileError } =
-                await supabaseClient
-                    .from("profiles")
-                    .update({
-                        account_status: "pending"
-                    })
-                    .eq("id", verification.user_id);
+        /*
+         * RESET USER
+         */
+
+        if (
+            verification?.user_id
+        ) {
+
+            const {
+                error:
+                    profileError
+            } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    account_status:
+                        "pending"
+                })
+                .eq(
+                    "id",
+                    verification.user_id
+                );
+
 
             if (profileError) {
                 throw profileError;
             }
+
         }
+
 
         showMessage(
             "Business verification deleted and user status reset to pending.",
             "success"
         );
 
+
+        closeViewModal();
+
+
         await loadUsers();
+
         await loadBusinessVerifications();
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "DELETE VERIFICATION ERROR:",
             error
         );
 
+
         showMessage(
             error.message ||
             "Could not delete business verification.",
             "error"
         );
+
     }
+
 }
+
 
 /* =========================================================
    OPEN REJECT MODAL
 ========================================================= */
 
+function openRejectModal(
+    id
+) {
 
-        
-        
-
-
-/* =========================================================
-   CLOSE REJECT MODAL
-========================================================= */
-
-function closeRejectModal() {
-
-    rejectingVerificationId = null;
+    rejectingVerificationId =
+        id;
 
 
-    document.getElementById(
-        "rejectReason"
-    ).value = "";
+    const reason =
+        document.getElementById(
+            "rejectReason"
+        );
 
 
-    document.getElementById(
-        "rejectModal"
-    ).classList.remove("show");
+    if (reason) {
+        reason.value = "";
+    }
+
+
+    const modal =
+        document.getElementById(
+            "rejectModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
+            "show"
+        );
+
+    }
 
 }
 
 
 /* =========================================================
    CONFIRM REJECT
+ *
+ * IMPORTANT:
+ * This is the ONLY reject function.
 ========================================================= */
 
 async function confirmRejectVerification() {
 
-    if (!rejectingVerificationId) {
+    if (
+        !rejectingVerificationId
+    ) {
 
         showMessage(
             "No verification selected.",
@@ -3089,14 +3924,19 @@ async function confirmRejectVerification() {
         );
 
         return;
-
     }
 
 
-    const reason =
+    const reasonElement =
         document.getElementById(
             "rejectReason"
-        ).value.trim();
+        );
+
+
+    const reason =
+        reasonElement
+        ? reasonElement.value.trim()
+        : "";
 
 
     if (!reason) {
@@ -3107,51 +3947,153 @@ async function confirmRejectVerification() {
         );
 
         return;
-
     }
 
 
     try {
 
         /*
-         * Your database status values are:
-         *
-         * pending
-         * verified
-         * rejected
-         *
-         * Therefore we use "rejected".
+         * GET VERIFICATION
          */
 
         const {
-            error
-        } = await supabaseClient
+            data: verification,
+            error:
+                verificationError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .select(
+                "id,user_id"
+            )
+            .eq(
+                "id",
+                rejectingVerificationId
+            )
+            .single();
 
-            .from("business_verifications")
 
+        if (verificationError) {
+            throw verificationError;
+        }
+
+
+        /*
+         * UPDATE BUSINESS STATUS
+         */
+
+        const {
+            error:
+                rejectError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
             .update({
-                status: "rejected"
+                status:
+                    "rejected"
             })
-
             .eq(
                 "id",
                 rejectingVerificationId
             );
 
 
-        if (error) {
-            throw error;
+        if (rejectError) {
+            throw rejectError;
+        }
+
+
+        /*
+         * TRY TO SAVE REJECTION REASON
+         *
+         * If your table has a rejection_reason
+         * column, this saves it.
+         */
+
+        const {
+            error:
+                reasonError
+        } =
+        await supabaseClient
+            .from(
+                "business_verifications"
+            )
+            .update({
+                rejection_reason:
+                    reason
+            })
+            .eq(
+                "id",
+                rejectingVerificationId
+            );
+
+
+        /*
+         * If rejection_reason does not exist,
+         * don't stop the rejection itself.
+         */
+
+        if (
+            reasonError &&
+            !String(
+                reasonError.message || ""
+            )
+            .toLowerCase()
+            .includes(
+                "rejection_reason"
+            )
+        ) {
+
+            throw reasonError;
+
+        }
+
+
+        /*
+         * UPDATE PROFILE
+         */
+
+        if (
+            verification?.user_id
+        ) {
+
+            const {
+                error:
+                    profileError
+            } =
+            await supabaseClient
+                .from("profiles")
+                .update({
+                    account_status:
+                        "rejected"
+                })
+                .eq(
+                    "id",
+                    verification.user_id
+                );
+
+
+            if (profileError) {
+                throw profileError;
+            }
+
         }
 
 
         showMessage(
-            "Business verification rejected.",
+            "Business verification rejected and user account updated.",
             "success"
         );
 
 
         closeRejectModal();
 
+
+        await loadUsers();
 
         await loadBusinessVerifications();
 
@@ -3173,11 +4115,45 @@ async function confirmRejectVerification() {
 
     }
 
-
-
 }
 
 
+/* =========================================================
+   CLOSE REJECT MODAL
+========================================================= */
+
+function closeRejectModal() {
+
+    rejectingVerificationId =
+        null;
+
+
+    const reason =
+        document.getElementById(
+            "rejectReason"
+        );
+
+
+    if (reason) {
+        reason.value = "";
+    }
+
+
+    const modal =
+        document.getElementById(
+            "rejectModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
+            "show"
+        );
+
+    }
+
+}
 
 
 /* =========================================================
@@ -3186,130 +4162,24 @@ async function confirmRejectVerification() {
 
 function closeViewModal() {
 
-    document.getElementById(
-        "viewModal"
-    ).classList.remove("show");
-
-}
-
-
-/* =========================================================
-   SEARCH FILTER EVENT
-========================================================= */
-
-const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+    const modal =
+        document.getElementById(
+            "viewModal"
+        );
 
 
-if (searchInput) {
+    if (modal) {
 
-    searchInput.addEventListener(
-        "input",
-        filterUsers
-    );
-
-}
-
-
-/* =========================================================
-   TYPE FILTER EVENT
-========================================================= */
-
-const typeFilter =
-    document.getElementById(
-        "typeFilter"
-    );
-
-
-if (typeFilter) {
-
-    typeFilter.addEventListener(
-        "change",
-        filterUsers
-    );
-
-}
-
-
-/* =========================================================
-   STATUS FILTER EVENT
-========================================================= */
-
-const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
-
-
-if (statusFilter) {
-
-    statusFilter.addEventListener(
-        "change",
-        filterUsers
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE MODALS WHEN CLICKING OUTSIDE
-========================================================= */
-
-window.addEventListener(
-    "click",
-    function(event) {
-
-        const viewModal =
-            document.getElementById(
-                "viewModal"
-            );
-
-
-        const rejectModal =
-            document.getElementById(
-                "rejectModal"
-            );
-
-
-        if (
-            event.target === viewModal
-        ) {
-
-            closeViewModal();
-
-        }
-
-
-        if (
-            event.target === rejectModal
-        ) {
-
-            closeRejectModal();
-
-        }
+        modal.classList.remove(
+            "show"
+        );
 
     }
-);
 
-
-/* =========================================================
-   PAGE LOAD
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        loadAdmin();
-
-    }
-);
-
+}
+            
+                
+  
 </script>
-
 </body>
-
 </html>
-    
