@@ -1130,11 +1130,12 @@ Cancel
 ========================================================= */
 
 let allUsers = [];
-
 let allVerifications = [];
-
 let editingUserId = null;
 let rejectingVerificationId = null;
+
+const USERS_PER_PAGE = 10;
+let currentUserPage = 1;
 
 
 /* =========================================================
@@ -1537,235 +1538,225 @@ async function loadUsers() {
    DISPLAY USERS
 ========================================================= */
 
+/* =========================================================
+   DISPLAY USERS WITH PAGINATION
+========================================================= */
+
 function displayUsers(users) {
 
     const table =
-        document.getElementById(
-            "usersTable"
-        );
-
+        document.getElementById("usersTable");
 
     const total =
         allUsers.length;
 
-
     const pending =
-        allUsers.filter(
-            u =>
-            String(
-                u.account_status || ""
-            ).toLowerCase()
-            === "pending"
-        ).length;
+        allUsers.filter(function(u) {
 
+            return String(
+                u.account_status || ""
+            ).toLowerCase() === "pending";
+
+        }).length;
 
     const approved =
-        allUsers.filter(
-            u => {
+        allUsers.filter(function(u) {
 
-                const s =
-                    String(
-                        u.account_status || ""
-                    ).toLowerCase();
+            const s =
+                String(
+                    u.account_status || ""
+                ).toLowerCase();
 
-                return (
-                    s === "approved" ||
-                    s === "active"
-                );
+            return (
+                s === "approved" ||
+                s === "active"
+            );
 
-            }
-        ).length;
-
+        }).length;
 
     const rejected =
-        allUsers.filter(
-            u =>
-            String(
-                u.account_status || ""
-            ).toLowerCase()
-            === "rejected"
-        ).length;
+        allUsers.filter(function(u) {
 
+            return String(
+                u.account_status || ""
+            ).toLowerCase() === "rejected";
+
+        }).length;
+
+
+    /* UPDATE STATISTICS */
 
     document.getElementById(
         "totalUsers"
-    ).textContent =
-        total;
-
+    ).textContent = total;
 
     document.getElementById(
         "pendingUsers"
-    ).textContent =
-        pending;
-
+    ).textContent = pending;
 
     document.getElementById(
         "approvedUsers"
-    ).textContent =
-        approved;
-
+    ).textContent = approved;
 
     document.getElementById(
         "rejectedUsers"
-    ).textContent =
-        rejected;
+    ).textContent = rejected;
 
+
+    /* NO USERS */
 
     if (!users.length) {
 
         table.innerHTML = `
-
-        <tr>
-
-        <td
-        colspan="8"
-        style="text-align:center;padding:25px"
-        >
-
-        No users found.
-
-        </td>
-
-        </tr>
-
+            <tr>
+                <td
+                    colspan="8"
+                    style="
+                        text-align:center;
+                        padding:30px;
+                    "
+                >
+                    No users found.
+                </td>
+            </tr>
         `;
 
-        return;
+        renderUserPagination(0);
 
+        return;
     }
+
+
+    /* MAKE SURE PAGE IS VALID */
+
+    const totalPages =
+        Math.ceil(
+            users.length /
+            USERS_PER_PAGE
+        );
+
+    if (currentUserPage > totalPages) {
+        currentUserPage = totalPages;
+    }
+
+    if (currentUserPage < 1) {
+        currentUserPage = 1;
+    }
+
+
+    /* GET ONLY 5 USERS */
+
+    const startIndex =
+        (currentUserPage - 1) *
+        USERS_PER_PAGE;
+
+    const endIndex =
+        startIndex +
+        USERS_PER_PAGE;
+
+    const pageUsers =
+        users.slice(
+            startIndex,
+            endIndex
+        );
 
 
     table.innerHTML = "";
 
 
-    users.forEach(
-        user => {
+    /* DISPLAY CURRENT PAGE */
 
-            const tr =
-                document.createElement(
-                    "tr"
-                );
+    pageUsers.forEach(function(user) {
 
+        const tr =
+            document.createElement("tr");
 
-            const status =
-                user.account_status ||
-                "-";
+        const status =
+            user.account_status || "-";
 
 
-            tr.innerHTML = `
+        tr.innerHTML = `
 
             <td class="user-id">
-
-                ${escapeHtml(
-                    user.id
-                )}
-
+                ${escapeHtml(user.id)}
             </td>
 
-
             <td>
-
                 ${escapeHtml(
-                    user.full_name ||
-                    "-"
+                    user.full_name || "-"
                 )}
-
             </td>
 
-
             <td>
-
                 ${escapeHtml(
-                    user.email ||
-                    "-"
+                    user.email || "-"
                 )}
-
             </td>
 
-
             <td>
-
                 ${escapeHtml(
-                    user.mobile ||
-                    "-"
+                    user.mobile || "-"
                 )}
-
             </td>
 
-
             <td>
-
                 ${escapeHtml(
-                    user.user_type ||
-                    "-"
+                    user.user_type || "-"
                 )}
-
             </td>
 
-
             <td>
-
                 <span
-                class="status ${statusClass(status)}"
+                    class="status ${statusClass(status)}"
                 >
-
-                ${escapeHtml(status)}
-
+                    ${escapeHtml(status)}
                 </span>
-
             </td>
 
-
             <td>
-
                 ${escapeHtml(
                     formatDate(
                         user.created_at
                     )
                 )}
-
             </td>
-
 
             <td>
 
-           
+                <div class="actions">
 
                     <button
-                    class="edit-btn"
-                    onclick="editUser('${escapeHtml(user.id)}')"
+                        class="edit-btn"
+                        onclick="editUser('${escapeHtml(user.id)}')"
                     >
-
-                    ✏️ Edit
-
+                        ✏️ Edit
                     </button>
-
 
                     <button
-                    class="delete-btn"
-                    onclick="deleteUser('${escapeHtml(user.id)}')"
+                        class="delete-btn"
+                        onclick="deleteUser('${escapeHtml(user.id)}')"
                     >
-
-                    🗑 Delete
-
+                        🗑 Delete
                     </button>
 
-               
+                </div>
 
             </td>
 
-            `;
+        `;
+
+        table.appendChild(tr);
+
+    });
 
 
-            table.appendChild(
-                tr
-            );
+    /* PAGINATION */
 
-        }
+    renderUserPagination(
+        users.length
     );
 
 }
-
 
 /* =========================================================
    FILTER
@@ -1877,6 +1868,283 @@ function filterUsers() {
     displayUsers(
         filteredUsers
     );
+/* =========================================================
+   USER PAGINATION
+========================================================= */
+
+function renderUserPagination(totalUsers) {
+
+    const pagination =
+        document.getElementById(
+            "userPagination"
+        );
+
+    const info =
+        document.getElementById(
+            "paginationInfo"
+        );
+
+    const buttons =
+        document.getElementById(
+            "paginationButtons"
+        );
+
+
+    if (!pagination || !info || !buttons) {
+        return;
+    }
+
+
+    /* HIDE WHEN 5 OR LESS */
+
+    if (totalUsers <= USERS_PER_PAGE) {
+
+        pagination.style.display = "none";
+
+        return;
+    }
+
+
+    pagination.style.display = "flex";
+
+
+    const totalPages =
+        Math.ceil(
+            totalUsers /
+            USERS_PER_PAGE
+        );
+
+
+    const start =
+        (
+            (currentUserPage - 1) *
+            USERS_PER_PAGE
+        ) + 1;
+
+    const end =
+        Math.min(
+            currentUserPage *
+            USERS_PER_PAGE,
+            totalUsers
+        );
+
+
+    info.textContent =
+        `Showing ${start}-${end} of ${totalUsers} users`;
+
+
+    buttons.innerHTML = "";
+
+
+    /* PREVIOUS */
+
+    const previous =
+        document.createElement("button");
+
+    previous.className =
+        "pagination-btn";
+
+    previous.textContent =
+        "‹ Prev";
+
+    previous.disabled =
+        currentUserPage === 1;
+
+    previous.onclick =
+        function() {
+
+            if (currentUserPage > 1) {
+
+                currentUserPage--;
+
+                refreshFilteredUsers();
+
+            }
+
+        };
+
+    buttons.appendChild(previous);
+
+
+    /* PAGE NUMBERS */
+
+    for (
+        let page = 1;
+        page <= totalPages;
+        page++
+    ) {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "pagination-btn";
+
+        if (
+            page === currentUserPage
+        ) {
+
+            button.classList.add(
+                "active"
+            );
+
+        }
+
+        button.textContent =
+            page;
+
+        button.onclick =
+            function() {
+
+                currentUserPage =
+                    page;
+
+                refreshFilteredUsers();
+
+            };
+
+        buttons.appendChild(button);
+
+    }
+
+
+    /* NEXT */
+
+    const next =
+        document.createElement("button");
+
+    next.className =
+        "pagination-btn";
+
+    next.textContent =
+        "Next ›";
+
+    next.disabled =
+        currentUserPage === totalPages;
+
+    next.onclick =
+        function() {
+
+            if (
+                currentUserPage <
+                totalPages
+            ) {
+
+                currentUserPage++;
+
+                refreshFilteredUsers();
+
+            }
+
+        };
+
+    buttons.appendChild(next);
+
+}
+
+
+
+/* =========================================================
+   REFRESH FILTERED USERS
+========================================================= */
+
+function refreshFilteredUsers() {
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+    const typeFilter =
+        document.getElementById(
+            "typeFilter"
+        );
+
+    const statusFilter =
+        document.getElementById(
+            "statusFilter"
+        );
+
+
+    const search =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+    const selectedType =
+        typeFilter.value;
+
+    const selectedStatus =
+        statusFilter.value;
+
+
+    const filteredUsers =
+        allUsers.filter(function(user) {
+
+            const name =
+                String(
+                    user.full_name || ""
+                ).toLowerCase();
+
+            const email =
+                String(
+                    user.email || ""
+                ).toLowerCase();
+
+            const mobile =
+                String(
+                    user.mobile || ""
+                ).toLowerCase();
+
+            const userType =
+                String(
+                    user.user_type || ""
+                ).toLowerCase();
+
+            const accountStatus =
+                String(
+                    user.account_status || ""
+                ).toLowerCase();
+
+
+            const matchesSearch =
+                !search ||
+                name.includes(search) ||
+                email.includes(search) ||
+                mobile.includes(search);
+
+
+            const matchesType =
+                selectedType === "all" ||
+                userType === selectedType;
+
+
+            const matchesStatus =
+                selectedStatus === "all" ||
+                accountStatus === selectedStatus;
+
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesStatus
+            );
+
+        });
+
+
+    displayUsers(
+        filteredUsers
+    );
+
+}
+function filterUsers() {
+
+    currentUserPage = 1;
+
+    refreshFilteredUsers();
+
+}
 
 }
 
