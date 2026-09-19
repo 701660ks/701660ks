@@ -1657,6 +1657,13 @@ function displayUsers(users) {
 
         row.innerHTML = `
 
+
+          <td>
+                ${escapeHtml(
+                    user.id
+                )}
+            </td>
+
             <td>
                 ${escapeHtml(
                     user.full_name
@@ -2407,7 +2414,7 @@ function displayBusinessVerifications(
                 <td>
 
                     ${escapeHtml(
-                        verification.user_id.name
+                        verification.user_id.
                     )}
 
                 </td>
