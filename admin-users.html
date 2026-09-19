@@ -1125,22 +1125,17 @@ Cancel
 
 <script>
 
-/* =========================================================
-   GLOBAL
-========================================================= */
+
 
 let allUsers = [];
 let allVerifications = [];
 let editingUserId = null;
 let rejectingVerificationId = null;
 
-const USERS_PER_PAGE = 10;
+const USERS_PER_PAGE = 5;
 let currentUserPage = 1;
+let currentFilteredUsers = [];
 
-
-/* =========================================================
-   MESSAGE
-========================================================= */
 
 function showMessage(
     text,
@@ -1758,6 +1753,166 @@ function displayUsers(users) {
 
 }
 
+
+
+
+
+
+/* =========================================================
+   USER PAGINATION
+========================================================= */
+
+function renderUserPagination(totalUsers) {
+
+    const pagination =
+        document.getElementById("userPagination");
+
+    const info =
+        document.getElementById("paginationInfo");
+
+    const buttons =
+        document.getElementById("paginationButtons");
+
+    if (!pagination || !info || !buttons) {
+        return;
+    }
+
+    /* Hide pagination if 5 or fewer */
+
+    if (totalUsers <= USERS_PER_PAGE) {
+
+        pagination.style.display = "none";
+
+        return;
+    }
+
+    pagination.style.display = "flex";
+
+    const totalPages =
+        Math.ceil(
+            totalUsers / USERS_PER_PAGE
+        );
+
+    if (currentUserPage > totalPages) {
+        currentUserPage = totalPages;
+    }
+
+    const start =
+        ((currentUserPage - 1) *
+            USERS_PER_PAGE) + 1;
+
+    const end =
+        Math.min(
+            currentUserPage * USERS_PER_PAGE,
+            totalUsers
+        );
+
+    info.textContent =
+        `Showing ${start}-${end} of ${totalUsers} users`;
+
+    buttons.innerHTML = "";
+
+    /* PREVIOUS */
+
+    const previous =
+        document.createElement("button");
+
+    previous.className =
+        "pagination-btn";
+
+    previous.textContent =
+        "‹ Prev";
+
+    previous.disabled =
+        currentUserPage === 1;
+
+    previous.onclick = function () {
+
+        if (currentUserPage > 1) {
+
+            currentUserPage--;
+
+            displayUsers(
+                currentFilteredUsers
+            );
+        }
+
+    };
+
+    buttons.appendChild(previous);
+
+
+    /* PAGE NUMBERS */
+
+    for (
+        let page = 1;
+        page <= totalPages;
+        page++
+    ) {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "pagination-btn";
+
+        button.textContent =
+            page;
+
+        if (page === currentUserPage) {
+
+            button.classList.add("active");
+
+        }
+
+        button.onclick = function () {
+
+            currentUserPage = page;
+
+            displayUsers(
+                currentFilteredUsers
+            );
+
+        };
+
+        buttons.appendChild(button);
+
+    }
+
+
+    /* NEXT */
+
+    const next =
+        document.createElement("button");
+
+    next.className =
+        "pagination-btn";
+
+    next.textContent =
+        "Next ›";
+
+    next.disabled =
+        currentUserPage === totalPages;
+
+    next.onclick = function () {
+
+        if (
+            currentUserPage <
+            totalPages
+        ) {
+
+            currentUserPage++;
+
+            displayUsers(
+                currentFilteredUsers
+            );
+        }
+
+    };
+
+    buttons.appendChild(next);
+
+}
 /* =========================================================
    FILTER
 ========================================================= */
@@ -1872,175 +2027,9 @@ function filterUsers() {
    USER PAGINATION
 ========================================================= */
 
-function renderUserPagination(totalUsers) {
-
-    const pagination =
-        document.getElementById(
-            "userPagination"
-        );
-
-    const info =
-        document.getElementById(
-            "paginationInfo"
-        );
-
-    const buttons =
-        document.getElementById(
-            "paginationButtons"
-        );
 
 
-    if (!pagination || !info || !buttons) {
-        return;
-    }
-
-
-    /* HIDE WHEN 5 OR LESS */
-
-    if (totalUsers <= USERS_PER_PAGE) {
-
-        pagination.style.display = "none";
-
-        return;
-    }
-
-
-    pagination.style.display = "flex";
-
-
-    const totalPages =
-        Math.ceil(
-            totalUsers /
-            USERS_PER_PAGE
-        );
-
-
-    const start =
-        (
-            (currentUserPage - 1) *
-            USERS_PER_PAGE
-        ) + 1;
-
-    const end =
-        Math.min(
-            currentUserPage *
-            USERS_PER_PAGE,
-            totalUsers
-        );
-
-
-    info.textContent =
-        `Showing ${start}-${end} of ${totalUsers} users`;
-
-
-    buttons.innerHTML = "";
-
-
-    /* PREVIOUS */
-
-    const previous =
-        document.createElement("button");
-
-    previous.className =
-        "pagination-btn";
-
-    previous.textContent =
-        "‹ Prev";
-
-    previous.disabled =
-        currentUserPage === 1;
-
-    previous.onclick =
-        function() {
-
-            if (currentUserPage > 1) {
-
-                currentUserPage--;
-
-                refreshFilteredUsers();
-
-            }
-
-        };
-
-    buttons.appendChild(previous);
-
-
-    /* PAGE NUMBERS */
-
-    for (
-        let page = 1;
-        page <= totalPages;
-        page++
-    ) {
-
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "pagination-btn";
-
-        if (
-            page === currentUserPage
-        ) {
-
-            button.classList.add(
-                "active"
-            );
-
-        }
-
-        button.textContent =
-            page;
-
-        button.onclick =
-            function() {
-
-                currentUserPage =
-                    page;
-
-                refreshFilteredUsers();
-
-            };
-
-        buttons.appendChild(button);
-
-    }
-
-
-    /* NEXT */
-
-    const next =
-        document.createElement("button");
-
-    next.className =
-        "pagination-btn";
-
-    next.textContent =
-        "Next ›";
-
-    next.disabled =
-        currentUserPage === totalPages;
-
-    next.onclick =
-        function() {
-
-            if (
-                currentUserPage <
-                totalPages
-            ) {
-
-                currentUserPage++;
-
-                refreshFilteredUsers();
-
-            }
-
-        };
-
-    buttons.appendChild(next);
-
-}
+    
 
 
 
