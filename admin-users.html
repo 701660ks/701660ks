@@ -2371,8 +2371,8 @@ function displayVerifications(
 
 
             const businessType =
-                row.business_type ||
-                row.user_type ||
+                row.verification_type ||
+                row.verification_type ||
                 row.type ||
                 "-";
 
@@ -2432,7 +2432,8 @@ function displayVerifications(
                 <!-- TYPE -->
                 <td>
                     ${escapeHtml(
-                       row.verifcation_type
+                              
+                        businessType
                     )}
                 </td>
 
