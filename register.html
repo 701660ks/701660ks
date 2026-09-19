@@ -966,37 +966,52 @@ document
 
             /* PROFILE INSERT */
 
-            const {
-                error: profileError
-            } =
-            await supabaseClient
-                .from("profiles")
-                .insert({
+            
+const {
+    data: authData,
+    error: authError
+} =
+await supabaseClient.auth.signUp({
 
-                    id:
-                        authData.user.id,
+    email: email,
 
-                    full_name:
-                        fullName,
+    password: password,
 
-                    email:
-                        email,
+    options: {
 
-                    mobile:
-                        mobile,
+        data: {
 
-                    user_type:
-                        userType,
+            full_name: fullName,
 
-                    mobile_verified:
-                        true,
+            mobile: mobile,
 
-                    account_status:
-                        userType === "user"
-                        ? "active"
-                        : "pending_admin"
+            user_type: userType
 
-                });
+        }
+
+    }
+
+});
+
+if (authError) {
+    throw authError;
+}
+
+if (!authData.user) {
+    throw new Error(
+        "User was not created."
+    );
+}
+
+showMessage(
+    "Account created successfully!",
+    "success"
+);
+
+setTimeout(() => {
+    window.location.href = "login.html";
+}, 2000);
+   
 
 
             if (profileError)
