@@ -275,20 +275,7 @@ function setupNavigation() {
     });
 
 
-    document
-        .getElementById("mobileMenuButton")
-        .addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelector(".sidebar")
-                    .classList.toggle(
-                        "mobile-open"
-                    );
-
-            }
-        );
+ 
 
 }
 
@@ -357,16 +344,7 @@ function showSection(sectionName) {
         });
 
 
-    /*
-       Close mobile sidebar
-    */
-
-    document
-        .querySelector(".sidebar")
-        .classList.remove(
-            "mobile-open"
-        );
-
+   
 
     /*
        Load section data
@@ -1822,15 +1800,11 @@ function setupButtons() {
         );
 
 
-    document
-        .getElementById(
-            "logoutButton"
-        )
-        .addEventListener(
-            "click",
-            logout
-        );
+ const logoutButton = document.getElementById("logoutButton");
 
+if (logoutButton) {
+    logoutButton.addEventListener("click", logout);
+}
 }
 
 
