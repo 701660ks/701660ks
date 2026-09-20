@@ -8,14 +8,9 @@
 
 const sb = supabaseClient;
 
-if (!sb) {
-    console.error("Supabase client not found.");
-    alert("Supabase client not initialized!");
-    return;
-}
-
-console.log("JS UNDEFINED: Supabase connected");
-
+/* =========================================================
+   JS UNDEFINED - WHOLESALER DASHBOARD
+   ========================================================= */
 
 (() => {
     "use strict";
@@ -23,39 +18,50 @@ console.log("JS UNDEFINED: Supabase connected");
     /* =====================================================
        SUPABASE
        ===================================================== */
-console.log("Checking Supabase...");
-console.log("window.supabase =", window.supabase);
-console.log("window.supabaseClient =", window.supabaseClient);
 
-const sb =supabaseClient;
+    console.log("Checking Supabase...");
+    console.log("window.supabase =", window.supabase);
+    console.log("supabaseClient =", typeof supabaseClient);
 
-if (!sb) {
-    console.error("Supabase client not found.");
+    const sb = supabaseClient;
 
-    alert("Supabase client not initialized!");
+    if (!sb) {
+        console.error("Supabase client not found.");
 
-    const loading = document.getElementById("loadingScreen");
+        alert("Supabase client not initialized!");
 
-    if (loading) {
-        loading.innerHTML = `
-            <div style="
-                padding:30px;
-                text-align:center;
-                font-family:Arial,sans-serif;
-            ">
-                <h2>Supabase Connection Error</h2>
-                <p>Supabase client was not initialized.</p>
-                <button onclick="location.reload()">
-                    Retry
-                </button>
-            </div>
-        `;
+        const loading =
+            document.getElementById("loadingScreen");
+
+        if (loading) {
+            loading.innerHTML = `
+                <div style="
+                    padding:30px;
+                    text-align:center;
+                    font-family:Arial,sans-serif;
+                ">
+                    <h2>Supabase Connection Error</h2>
+                    <p>Supabase client was not initialized.</p>
+
+                    <button
+                        onclick="location.reload()"
+                        style="
+                            padding:10px 20px;
+                            border:0;
+                            border-radius:8px;
+                            cursor:pointer;
+                        "
+                    >
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        return;
     }
 
-    return;
-}
-
-console.log("JS UNDEFINED: Supabase connected");
+    console.log("JS UNDEFINED: Supabase connected");
     
     /* =====================================================
        STATE
