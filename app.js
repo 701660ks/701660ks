@@ -26,9 +26,9 @@ const sb = supabaseClient;
    
 
     if (!sb) {
-       alert("Supabase client not found.");
+       window.alert("Supabase client not found.");
 
-        alert("Supabase client not initialized!");
+       window.alert("Supabase client not initialized!");
 
         const loading =
             document.getElementById("loadingScreen");
