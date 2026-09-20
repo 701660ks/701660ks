@@ -987,6 +987,7 @@ console.log("AUTH USER ID:", state.user.id);
         "Products successfully loaded:",
         state.products.length
     );
+}
 
     
 
