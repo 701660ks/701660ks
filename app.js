@@ -34,6 +34,7 @@ const sb = supabaseClient;
             document.getElementById("loadingScreen");
 
         if (loading) {
+window.alert("kd");
             loading.innerHTML = `
                 <div style="
                     padding:30px;
