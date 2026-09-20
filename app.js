@@ -23,7 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
    INITIALIZE
 ========================================= */
 
+
 async function initializeApp() {
+
+    const loadingScreen =
+        document.getElementById("loadingScreen");
+
+    const app =
+        document.getElementById("app");
 
     try {
 
@@ -34,6 +41,10 @@ async function initializeApp() {
         } = await supabaseClient.auth.getSession();
 
 
+        /* -----------------------------------------
+           NOT LOGGED IN
+        ----------------------------------------- */
+
         if (!session) {
 
             window.location.href = "login.html";
@@ -42,35 +53,94 @@ async function initializeApp() {
         }
 
 
+        /* -----------------------------------------
+           CURRENT USER
+        ----------------------------------------- */
+
         currentUser = session.user;
 
+
+        /* -----------------------------------------
+           LOAD PROFILE
+        ----------------------------------------- */
 
         await loadProfile();
 
 
-        document
-            .getElementById("loadingScreen")
-            .classList.add("hidden");
+        /* -----------------------------------------
+           SHOW DASHBOARD
+        ----------------------------------------- */
 
-        document
-            .getElementById("app")
-            .classList.remove("hidden");
+        if (loadingScreen) {
+            loadingScreen.classList.add("hidden");
+        }
 
+        if (app) {
+            app.classList.remove("hidden");
+        }
+
+
+        /* -----------------------------------------
+           LOAD DASHBOARD DATA
+        ----------------------------------------- */
 
         await loadDashboardData();
 
-    } catch (error) {
+    }
 
-        console.error(error);
+    catch (error) {
 
-        showToast(
-            "Unable to load dashboard."
+        console.error(
+            "WHOLESALER DASHBOARD ERROR:",
+            error
         );
+
+
+        /*
+           IMPORTANT:
+           Never leave the user permanently stuck
+           on "Loading dashboard..."
+        */
+
+        if (loadingScreen) {
+            loadingScreen.classList.add("hidden");
+        }
+
+
+        /*
+           If authentication succeeded, allow the
+           dashboard to open even if some data failed.
+        */
+
+        if (currentUser && app) {
+
+            app.classList.remove("hidden");
+
+            showToast(
+                "Dashboard opened, but some data could not be loaded."
+            );
+
+        }
+
+        else {
+
+            /*
+               Authentication itself failed.
+            */
+
+            if (app) {
+                app.classList.add("hidden");
+            }
+
+            showToast(
+                "Unable to connect to your account. Please login again."
+            );
+
+        }
 
     }
 
 }
-
 
 /* =========================================
    PROFILE
