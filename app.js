@@ -2005,6 +2005,112 @@ function showToast(message) {
 
 }
 
+/* =========================================================
+   TOP MENU
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+    const menuPanel =
+        document.getElementById("menuPanel");
+
+    const menuOverlay =
+        document.getElementById("menuOverlay");
+
+    const menuClose =
+        document.getElementById("menuClose");
+
+    const menuLogoutBtn =
+        document.getElementById("menuLogoutBtn");
+
+
+    function openMenu() {
+
+        menuPanel?.classList.add("open");
+
+        menuOverlay?.classList.add("open");
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    function closeMenu() {
+
+        menuPanel?.classList.remove("open");
+
+        menuOverlay?.classList.remove("open");
+
+        document.body.style.overflow = "";
+    }
+
+
+    menuButton?.addEventListener(
+        "click",
+        openMenu
+    );
+
+
+    menuClose?.addEventListener(
+        "click",
+        closeMenu
+    );
+
+
+    menuOverlay?.addEventListener(
+        "click",
+        closeMenu
+    );
+
+
+    /* ESC KEY */
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key === "Escape") {
+
+                closeMenu();
+
+            }
+
+        }
+    );
+
+
+    /* LOGOUT */
+
+    menuLogoutBtn?.addEventListener(
+        "click",
+        async () => {
+
+            const { error } =
+                await supabaseClient.auth.signOut();
+
+            if (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                alert(
+                    "Logout failed. Please try again."
+                );
+
+                return;
+            }
+
+
+            window.location.href =
+                "index.html";
+        }
+    );
+
+});
 
 /* =========================================
    AUTH STATE
