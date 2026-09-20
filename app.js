@@ -2,70 +2,43 @@
    JS UNDEFINED - WHOLESALER DASHBOARD
    Complete Supabase Dashboard JavaScript
    ========================================================= */
-
-
-
-
-const sb = supabaseClient;
-
-document.write(supabaseClient);
-
-/* =========================================================
-   JS UNDEFINED - WHOLESALER DASHBOARD
-   ========================================================= */
-
 (() => {
     "use strict";
 
-    /* =====================================================
-       SUPABASE
-       ===================================================== */
+    console.log("=== JS UNDEFINED APP START ===");
 
-    console.log("Checking Supabase...");
-    console.log("window.supabase =", window.supabase);
-    console.log("supabaseClient =", typeof supabaseClient);
+    console.log("window.supabase:", window.supabase);
+    console.log("supabaseClient type:", typeof supabaseClient);
 
-   
+    const sb = supabaseClient;
 
     if (!sb) {
-       window.alert("Supabase client not found.");
+        console.error("Supabase client not found");
 
-       window.alert("Supabase client not initialized!");
-
-        const loading =
-            document.getElementById("loadingScreen");
-
-        if (loading) {
-
-            loading.innerHTML = `
-                <div style="
-                    padding:30px;
-                    text-align:center;
-                    font-family:Arial,sans-serif;
-                ">
-                    <h2>Supabase Connection Error</h2>
-                    <p>Supabase client was not initialized.</p>
-
-                    <button
-                        onclick="location.reload()"
-                        style="
-                            padding:10px 20px;
-                            border:0;
-                            border-radius:8px;
-                            cursor:pointer;
-                        "
-                    >
-                        Retry
-                    </button>
-                </div>
-            `;
-        }
+        document.body.innerHTML = `
+            <div style="
+                padding:30px;
+                font-family:Arial;
+                text-align:center;
+            ">
+                <h2>Supabase Connection Error</h2>
+                <p>supabaseClient was not found.</p>
+                <p>Check the script order in wholesaler.html.</p>
+            </div>
+        `;
 
         return;
     }
 
-    console.log("JS UNDEFINED: Supabase connected");
-    
+    console.log("Supabase client found successfully");
+
+
+    // YOUR EXISTING APP.JS CODE CONTINUES BELOW
+
+
+
+
+  
     /* =====================================================
        STATE
        ===================================================== */
