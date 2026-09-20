@@ -23,7 +23,7 @@ const sb = supabaseClient;
     console.log("window.supabase =", window.supabase);
     console.log("supabaseClient =", typeof supabaseClient);
 
-    const sb = supabaseClient;
+   
 
     if (!sb) {
         console.error("Supabase client not found.");
