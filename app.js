@@ -26,7 +26,7 @@ const sb = supabaseClient;
    
 
     if (!sb) {
-        console.error("Supabase client not found.");
+       alert("Supabase client not found.");
 
         alert("Supabase client not initialized!");
 
