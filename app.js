@@ -34,17 +34,23 @@ async function initializeApp() {
 
     try {
 
+        console.log("Starting wholesaler dashboard...");
+
+        /* GET LOGIN SESSION */
         const {
             data: {
                 session
-            }
+            },
+            error: sessionError
         } = await supabaseClient.auth.getSession();
 
+        if (sessionError) {
+            throw sessionError;
+        }
 
-        /* -----------------------------------------
-           NOT LOGGED IN
-        ----------------------------------------- */
+        console.log("Session:", session);
 
+        /* NOT LOGGED IN */
         if (!session) {
 
             window.location.href = "login.html";
@@ -52,25 +58,27 @@ async function initializeApp() {
             return;
         }
 
-
-        /* -----------------------------------------
-           CURRENT USER
-        ----------------------------------------- */
-
+        /* SAVE CURRENT USER */
         currentUser = session.user;
 
+        console.log(
+            "Logged in user:",
+            currentUser.id
+        );
 
-        /* -----------------------------------------
-           LOAD PROFILE
-        ----------------------------------------- */
-
+        /* LOAD PROFILE */
         await loadProfile();
 
+        console.log(
+            "Profile loaded:",
+            currentProfile
+        );
 
-        /* -----------------------------------------
-           SHOW DASHBOARD
-        ----------------------------------------- */
-
+        /*
+         * IMPORTANT:
+         * Hide loading screen BEFORE dashboard
+         * data requests.
+         */
         if (loadingScreen) {
             loadingScreen.classList.add("hidden");
         }
@@ -79,69 +87,58 @@ async function initializeApp() {
             app.classList.remove("hidden");
         }
 
+        /*
+         * Dashboard statistics should NOT prevent
+         * the dashboard from opening.
+         */
+        try {
 
-        /* -----------------------------------------
-           LOAD DASHBOARD DATA
-        ----------------------------------------- */
+            await loadDashboardData();
 
-        await loadDashboardData();
+        } catch (dashboardError) {
 
-    }
+            console.error(
+                "Dashboard data error:",
+                dashboardError
+            );
 
-    catch (error) {
+        }
+
+    } catch (error) {
 
         console.error(
-            "WHOLESALER DASHBOARD ERROR:",
+            "WHOLESALER INITIALIZATION ERROR:",
             error
         );
 
-
         /*
-           IMPORTANT:
-           Never leave the user permanently stuck
-           on "Loading dashboard..."
-        */
-
+         * NEVER leave the user stuck on
+         * Loading dashboard...
+         */
         if (loadingScreen) {
             loadingScreen.classList.add("hidden");
         }
 
-
         /*
-           If authentication succeeded, allow the
-           dashboard to open even if some data failed.
-        */
-
+         * If we have a logged-in user,
+         * show the dashboard anyway.
+         */
         if (currentUser && app) {
 
             app.classList.remove("hidden");
 
-            showToast(
-                "Dashboard opened, but some data could not be loaded."
-            );
-
-        }
-
-        else {
+        } else {
 
             /*
-               Authentication itself failed.
-            */
-
-            if (app) {
-                app.classList.add("hidden");
-            }
-
-            showToast(
-                "Unable to connect to your account. Please login again."
-            );
+             * No valid login session.
+             */
+            window.location.href = "login.html";
 
         }
 
     }
 
 }
-
 /* =========================================
    PROFILE
 ========================================= */
