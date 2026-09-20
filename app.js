@@ -2905,6 +2905,39 @@ function cartQuantityChange(event) {
        PAYMENTS
        ===================================================== */
 
+
+
+
+async function loadPayments() {
+    console.log("=== LOAD PAYMENTS START ===");
+
+    if (!state.user?.id) {
+        state.payments = [];
+        return;
+    }
+
+    const { data, error } = await sb
+        .from("payments")
+        .select("*")
+        .eq("seller_id", state.user.id)
+        .order("created_at", { ascending: false });
+
+    console.log("PAYMENT DATA:", data);
+    console.log("PAYMENT ERROR:", error);
+
+    if (error) {
+        console.error("Payments:", error);
+        state.payments = [];
+        return;
+    }
+
+    state.payments = data || [];
+
+    console.log("Payments loaded:", state.payments.length);
+}
+
+
+
     function renderPayments() {
 
     const payments =
