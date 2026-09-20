@@ -2895,3 +2895,25 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================================
+   WHOLESALER FULL SCREEN OVERRIDE
+   ========================================================= */
+
+body:has(.top-header) .sidebar {
+    display: none !important;
+}
+
+body:has(.top-header) .main {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+}
+
+body:has(.top-header) .content {
+    width: 100% !important;
+    max-width: 1800px !important;
+    margin: 0 auto !important;
+    padding: 42px 5vw 80px !important;
+    box-sizing: border-box !important;
+}
