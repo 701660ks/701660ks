@@ -4760,14 +4760,33 @@ function cartQuantityChange(event) {
         openProduct:
             openProduct
     };
+console.log("INIT STARTED");
 
+const { data: sessionData, error: sessionError } =
+    await sb.auth.getSession();
 
-    /* =====================================================
-       START
-       ===================================================== */
+console.log("SESSION DATA:", sessionData);
+console.log("SESSION ERROR:", sessionError);
 
-   document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded");
+if (sessionError) {
+    document.body.innerHTML += `
+        <div style="padding:20px;color:red;font-size:18px;">
+            Session Error: ${sessionError.message}
+        </div>
+    `;
+    return;
+}
 
-    init();
-});
+if (!sessionData.session) {
+    document.body.innerHTML += `
+        <div style="padding:20px;color:red;font-size:18px;">
+            NO LOGIN SESSION FOUND
+        </div>
+    `;
+
+    window.location.href = "login.html";
+    return;
+}
+
+console.log("LOGGED IN USER:", sessionData.session.user);
+console.log("USER ID:", sessionData.session.user.id);
