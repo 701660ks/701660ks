@@ -29,106 +29,143 @@
 
     <!-- ================= SIDEBAR ================= -->
 
-   <aside class="sidebar">
 
-    <!-- LOGO -->
-    <div class="sidebar-logo">
-        <div class="logo-icon">W</div>
+    
+  <!-- =====================================================
+     TOP HEADER
+===================================================== -->
+<header class="top-header">
+
+    <div class="brand-area">
+
+        <div class="brand-logo">
+            W
+        </div>
+
+        <div class="brand-text">
+            <h2>WHOLESALE HUB</h2>
+            <span>B2B BUSINESS PLATFORM</span>
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div class="user-status">
+            <span class="status-dot"></span>
+            <span id="headerUserName">Wholesaler</span>
+        </div>
+
+        <button
+            type="button"
+            class="menu-button"
+            id="menuButton"
+            aria-label="Open Menu"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     MENU OVERLAY
+===================================================== -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+
+<!-- =====================================================
+     MENU PANEL
+===================================================== -->
+<div class="menu-panel" id="menuPanel">
+
+    <div class="menu-panel-header">
 
         <div>
-            <h2>Wholesale Hub</h2>
-            <span>B2B Business</span>
+            <small>WHOLESALE HUB</small>
+            <h3>Menu</h3>
         </div>
+
+        <button
+            type="button"
+            class="menu-close"
+            id="menuClose"
+        >
+            ×
+        </button>
+
     </div>
 
-    <!-- MAIN MENU -->
-    <div class="sidebar-section-title">
-        Main Menu
-    </div>
 
-    <nav class="sidebar-nav">
+    <div class="menu-links">
 
-        <a href="#" class="nav-item active" data-section="dashboard">
-            <span class="icon">⌂</span>
-            <span>Dashboard</span>
-        </a>
+        <!-- WHOLESALER DASHBOARD -->
+        <a href="wholesaler.html" class="menu-link">
 
-        <a href="#" class="nav-item" data-section="products">
-            <span class="icon">▣</span>
-            <span>B2B Products</span>
-        </a>
-
-        <a href="#" class="nav-item" data-section="buy-products">
-            <span class="icon">🛒</span>
-            <span>Buy Products</span>
-        </a>
-
-        <a href="#" class="nav-item" data-section="orders">
-            <span class="icon">▤</span>
-            <span>My Orders</span>
-        </a>
-
-        <a href="#" class="nav-item" data-section="payments">
-            <span class="icon">₹</span>
-            <span>Payments</span>
-        </a>
-
-    </nav>
-
-    <!-- MANAGEMENT -->
-    <div class="sidebar-section-title">
-        Management
-    </div>
-
-    <nav class="sidebar-nav">
-
-        <a href="#" class="nav-item add-product" data-section="add-product">
-            <span class="icon">＋</span>
-            <span>Add Product</span>
-        </a>
-
-        <a href="#" class="nav-item" data-section="customers">
-            <span class="icon">♙</span>
-            <span>Customers</span>
-        </a>
-
-    </nav>
-
-    <div class="sidebar-divider"></div>
-
-    <!-- BOTTOM -->
-    <div class="sidebar-bottom">
-
-        <div class="sidebar-user">
-
-            <div class="sidebar-user-avatar">
-                W
+            <div class="menu-icon">
+                ◈
             </div>
 
-            <div class="sidebar-user-info">
-                <strong id="sidebarUserName">
-                    Wholesaler
-                </strong>
-
-                <span>
-                    Business Account
-                </span>
+            <div>
+                <strong>Wholesaler Dashboard</strong>
+                <span>Manage your B2B business</span>
             </div>
 
-        </div>
+        </a>
 
-        <div class="sidebar-logout">
 
-            <a href="#" class="nav-item" id="logoutBtn">
-                <span class="icon">↪</span>
-                <span>Logout</span>
-            </a>
+        <!-- INDEX -->
+        <a href="index.html" class="menu-link">
 
-        </div>
+            <div class="menu-icon">
+                ⌂
+            </div>
+
+            <div>
+                <strong>Home</strong>
+                <span>Go to main website</span>
+            </div>
+
+        </a>
+
+
+        <!-- LOGOUT -->
+        <button
+            type="button"
+            class="menu-link logout-menu-link"
+            id="menuLogoutBtn"
+        >
+
+            <div class="menu-icon">
+                ↪
+            </div>
+
+            <div>
+                <strong>Logout</strong>
+                <span>Sign out of your account</span>
+            </div>
+
+        </button>
 
     </div>
 
-</aside>
+
+    <div class="menu-panel-footer">
+
+        <span>Wholesale Hub</span>
+
+        <small>
+            B2B Business Platform
+        </small>
+
+    </div>
+
+</div>
 
     <!-- ================= MAIN ================= -->
 
