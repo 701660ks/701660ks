@@ -3559,9 +3559,7 @@ async function loadPayments() {
        DRAW PAYMENT GRAPH
        ========================= */
 
-    drawPaymentGraph(
-        payments
-    );
+    
 }
 
 function drawSalesGraph(orders) {
