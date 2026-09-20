@@ -3,448 +3,247 @@
 
 
 
+
 /* =========================================================
-   JS UNDEFINED - FINAL RESPONSIVE DASHBOARD FIX
+   FINAL DASHBOARD RESPONSIVE FIX
    ========================================================= */
 
-/* ---------- GENERAL ---------- */
-
-html {
-    width: 100%;
-    overflow-x: hidden;
-}
-
+/* Prevent dashboard content from creating horizontal page overflow */
+html,
 body {
-    width: 100%;
-    min-width: 0;
+    max-width: 100%;
     overflow-x: hidden;
 }
 
-.app {
-    width: 100%;
+.layout,
+.content,
+.page-section,
+.panel {
     min-width: 0;
+    max-width: 100%;
 }
 
-.layout {
-    width: 100%;
-    min-width: 0;
-}
 
-.content {
-    width: 100%;
-    min-width: 0;
-    max-width: 1600px;
-    margin: 0 auto;
-}
+/* =========================================================
+   MEDIUM / COMPUTER SCREEN
+   Stack charts when available width is not enough
+   ========================================================= */
 
-/* ---------- DESKTOP ---------- */
-
-@media (min-width: 1001px) {
-
-    .content {
-        padding: 30px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
+@media (max-width: 1200px) {
 
     .chart-grid {
-        grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+        grid-template-columns: 1fr !important;
+        width: 100%;
+    }
+
+    .chart-grid > .panel {
+        width: 100%;
+        min-width: 0;
     }
 
     .chart-wrap {
         width: 100%;
-        height: 290px;
+        min-width: 0;
     }
 
     .chart-wrap canvas {
-        display: block;
-        width: 100% !important;
-        max-width: 100%;
-    }
-
-    .panel {
-        width: 100%;
-        min-width: 0;
+        max-width: 100% !important;
     }
 }
 
 
-/* ---------- TABLET ---------- */
-
-@media (max-width: 1000px) {
-
-    .sidebar {
-        width: 230px;
-    }
-
-    .content {
-        padding: 22px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .chart-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .product-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-
-/* ---------- MOBILE ---------- */
+/* =========================================================
+   MOBILE DASHBOARD
+   ========================================================= */
 
 @media (max-width: 800px) {
 
-    .topbar {
-        height: 64px;
-        padding: 0 12px;
-        position: sticky;
-        top: 0;
-        width: 100%;
-    }
-
-    .brand {
-        gap: 8px;
-        min-width: 0;
-    }
-
-    .brand-mark {
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0;
-    }
-
-    .brand strong {
-        font-size: 13px;
-        white-space: nowrap;
-    }
-
-    .brand small {
-        font-size: 9px;
-    }
-
-    .top-actions {
-        gap: 6px;
-    }
-
-    .top-actions .user-name {
-        display: none;
-    }
-
-    .logout-btn {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .mobile-only {
-        display: block;
-    }
-
-    /* Sidebar */
-
-    .sidebar {
-        width: 250px;
-        left: -270px;
-        top: 64px;
-        height: calc(100vh - 64px);
-        position: fixed;
-        z-index: 1000;
-        box-shadow: 10px 0 30px rgba(0,0,0,.12);
-        transition: left .25s ease;
-    }
-
-    .sidebar.open {
-        left: 0;
-    }
-
-    /* Main content */
-
     .content {
         width: 100%;
         max-width: 100%;
-        padding: 14px;
-        margin: 0;
+        padding: 12px;
+        overflow-x: hidden;
     }
 
-    .page-head {
-        margin-bottom: 15px;
-        gap: 12px;
-    }
-
-    .page-head h1 {
-        font-size: 23px;
-    }
-
-    .page-head p {
-        font-size: 12px;
-    }
-
-    /* Dashboard cards */
-
-    .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .stat-card {
-        padding: 14px;
-        border-radius: 13px;
-        min-width: 0;
-    }
-
-    .stat-card span {
-        font-size: 11px;
-    }
-
-    .stat-card strong {
-        font-size: 22px;
-        margin: 5px 0;
-        white-space: nowrap;
-    }
-
-    .stat-card small {
-        font-size: 10px;
-    }
-
-    /* Charts */
-
+    /* Charts one below another */
     .chart-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
         width: 100%;
+        gap: 12px;
     }
 
-    .panel {
+    .chart-grid .panel {
         width: 100%;
         min-width: 0;
-        padding: 14px;
-        border-radius: 14px;
-        margin-bottom: 12px;
-    }
-
-    .panel-head {
-        margin-bottom: 8px;
-    }
-
-    .panel h3 {
-        font-size: 18px;
     }
 
     .chart-wrap {
         width: 100%;
-        height: 260px;
+        height: 250px;
         min-width: 0;
         overflow: hidden;
     }
 
     .chart-wrap canvas {
-        display: block;
         width: 100% !important;
-        max-width: 100%;
+        max-width: 100% !important;
     }
 
-    /* Recent orders */
+
+    /* =====================================================
+       RECENT ORDERS
+       ALL 5 COLUMNS MUST FIT ON PHONE
+       ===================================================== */
 
     #dashboard .table-wrap {
         width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
     }
 
     #dashboard table {
-        min-width: 600px;
+        width: 100%;
+        min-width: 0 !important;
+        table-layout: fixed;
     }
 
     #dashboard th,
     #dashboard td {
-        padding: 10px 8px;
-        font-size: 11px;
+        padding: 9px 5px;
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    /* Other tables */
+    /* Order */
+    #dashboard th:nth-child(1),
+    #dashboard td:nth-child(1) {
+        width: 22%;
+    }
 
-    .table-wrap {
+    /* Product */
+    #dashboard th:nth-child(2),
+    #dashboard td:nth-child(2) {
+        width: 32%;
+    }
+
+    /* Qty */
+    #dashboard th:nth-child(3),
+    #dashboard td:nth-child(3) {
+        width: 12%;
+        text-align: center;
+    }
+
+    /* Total */
+    #dashboard th:nth-child(4),
+    #dashboard td:nth-child(4) {
+        width: 17%;
+        text-align: right;
+    }
+
+    /* Status */
+    #dashboard th:nth-child(5),
+    #dashboard td:nth-child(5) {
+        width: 17%;
+        text-align: center;
+    }
+
+    #dashboard .pill {
+        font-size: 8px;
+        padding: 4px 5px;
+    }
+
+
+    /* =====================================================
+       DASHBOARD CARDS
+       ===================================================== */
+
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
 
-    table {
-        min-width: 650px;
+    .stat-card {
+        min-width: 0;
+        padding: 13px;
     }
 
-    /* Products */
-
-    .product-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-    }
-
-    .product-img {
-        height: 150px;
-    }
-
-    /* Forms */
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-grid .full {
-        grid-column: auto;
-    }
-
-    /* Toolbar */
-
-    .toolbar {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .toolbar .input {
-        max-width: none;
-    }
-
-    /* Cart */
-
-    .cart-row {
-        grid-template-columns: 50px 1fr;
-    }
-
-    /* Payment stats */
-
-    .stats-grid.compact {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .stat-card strong {
+        font-size: 21px;
     }
 }
 
 
-/* ---------- SMALL PHONE ---------- */
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
 
 @media (max-width: 520px) {
-
-    .topbar {
-        height: 60px;
-    }
-
-    .sidebar {
-        top: 60px;
-        height: calc(100vh - 60px);
-    }
 
     .content {
         padding: 10px;
     }
 
-    .page-head h1 {
-        font-size: 21px;
-    }
-
-    .page-head p {
-        font-size: 11px;
-    }
-
-    .btn {
-        padding: 9px 12px;
-        font-size: 12px;
-    }
-
-    /* Keep 2 cards per row */
-
     .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 8px;
     }
 
     .stat-card {
-        padding: 12px;
+        padding: 11px;
+    }
+
+    .stat-card span {
+        font-size: 10px;
     }
 
     .stat-card strong {
-        font-size: 20px;
+        font-size: 19px;
     }
 
     .stat-card small {
         font-size: 9px;
     }
 
-    /* Charts */
 
-    .panel {
-        padding: 12px;
-        border-radius: 13px;
-    }
-
-    .panel h3 {
-        font-size: 17px;
-    }
-
+    /* Sales graph */
     .chart-wrap {
-        height: 240px;
+        height: 230px;
     }
 
-    /* Products one column on very small phones */
-
-    .product-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .product-img {
-        height: 190px;
-    }
-
-    /* Payment cards */
-
-    .stats-grid.compact {
-        grid-template-columns: 1fr 1fr;
-    }
 
     /* Recent orders */
-
-    #dashboard .panel {
-        overflow: hidden;
+    #dashboard th,
+    #dashboard td {
+        padding: 8px 3px;
+        font-size: 9px;
     }
 
-    #dashboard .table-wrap {
-        margin: 0 -4px;
-        width: calc(100% + 8px);
-    }
-}
-
-
-/* ---------- VERY SMALL PHONES ---------- */
-
-@media (max-width: 380px) {
-
-    .brand strong {
-        font-size: 12px;
+    #dashboard th:nth-child(1),
+    #dashboard td:nth-child(1) {
+        width: 22%;
     }
 
-    .logout-btn {
-        padding: 7px 8px;
-        font-size: 11px;
+    #dashboard th:nth-child(2),
+    #dashboard td:nth-child(2) {
+        width: 31%;
     }
 
-    .stats-grid {
-        gap: 7px;
+    #dashboard th:nth-child(3),
+    #dashboard td:nth-child(3) {
+        width: 11%;
     }
 
-    .stat-card {
-        padding: 10px;
+    #dashboard th:nth-child(4),
+    #dashboard td:nth-child(4) {
+        width: 18%;
     }
 
-    .stat-card strong {
-        font-size: 18px;
-    }
-
-    .chart-wrap {
-        height: 226px;
+    #dashboard th:nth-child(5),
+    #dashboard td:nth-child(5) {
+        width: 18%;
     }
 }
+
+
