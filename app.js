@@ -374,6 +374,29 @@
 
             state.user =
                 session.user;
+console.log("AUTH USER ID:", state.user.id);
+
+const userBox = document.createElement("div");
+
+userBox.style.cssText = `
+    background:#fff3cd;
+    color:#664d03;
+    padding:15px;
+    margin:10px 20px;
+    border-radius:8px;
+    font-family:Arial;
+    font-size:14px;
+    word-break:break-all;
+    position:relative;
+    z-index:99999;
+`;
+
+userBox.innerHTML = `
+    <strong>Logged-in User ID:</strong><br>
+    ${esc(state.user.id)}
+`;
+
+document.body.prepend(userBox);
 
 
             /* PROFILE */
