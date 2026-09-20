@@ -2905,243 +2905,160 @@ function cartQuantityChange(event) {
        PAYMENTS
        ===================================================== */
 
-    async function loadPayments() {
-
-        const [
-            sellerPayments,
-            buyerPayments
-        ] =
-            await Promise.all([
-
-                sb
-                    .from("payments")
-                    .select("*")
-                    .eq(
-                        "seller_id",
-                        state.user.id
-                    )
-                    .order(
-                        "created_at",
-                        {
-                            ascending: false
-                        }
-                    ),
-
-                sb
-                    .from("payments")
-                    .select("*")
-                    .eq(
-                        "user_id",
-                        state.user.id
-                    )
-                    .order(
-                        "created_at",
-                        {
-                            ascending: false
-                        }
-                    )
-            ]);
-
-
-        const combined = [
-            ...(sellerPayments.data || []),
-            ...(buyerPayments.data || [])
-        ];
-
-
-        const seen =
-            new Set();
-
-
-        state.payments =
-            combined.filter(
-                payment => {
-
-                    if (
-                        seen.has(
-                            payment.id
-                        )
-                    ) {
-                        return false;
-                    }
-
-                    seen.add(
-                        payment.id
-                    );
-
-                    return true;
-                }
-            );
-
-
-        renderPayments();
-    }
-
-
     function renderPayments() {
 
-        const paid =
-            state.payments
-                .filter(payment =>
-                    [
-                        "paid",
-                        "completed"
-                    ].includes(
-                        String(
-                            payment.payment_status ||
-                            ""
-                        ).toLowerCase()
-                    )
-                )
-                .reduce(
-                    (total, payment) =>
-                        total +
-                        Number(
-                            payment.amount ||
-                            0
-                        ),
-                    0
-                );
+    const payments =
+        state.payments || [];
 
 
-        const pending =
-            state.payments
-                .filter(payment =>
-                    ![
-                        "paid",
-                        "completed"
-                    ].includes(
-                        String(
-                            payment.payment_status ||
-                            ""
-                        ).toLowerCase()
-                    )
-                )
-                .reduce(
-                    (total, payment) =>
-                        total +
-                        Number(
-                            payment.amount ||
-                            0
-                        ),
-                    0
-                );
-
-
-        const total =
-            state.payments.reduce(
-                (sum, payment) =>
+    const paid =
+        payments
+            .filter(
+                payment =>
+                    String(
+                        payment.payment_status ||
+                        ""
+                    ).toLowerCase() ===
+                    "paid"
+            )
+            .reduce(
+                (
+                    sum,
+                    payment
+                ) =>
                     sum +
                     Number(
-                        payment.amount ||
-                        0
+                        payment.amount || 0
                     ),
                 0
             );
 
 
-        if ($("paidTotal")) {
-
-            $("paidTotal")
-                .textContent =
-                money(paid);
-        }
-
-
-        if ($("pendingTotal")) {
-
-            $("pendingTotal")
-                .textContent =
-                money(pending);
-        }
-
-
-        if ($("paymentTotal")) {
-
-            $("paymentTotal")
-                .textContent =
-                money(total);
-        }
-
-
-        if ($("paymentsPageTotal")) {
-
-            $("paymentsPageTotal")
-                .textContent =
-                money(total);
-        }
+    const pending =
+        payments
+            .filter(
+                payment =>
+                    String(
+                        payment.payment_status ||
+                        ""
+                    ).toLowerCase() ===
+                    "pending"
+            )
+            .reduce(
+                (
+                    sum,
+                    payment
+                ) =>
+                    sum +
+                    Number(
+                        payment.amount || 0
+                    ),
+                0
+            );
 
 
-        if (!$("paymentsBody")) {
-            return;
-        }
+    const paidElement =
+        document.getElementById(
+            "paidTotal"
+        );
 
-
-        $("paymentsBody").innerHTML =
-            state.payments.length
-
-                ? state.payments.map(
-                    payment => `
-
-                    <tr>
-
-                        <td>
-                            ${esc(
-                                payment.transaction_id ||
-                                "—"
-                            )}
-                        </td>
-
-                        <td>
-                            ${esc(
-                                payment.order_id
-                                    ? payment.order_id.slice(
-                                        0,
-                                        8
-                                    )
-                                    : "—"
-                            )}
-                        </td>
-
-                        <td>
-                            ${money(
-                                payment.amount
-                            )}
-                        </td>
-
-                        <td>
-                            ${esc(
-                                payment.payment_mode ||
-                                "—"
-                            )}
-                        </td>
-
-                        <td>
-                            ${statusPill(
-                                payment.payment_status
-                            )}
-                        </td>
-
-                        <td>
-                            ${date(
-                                payment.paid_at ||
-                                payment.created_at
-                            )}
-                        </td>
-
-                    </tr>
-
-                `
-                ).join("")
-
-                : `
-                    <tr>
-                        <td colspan="6">
-                            No payment records.
-                        </td>
-                    </tr>
-                `;
+    if (paidElement) {
+        paidElement.textContent =
+            money(paid);
     }
+
+
+    const pendingElement =
+        document.getElementById(
+            "pendingTotal"
+        );
+
+    if (pendingElement) {
+        pendingElement.textContent =
+            money(pending);
+    }
+
+
+    const body =
+        document.getElementById(
+            "paymentsBody"
+        );
+
+    if (!body) return;
+
+
+    if (!payments.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="6"
+                    class="empty-row">
+                    No payments found.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        payments
+            .map(
+                payment => {
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${esc(
+                                    payment.transaction_id ||
+                                    "—"
+                                )}
+                            </td>
+
+                            <td>
+                                ${esc(
+                                    payment.order_id
+                                        ?.slice(0, 8) ||
+                                    "—"
+                                )}
+                            </td>
+
+                            <td>
+                                ${money(
+                                    payment.amount
+                                )}
+                            </td>
+
+                            <td>
+                                ${esc(
+                                    payment.payment_mode ||
+                                    "—"
+                                )}
+                            </td>
+
+                            <td>
+                                ${statusPill(
+                                    payment.payment_status
+                                )}
+                            </td>
+
+                            <td>
+                                ${date(
+                                    payment.paid_at ||
+                                    payment.created_at
+                                )}
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            )
+            .join("");
+}
+
 
 
 
@@ -3425,124 +3342,745 @@ function cartQuantityChange(event) {
      DASHBOARD
      ========================================== */
 
-  function renderDashboard(){
+  function renderDashboard() {
 
-    const activeProducts =
-      state.products.filter(p => p.is_active);
+    console.log("=== RENDER DASHBOARD ===");
 
-    const receivedOrders =
-      state.ordersReceived;
+    const products = state.products || [];
+    const orders = state.ordersReceived || [];
+    const payments = state.payments || [];
+    const customers = state.customers || [];
 
-    const paidPayments =
-      state.payments.filter(p =>
-        ["paid","completed","success","successful"]
-          .includes(
-            String(p.payment_status || "")
-              .toLowerCase()
-          )
-      );
+    /* =========================
+       DASHBOARD COUNTS
+       ========================= */
 
-    const sales =
-      paidPayments.reduce(
-        (sum, p) => sum + Number(p.amount || 0),
-        0
-      );
+    const productCount =
+        products.length;
 
-    const customerIds =
-      new Set(
-        receivedOrders
-          .map(o => o.user_id)
-          .filter(Boolean)
-      );
+    const orderCount =
+        orders.length;
 
-    if ($("productCount"))
-      $("productCount").textContent =
-        activeProducts.length;
+    const paymentTotal =
+        payments.reduce(
+            (sum, payment) =>
+                sum + Number(payment.amount || 0),
+            0
+        );
 
-    if ($("orderCount"))
-      $("orderCount").textContent =
-        receivedOrders.length;
+    /*
+       If customers table is successfully loaded,
+       use it. Otherwise calculate unique buyers
+       from orders.
+    */
 
-    if ($("customerCount"))
-      $("customerCount").textContent =
-        customerIds.size;
+    let customerCount =
+        customers.length;
 
-    if ($("paymentTotal"))
-      $("paymentTotal").textContent =
-        money(sales);
+    if (!customerCount) {
 
-    if ($("welcomeName")) {
-      $("welcomeName").textContent =
-        state.profile?.business_name ||
-        state.profile?.full_name ||
-        "Wholesaler";
+        const uniqueCustomers =
+            new Set(
+                orders
+                    .map(order =>
+                        order.user_id
+                    )
+                    .filter(Boolean)
+            );
+
+        customerCount =
+            uniqueCustomers.size;
     }
 
-    if ($("headerUserName")) {
-      $("headerUserName").textContent =
-        state.profile?.business_name ||
-        state.profile?.full_name ||
-        state.user?.email ||
-        "Wholesaler";
+
+    /* =========================
+       UPDATE STAT CARDS
+       ========================= */
+
+    const productElement =
+        document.getElementById("statProducts");
+
+    if (productElement) {
+        productElement.textContent =
+            productCount;
     }
 
-    renderRecentOrders();
-  }
 
+    const orderElement =
+        document.getElementById("statOrders");
 
-  function renderRecentOrders(){
-
-    const body =
-      $("recentOrdersBody");
-
-    if (!body) return;
-
-    const rows =
-      state.ordersReceived.slice(0, 5);
-
-    if (!rows.length) {
-      body.innerHTML = `
-        <tr>
-          <td colspan="6">
-            No recent orders.
-          </td>
-        </tr>
-      `;
-      return;
+    if (orderElement) {
+        orderElement.textContent =
+            orderCount;
     }
 
-    body.innerHTML = rows.map(o => `
-      <tr>
-        <td>
-          <b>${esc(
-            o.order_number ||
-            o.id?.slice(0, 8) ||
-            "Order"
-          )}</b>
-        </td>
 
-        <td>
-          ${esc(o.product_name || "—")}
-        </td>
+    const paymentElement =
+        document.getElementById("statPayments");
 
-        <td>
-          ${Number(o.buying_quantity || 0)}
-        </td>
+    if (paymentElement) {
+        paymentElement.textContent =
+            money(paymentTotal);
+    }
 
-        <td>
-          ${money(o.total_price)}
-        </td>
 
-        <td>
-          ${statusPill(o.status)}
-        </td>
+    const customerElement =
+        document.getElementById("statCustomers");
 
-        <td>
-          ${date(o.created_at)}
-        </td>
-      </tr>
-    `).join("");
-  }
+    if (customerElement) {
+        customerElement.textContent =
+            customerCount;
+    }
+
+
+    console.log("Dashboard products:", productCount);
+    console.log("Dashboard orders:", orderCount);
+    console.log("Dashboard payments:", paymentTotal);
+    console.log("Dashboard customers:", customerCount);
+
+
+    /* =========================
+       RECENT ORDERS
+       ========================= */
+
+    const recentBody =
+        document.getElementById(
+            "recentOrdersBody"
+        );
+
+    if (recentBody) {
+
+        if (!orders.length) {
+
+            recentBody.innerHTML = `
+                <tr>
+                    <td colspan="5"
+                        class="empty-row">
+                        No recent orders.
+                    </td>
+                </tr>
+            `;
+
+        } else {
+
+            recentBody.innerHTML =
+                orders
+                    .slice(0, 10)
+                    .map(order => {
+
+                        return `
+                            <tr>
+
+                                <td>
+                                    ${esc(
+                                        order.order_number ||
+                                        order.id?.slice(0, 8) ||
+                                        "Order"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${esc(
+                                        order.product_name ||
+                                        "Product"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${Number(
+                                        order.buying_quantity || 0
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${money(
+                                        order.total_price
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${statusPill(
+                                        order.status
+                                    )}
+                                </td>
+
+                            </tr>
+                        `;
+
+                    })
+                    .join("");
+        }
+    }
+
+
+    /* =========================
+       DRAW SALES GRAPH
+       ========================= */
+
+    drawSalesGraph(
+        orders
+    );
+
+
+    /* =========================
+       DRAW PAYMENT GRAPH
+       ========================= */
+
+    drawPaymentGraph(
+        payments
+    );
+}
+
+function drawSalesGraph(orders) {
+
+    const canvas =
+        document.getElementById(
+            "salesChart"
+        );
+
+    if (!canvas) return;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const width =
+        canvas.clientWidth || 500;
+
+    const height =
+        260;
+
+    const dpr =
+        window.devicePixelRatio || 1;
+
+    canvas.width =
+        width * dpr;
+
+    canvas.height =
+        height * dpr;
+
+    canvas.style.height =
+        height + "px";
+
+    ctx.scale(
+        dpr,
+        dpr
+    );
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /* =========================
+       GROUP SALES BY DATE
+       ========================= */
+
+    const dailySales = {};
+
+    orders.forEach(order => {
+
+        const orderDate =
+            order.created_at
+                ? new Date(
+                    order.created_at
+                ).toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "2-digit",
+                        month: "short"
+                    }
+                )
+                : "Unknown";
+
+        dailySales[orderDate] =
+            (
+                dailySales[orderDate] || 0
+            ) +
+            Number(
+                order.total_price || 0
+            );
+    });
+
+
+    const labels =
+        Object.keys(
+            dailySales
+        );
+
+    const values =
+        Object.values(
+            dailySales
+        );
+
+
+    if (!values.length) {
+
+        ctx.font =
+            "14px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            "No sales data",
+            width / 2,
+            height / 2
+        );
+
+        return;
+    }
+
+
+    /* =========================
+       GRAPH SETTINGS
+       ========================= */
+
+    const paddingLeft = 55;
+    const paddingRight = 20;
+    const paddingTop = 20;
+    const paddingBottom = 45;
+
+    const graphWidth =
+        width -
+        paddingLeft -
+        paddingRight;
+
+    const graphHeight =
+        height -
+        paddingTop -
+        paddingBottom;
+
+    const maxValue =
+        Math.max(
+            ...values,
+            1
+        );
+
+
+    /* =========================
+       GRID
+       ========================= */
+
+    ctx.font =
+        "11px Arial";
+
+    ctx.textAlign =
+        "right";
+
+    ctx.fillStyle =
+        "#64748b";
+
+    for (
+        let i = 0;
+        i <= 4;
+        i++
+    ) {
+
+        const y =
+            paddingTop +
+            graphHeight -
+            (
+                graphHeight *
+                i /
+                4
+            );
+
+        const value =
+            maxValue *
+            i /
+            4;
+
+        ctx.fillText(
+            "₹" +
+            Math.round(
+                value
+            ).toLocaleString(
+                "en-IN"
+            ),
+            paddingLeft - 8,
+            y + 4
+        );
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            paddingLeft,
+            y
+        );
+
+        ctx.lineTo(
+            width -
+            paddingRight,
+            y
+        );
+
+        ctx.strokeStyle =
+            "#e2e8f0";
+
+        ctx.stroke();
+    }
+
+
+    /* =========================
+       LINE
+       ========================= */
+
+    ctx.beginPath();
+
+    values.forEach(
+        (
+            value,
+            index
+        ) => {
+
+            const x =
+                values.length === 1
+                    ? paddingLeft +
+                      graphWidth / 2
+                    : paddingLeft +
+                      (
+                          graphWidth *
+                          index /
+                          (
+                              values.length -
+                              1
+                          )
+                      );
+
+            const y =
+                paddingTop +
+                graphHeight -
+                (
+                    value /
+                    maxValue *
+                    graphHeight
+                );
+
+            if (index === 0) {
+                ctx.moveTo(
+                    x,
+                    y
+                );
+            } else {
+                ctx.lineTo(
+                    x,
+                    y
+                );
+            }
+        }
+    );
+
+    ctx.strokeStyle =
+        "#4f46e5";
+
+    ctx.lineWidth =
+        3;
+
+    ctx.stroke();
+
+
+    /* =========================
+       POINTS + DATES
+       ========================= */
+
+    values.forEach(
+        (
+            value,
+            index
+        ) => {
+
+            const x =
+                values.length === 1
+                    ? paddingLeft +
+                      graphWidth / 2
+                    : paddingLeft +
+                      (
+                          graphWidth *
+                          index /
+                          (
+                              values.length -
+                              1
+                          )
+                      );
+
+            const y =
+                paddingTop +
+                graphHeight -
+                (
+                    value /
+                    maxValue *
+                    graphHeight
+                );
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                5,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                "#4f46e5";
+
+            ctx.fill();
+
+
+            ctx.fillStyle =
+                "#334155";
+
+            ctx.textAlign =
+                "center";
+
+            ctx.font =
+                "11px Arial";
+
+            ctx.fillText(
+                labels[index],
+                x,
+                height - 15
+            );
+        }
+    );
+}
+
+
+function drawPaymentGraph(payments) {
+
+    const canvas =
+        document.getElementById(
+            "paymentChart"
+        );
+
+    if (!canvas) return;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const width =
+        canvas.clientWidth || 500;
+
+    const height =
+        260;
+
+    const dpr =
+        window.devicePixelRatio || 1;
+
+    canvas.width =
+        width * dpr;
+
+    canvas.height =
+        height * dpr;
+
+    canvas.style.height =
+        height + "px";
+
+    ctx.scale(
+        dpr,
+        dpr
+    );
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /* =========================
+       PAYMENT STATUS COUNTS
+       ========================= */
+
+    let paid = 0;
+    let pending = 0;
+    let failed = 0;
+
+    payments.forEach(
+        payment => {
+
+            const status =
+                String(
+                    payment.payment_status ||
+                    ""
+                ).toLowerCase();
+
+            if (
+                status === "paid"
+            ) {
+                paid++;
+            }
+
+            else if (
+                status === "pending"
+            ) {
+                pending++;
+            }
+
+            else {
+                failed++;
+            }
+        }
+    );
+
+
+    const values = [
+        paid,
+        pending,
+        failed
+    ];
+
+    const labels = [
+        "Paid",
+        "Pending",
+        "Other"
+    ];
+
+
+    const total =
+        values.reduce(
+            (
+                a,
+                b
+            ) => a + b,
+            0
+        );
+
+
+    if (!total) {
+
+        ctx.font =
+            "14px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillStyle =
+            "#64748b";
+
+        ctx.fillText(
+            "No payment data",
+            width / 2,
+            height / 2
+        );
+
+        return;
+    }
+
+
+    /* =========================
+       BAR GRAPH
+       ========================= */
+
+    const max =
+        Math.max(
+            ...values,
+            1
+        );
+
+    const barWidth =
+        Math.min(
+            90,
+            width / 5
+        );
+
+    const gap =
+        35;
+
+    const totalWidth =
+        (
+            barWidth * 3
+        ) +
+        (
+            gap * 2
+        );
+
+    const startX =
+        (
+            width -
+            totalWidth
+        ) / 2;
+
+    const bottom =
+        height - 45;
+
+    const graphHeight =
+        height - 80;
+
+
+    values.forEach(
+        (
+            value,
+            index
+        ) => {
+
+            const barHeight =
+                (
+                    value /
+                    max
+                ) *
+                graphHeight;
+
+            const x =
+                startX +
+                index *
+                (
+                    barWidth +
+                    gap
+                );
+
+            const y =
+                bottom -
+                barHeight;
+
+
+            ctx.fillStyle =
+                "#4f46e5";
+
+            ctx.fillRect(
+                x,
+                y,
+                barWidth,
+                barHeight
+            );
+
+
+            ctx.fillStyle =
+                "#334155";
+
+            ctx.font =
+                "12px Arial";
+
+            ctx.textAlign =
+                "center";
+
+            ctx.fillText(
+                String(value),
+                x +
+                barWidth / 2,
+                y - 8
+            );
+
+            ctx.fillText(
+                labels[index],
+                x +
+                barWidth / 2,
+                bottom + 20
+            );
+        }
+    );
+}
+
+
+
+
+
 
 
   /* ==========================================
