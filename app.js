@@ -27,7 +27,7 @@ console.log("Checking Supabase...");
 console.log("window.supabase =", window.supabase);
 console.log("window.supabaseClient =", window.supabaseClient);
 
-const sb = window.supabaseClient;
+const sb =supabaseClient;
 
 if (!sb) {
     console.error("Supabase client not found.");
