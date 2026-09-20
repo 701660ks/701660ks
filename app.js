@@ -927,49 +927,61 @@
        PRODUCTS
        ===================================================== */
 
-    async function loadProducts() {
+  async function loadProducts() {
 
-        const {
-            data,
-            error
-        } =
-            await sb
-                .from("products")
-                .select("*")
-                .eq(
-                    "seller_id",
-                    state.user.id
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
+    console.log("=== LOAD PRODUCTS START ===");
 
+    console.log("Current user ID:", state.user?.id);
 
-        if (error) {
+    const { data, error } = await sb
+        .from("products")
+        .select("*")
+        .eq("seller_id", state.user.id)
+        .order("created_at", { ascending: false });
 
-            console.error(
-                "Products:",
-                error
-            );
+    console.log("PRODUCT DATA:", data);
+    console.log("PRODUCT ERROR:", error);
 
-            state.products = [];
+    if (error) {
+        console.error("Products:", error);
 
-            toast(
-                "Products: " +
-                error.message
-            );
+        document.body.innerHTML += `
+            <div style="
+                background:#ffe5e5;
+                color:#b00000;
+                padding:20px;
+                margin:20px;
+                border-radius:10px;
+                font-family:Arial;
+            ">
+                <h3>PRODUCT DATABASE ERROR</h3>
+                <p>${error.message}</p>
+                <p>Code: ${error.code || "unknown"}</p>
+            </div>
+        `;
 
-            return;
-
-
-
-        state.products =
-            data || [];
+        state.products = [];
+        return;
     }
 
+    state.products = data || [];
+
+    document.body.innerHTML += `
+        <div style="
+            background:#e5ffe5;
+            color:#006400;
+            padding:20px;
+            margin:20px;
+            border-radius:10px;
+            font-family:Arial;
+        ">
+            <h3>PRODUCT DATABASE SUCCESS</h3>
+            <p>Products found: ${state.products.length}</p>
+        </div>
+    `;
+
+    console.log("Products loaded:", state.products.length);
+}
 
     function renderMyProducts() {
 
