@@ -247,3 +247,10 @@ body {
 }
 
 
+@media (max-width: 1200px) {
+    .chart-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
