@@ -2,14 +2,50 @@
    Uses the existing Supabase client from supabase.js.
    Expected global: supabaseClient
 */
-(() => {
-  "use strict";
 
-  const sb = window.supabaseClient;
-  if (!sb) {
-    document.body.innerHTML = '<div style="padding:30px;font-family:Arial">Supabase client not found. Check supabase.js.</div>';
-    return;
-  }
+
+
+/* ==========================================
+   JS UNDEFINED - WHOLESALER DASHBOARD
+   ========================================== */
+
+(() => {
+    "use strict";
+
+    const sb = window.supabaseClient;
+
+    if (!sb) {
+        console.error("Supabase client not found.");
+
+        const loading = document.getElementById("loadingScreen");
+
+        if (loading) {
+            loading.innerHTML = `
+                <div style="
+                    padding:30px;
+                    text-align:center;
+                    font-family:Arial,sans-serif;
+                ">
+                    <h2>Supabase connection error</h2>
+                    <p>Supabase client was not initialized.</p>
+                    <button onclick="location.reload()"
+                        style="
+                            padding:10px 20px;
+                            border:0;
+                            border-radius:8px;
+                            cursor:pointer;
+                        ">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        return;
+    }
+
+    console.log("Wholesaler dashboard: Supabase connected");
+
 
   const state = {
     user: null, profile: null, products: [], market: [], ordersReceived: [], ordersPurchased: [],
@@ -149,7 +185,7 @@
       seller_id:state.user.id,name:$("pName").value.trim(),product_type:$("pType").value,product_sub_type:$("pSubType").value.trim(),
       target_for:$("pTarget").value,price:Number($("pPrice").value),original_price:Number($("pOriginalPrice").value)||null,
       discount:Number($("pDiscount").value)||0,minimum_quantity:Math.max(1,Number($("pMOQ").value)||1),bulk_quantity:Number($("pBulkQty").value)||0,
-      bulk_price:Number($("pBulkPrice").value)||null,stock_quantity:Math.max(0,Number($("pStock").value)||0),
+      price:Number($("pprice").value)||null,stock_quantity:Math.max(0,Number($("pStock").value)||0),
       image_urls:$("pImages").value.split("\n").map(x=>x.trim()).filter(Boolean),description:$("pDescription").value.trim(),more_info:$("pMoreInfo").value.trim(),is_active:true
     };
     const res=id?await sb.from("products").update(payload).eq("id",id).eq("seller_id",state.user.id):await sb.from("products").insert(payload);
@@ -309,4 +345,46 @@
 
   window.JSU={addToCart};
   init().catch(err=>{console.error(err);toast(err.message||"Dashboard failed to load");$("loadingScreen").classList.add("hidden");$("app").classList.remove("hidden")});
+})();
+
+    window.JSU = {
+        addToCart: addToCart
+    };
+
+    init().catch(error => {
+
+        console.error(
+            "Wholesaler dashboard initialization error:",
+            error
+        );
+
+        const loading = document.getElementById("loadingScreen");
+
+        if (loading) {
+            loading.innerHTML = `
+                <div style="
+                    padding:30px;
+                    text-align:center;
+                    font-family:Arial,sans-serif;
+                ">
+                    <h2>Dashboard could not load</h2>
+
+                    <p style="color:#64748b;">
+                        ${esc(error.message || "Unknown error")}
+                    </p>
+
+                    <button onclick="location.reload()"
+                        style="
+                            padding:10px 20px;
+                            border:0;
+                            border-radius:8px;
+                            cursor:pointer;
+                        ">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+    });
+
 })();
