@@ -69,15 +69,205 @@
                 padding: 28px 18px 60px !important;
             }
         }
+    
+
+        /* =====================================================
+           PREMIUM STICKY NAV + SECTION NAVIGATION
+           ===================================================== */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 8% 10%, rgba(79,124,255,.08), transparent 26%),
+                radial-gradient(circle at 92% 18%, rgba(118,87,255,.08), transparent 26%),
+                #f5f7fb;
+        }
+
+        .top-header {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2000 !important;
+            min-height: 78px;
+            background: rgba(255,255,255,.82) !important;
+            border-bottom: 1px solid rgba(20,40,80,.08);
+            box-shadow: 0 12px 34px rgba(17,29,50,.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .header-right {
+            gap: 10px !important;
+        }
+
+        .dashboard-home-button,
+        .back-dashboard-button {
+            border: 1px solid rgba(79,124,255,.16);
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .dashboard-home-button {
+            min-height: 46px;
+            padding: 0 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 14px;
+            color: #315ee8;
+            background: linear-gradient(180deg, #ffffff, #f2f6ff);
+            box-shadow: 0 8px 22px rgba(49,94,232,.10);
+        }
+
+        .dashboard-home-button:hover,
+        .back-dashboard-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(49,94,232,.14);
+        }
+
+        .home-button-icon {
+            font-size: 17px;
+            line-height: 1;
+        }
+
+        .home-button-label {
+            font-size: 12px;
+            letter-spacing: .2px;
+        }
+
+        .content {
+            padding: 30px 5vw 80px !important;
+        }
+
+        .page-section {
+            min-height: calc(100vh - 108px);
+        }
+
+        .page-section.active-section {
+            animation: wholesale-section-in .28s ease both;
+        }
+
+        @keyframes wholesale-section-in {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            padding: 20px 22px;
+            margin-bottom: 22px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.88);
+            border: 1px solid rgba(20,40,80,.08);
+            box-shadow: 0 14px 35px rgba(20,40,80,.07);
+            gap: 18px;
+        }
+
+        .page-title > .back-dashboard-button {
+            order: 3;
+            flex: 0 0 auto;
+        }
+
+        .back-dashboard-button {
+            padding: 11px 15px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #315ee8;
+        }
+
+        .page-title > div {
+            flex: 1 1 auto;
+        }
+
+        .welcome {
+            margin-top: 2px;
+            box-shadow: 0 26px 60px rgba(21,34,58,.16);
+        }
+
+        .action-grid,
+        .stats-grid,
+        .charts-grid,
+        .table-card,
+        .payment-summary,
+        .payment-chart,
+        .profile-card,
+        .profile-details,
+        .marketplace-grid {
+            position: relative;
+        }
+
+        .action-card,
+        .stat-card,
+        .chart-card,
+        .table-card,
+        .payment-total-card,
+        .profile-card,
+        .profile-details,
+        .marketplace-grid .empty-state {
+            border: 1px solid rgba(20,40,80,.07);
+            box-shadow: 0 16px 38px rgba(20,40,80,.07);
+        }
+
+        .section-heading {
+            margin-top: 42px;
+        }
+
+        .table-header {
+            position: sticky;
+            top: 79px;
+            z-index: 8;
+            background: rgba(255,255,255,.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        @media (max-width: 700px) {
+            .top-header {
+                min-height: 70px;
+            }
+
+            .dashboard-home-button {
+                min-height: 42px;
+                padding: 0 11px;
+            }
+
+            .home-button-label {
+                display: none;
+            }
+
+            .content {
+                padding: 22px 16px 55px !important;
+            }
+
+            .page-title {
+                align-items: stretch;
+                flex-wrap: wrap;
+            }
+
+            .page-title > .back-dashboard-button {
+                order: 0;
+            }
+
+            .page-title > .primary-button {
+                width: 100%;
+            }
+
+            .table-header {
+                top: 70px;
+            }
+        }
+
     </style>
 </head>
 
 <body>
-
-<!-- Legacy profile elements required by current app.js -->
-<div id="userName" style="display:none;"></div>
-<div id="userEmail" style="display:none;"></div>
-<div id="userAvatar" style="display:none;"></div>
 
     <!-- =====================================================
          LOADING
@@ -113,6 +303,17 @@
                     <span class="status-dot"></span>
                     <span id="headerUserName">Wholesaler</span>
                 </div>
+
+                <button
+                    type="button"
+                    class="dashboard-home-button"
+                    id="dashboardHomeButton"
+                    data-section="dashboard"
+                    aria-label="Back to Dashboard"
+                >
+                    <span class="home-button-icon">⌂</span>
+                    <span class="home-button-label">Dashboard</span>
+                </button>
 
                 <button
                     type="button"
@@ -437,7 +638,7 @@
                                 <div>
                                     <h3>Orders Confirmed</h3>
                                     <p>Confirmed order activity</p>
-                                </div>
+                                    </div>
                             </div>
 
                             <div class="empty-chart">
@@ -477,6 +678,14 @@
                 <section id="products" class="page-section">
 
                     <div class="page-title">
+                        <button
+                            type="button"
+                            class="back-dashboard-button"
+                            data-section="dashboard"
+                        >
+                            ← Dashboard
+                        </button>
+
                         <div>
                             <p class="eyebrow">PRODUCT MANAGEMENT</p>
 
@@ -567,13 +776,20 @@
                 </section>
 
 
-
-      <!-- =================================================
+                <!-- =================================================
                      BUY PRODUCTS
                      ================================================= -->
                 <section id="buy" class="page-section">
 
                     <div class="page-title">
+                        <button
+                            type="button"
+                            class="back-dashboard-button"
+                            data-section="dashboard"
+                        >
+                            ← Dashboard
+                        </button>
+
                         <div>
                             <p class="eyebrow">B2B MARKETPLACE</p>
 
@@ -608,6 +824,14 @@
                 <section id="orders" class="page-section">
 
                     <div class="page-title">
+                        <button
+                            type="button"
+                            class="back-dashboard-button"
+                            data-section="dashboard"
+                        >
+                            ← Dashboard
+                        </button>
+
                         <div>
                             <p class="eyebrow">ORDER MANAGEMENT</p>
 
@@ -671,6 +895,14 @@
                 <section id="payments" class="page-section">
 
                     <div class="page-title">
+                        <button
+                            type="button"
+                            class="back-dashboard-button"
+                            data-section="dashboard"
+                        >
+                            ← Dashboard
+                        </button>
+
                         <div>
                             <p class="eyebrow">FINANCIAL MANAGEMENT</p>
 
@@ -762,6 +994,14 @@
                 <section id="profile" class="page-section">
 
                     <div class="page-title">
+                        <button
+                            type="button"
+                            class="back-dashboard-button"
+                            data-section="dashboard"
+                        >
+                            ← Dashboard
+                        </button>
+
                         <div>
                             <p class="eyebrow">ACCOUNT</p>
                             <h1>My Profile</h1>
@@ -881,6 +1121,15 @@
         style="display:none !important;"
     ></button>
 
+
+    <!-- =====================================================
+         HIDDEN LEGACY PROFILE IDs
+         Current app.js still updates these IDs.
+         They are invisible because the new header owns the visible UI.
+         ===================================================== -->
+    <span id="userName" aria-hidden="true" style="display:none !important;"></span>
+    <span id="userEmail" aria-hidden="true" style="display:none !important;"></span>
+    <span id="userAvatar" aria-hidden="true" style="display:none !important;"></span>
 
     <!-- =====================================================
          ADD PRODUCT MODAL
