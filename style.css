@@ -2917,3 +2917,142 @@ body:has(.top-header) .content {
     padding: 42px 5vw 80px !important;
     box-sizing: border-box !important;
 }
+
+
+
+/* =========================================================
+   WHOLESALER DASHBOARD - FULL WIDTH FIX
+   Removes old sidebar spacing
+   ========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+body {
+    min-width: 0 !important;
+}
+
+/* Main page area */
+main,
+.main,
+.main-content,
+.content,
+.dashboard-content,
+.page-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    box-sizing: border-box !important;
+}
+
+/* Dashboard sections */
+.page-section,
+.dashboard-section,
+#dashboard {
+    width: 100% !important;
+    max-width: 1400px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+}
+
+/* Welcome banner */
+.welcome,
+.welcome-card {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Quick Actions */
+.action-grid {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Business overview */
+.stats-grid,
+.charts-grid {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Prevent old sidebar width from affecting page */
+.sidebar,
+.side-bar,
+.left-sidebar,
+.dashboard-sidebar {
+    display: none !important;
+}
+
+/* Header must use full screen */
+.top-header,
+.header,
+header {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .content,
+    .main,
+    .main-content,
+    .dashboard-content,
+    .page-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
+    .page-section,
+    #dashboard {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .welcome {
+        width: 100% !important;
+    }
+
+    .action-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .stats-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .charts-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !
+
+
+
+}
+}
