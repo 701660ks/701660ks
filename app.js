@@ -1,15 +1,14 @@
 /* =========================================================
    JS UNDEFINED - WHOLESALER DASHBOARD
    Complete Supabase Dashboard JavaScript
-   ========================================================= */
+  console.log("=== JS UNDEFINED APP START ===");
+
+    console.log("window.supabase:", window.supabase);
+    console.log("supabaseClient type:", typeof supabaseClient); ========================================================= */
 (() => {
     "use strict";
 
-    console.log("=== JS UNDEFINED APP START ===");
-
-    console.log("window.supabase:", window.supabase);
-    console.log("supabaseClient type:", typeof supabaseClient);
-
+  
     const sb = supabaseClient;
 
     if (!sb) {
