@@ -1,1382 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wholesaler Dashboard</title>
-
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Keep script order: Supabase library -> Supabase config -> dashboard app -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="supabase.js"></script>
-    <script defer src="app.js"></script>
-
-    <style>
-        /* =====================================================
-           WHOLESALER FULL-SCREEN LAYOUT
-           ===================================================== */
-
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .top-header {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .main {
-            width: 100% !important;
-            min-width: 0 !important;
-            max-width: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .content {
-            width: 100% !important;
-            max-width: 1800px !important;
-            margin: 0 auto !important;
-            padding: 45px 5vw 80px !important;
-            box-sizing: border-box;
-        }
-
-        /* Old sidebar/topbar are no longer part of the design. */
-        .sidebar,
-        .topbar {
-            display: none !important;
-        }
-
-        /*
-           Compatibility elements for the current app.js.
-           They are invisible and do not create a sidebar.
-           This prevents the old JS references from stopping startup
-           until app.js is cleaned up.
-        */
-        #legacyMobileMenuButton,
-        #legacyLogoutButton,
-        #legacySidebar {
-            display: none !important;
-        }
-
-        @media (max-width: 700px) {
-            .content {
-                padding: 28px 18px 60px !important;
-            }
-        }
-    
-
-        /* =====================================================
-           PREMIUM STICKY NAV + SECTION NAVIGATION
-           ===================================================== */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background:
-                radial-gradient(circle at 8% 10%, rgba(79,124,255,.08), transparent 26%),
-                radial-gradient(circle at 92% 18%, rgba(118,87,255,.08), transparent 26%),
-                #f5f7fb;
-        }
-
-        .top-header {
-            position: sticky !important;
-            top: 0 !important;
-            z-index: 2000 !important;
-            min-height: 78px;
-            background: rgba(255,255,255,.82) !important;
-            border-bottom: 1px solid rgba(20,40,80,.08);
-            box-shadow: 0 12px 34px rgba(17,29,50,.07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .header-right {
-            gap: 10px !important;
-        }
-
-        .dashboard-home-button,
-        .back-dashboard-button {
-            border: 1px solid rgba(79,124,255,.16);
-            cursor: pointer;
-            font-weight: 800;
-            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
-        }
-
-        .dashboard-home-button {
-            min-height: 46px;
-            padding: 0 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 14px;
-            color: #315ee8;
-            background: linear-gradient(180deg, #ffffff, #f2f6ff);
-            box-shadow: 0 8px 22px rgba(49,94,232,.10);
-        }
-
-        .dashboard-home-button:hover,
-        .back-dashboard-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(49,94,232,.14);
-        }
-
-        .home-button-icon {
-            font-size: 17px;
-            line-height: 1;
-        }
-
-        .home-button-label {
-            font-size: 12px;
-            letter-spacing: .2px;
-        }
-
-        .content {
-            padding: 30px 5vw 80px !important;
-        }
-
-        .page-section {
-            min-height: calc(100vh - 108px);
-        }
-
-        .page-section.active-section {
-            animation: wholesale-section-in .28s ease both;
-        }
-
-        @keyframes wholesale-section-in {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .page-title {
-            padding: 20px 22px;
-            margin-bottom: 22px;
-            border-radius: 20px;
-            background: rgba(255,255,255,.88);
-            border: 1px solid rgba(20,40,80,.08);
-            box-shadow: 0 14px 35px rgba(20,40,80,.07);
-            gap: 18px;
-        }
-
-        .page-title > .back-dashboard-button {
-            order: 3;
-            flex: 0 0 auto;
-        }
-
-        .back-dashboard-button {
-            padding: 11px 15px;
-            border-radius: 12px;
-            background: #ffffff;
-            color: #315ee8;
-        }
-
-        .page-title > div {
-            flex: 1 1 auto;
-        }
-
-        .welcome {
-            margin-top: 2px;
-            box-shadow: 0 26px 60px rgba(21,34,58,.16);
-        }
-
-        .action-grid,
-        .stats-grid,
-        .charts-grid,
-        .table-card,
-        .payment-summary,
-        .payment-chart,
-        .profile-card,
-        .profile-details,
-        .marketplace-grid {
-            position: relative;
-        }
-
-        .action-card,
-        .stat-card,
-        .chart-card,
-        .table-card,
-        .payment-total-card,
-        .profile-card,
-        .profile-details,
-        .marketplace-grid .empty-state {
-            border: 1px solid rgba(20,40,80,.07);
-            box-shadow: 0 16px 38px rgba(20,40,80,.07);
-        }
-
-        .section-heading {
-            margin-top: 42px;
-        }
-
-        .table-header {
-            position: sticky;
-            top: 79px;
-            z-index: 8;
-            background: rgba(255,255,255,.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        @media (max-width: 700px) {
-            .top-header {
-                min-height: 70px;
-            }
-
-            .dashboard-home-button {
-                min-height: 42px;
-                padding: 0 11px;
-            }
-
-            .home-button-label {
-                display: none;
-            }
-
-            .content {
-                padding: 22px 16px 55px !important;
-            }
-
-            .page-title {
-                align-items: stretch;
-                flex-wrap: wrap;
-            }
-
-            .page-title > .back-dashboard-button {
-                order: 0;
-            }
-
-            .page-title > .primary-button {
-                width: 100%;
-            }
-
-            .table-header {
-                top: 70px;
-            }
-        }
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS UNDEFINED — Wholesaler Dashboard</title>
+  <link rel="stylesheet" href="wholesaler.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
-
 <body>
-
-    <!-- =====================================================
-         LOADING
-         ===================================================== -->
-   
-    <!-- =====================================================
-         APP
-         ===================================================== -->
-    <div id="app" class="app hidden">
-
-        <!-- =================================================
-             TOP HEADER
-             ================================================= -->
-        <header class="top-header">
-
-            <div class="brand-area">
-                <div class="brand-logo">W</div>
-
-                <div class="brand-text">
-                    <h2>JS UNDEFINED</h2>
-                    <span>B2B BUSINESS PLATFORM</span>
-                </div>
-            </div>
-<div class="header-right">
-
-                <div class="user-status">
-                   
-                    <button id="menuLogoutBtn" type="button"
-                    class="menu-link logout-menu-link"
-                    id="menuLogoutBtn"
-             >Log out</button>
-                </div>
-          
-    <button
-                    type="button"
-                    class="dashboard-home-button"
-                    id="dashboardHomeButton"
-                    data-section="dashboard"
-                    aria-label="Back to Dashboard"
-                >
-                    <span class="home-button-icon">⌂</span>
-                    <span class="home-button-label">Dashboard</span>
-                </button>
-
-
-  
-
-           
-                <button
-                    type="button"
-                    class="menu-button"
-                    id="menuButton"
-                    aria-label="Open Menu"
-                    aria-controls="menuPanel"
-                    aria-expanded="false"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-            </div>
-
-        </header>
-
-
-        <!-- =================================================
-             MENU OVERLAY
-             ================================================= -->
-        <div class="menu-overlay" id="menuOverlay"></div>
-
-
-        <!-- =================================================
-             MENU PANEL
-             ================================================= -->
-        <aside class="menu-panel" id="menuPanel">
-
-            <div class="menu-panel-header">
-
-                <div>
-                    <small>WHOLESALE HUB</small>
-                    <h3>Menu</h3>
-                </div>
-
-                <button
-                    type="button"
-                    class="menu-close"
-                    id="menuClose"
-                    aria-label="Close Menu"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <div class="menu-links">
-
-                <a href="wholesaler.html" class="menu-link">
-                    <div class="menu-icon">◈</div>
-
-                    <div>
-                        <strong>Wholesaler Dashboard</strong>
-                        <span>Manage your B2B business</span>
-                    </div>
-                </a>
-
-
-                <a href="index.html" class="menu-link">
-                    <div class="menu-icon">⌂</div>
-
-                    <div>
-                        <strong>Wholesalers HUB</strong>
-                        <span>HOME PAGE</span>
-                    </div>
-                </a>
-
-
-                <button
-                    type="button"
-                    class="menu-link logout-menu-link"
-                    id="menuLogoutBtn"
-                >
-                    <div class="menu-icon">↪</div>
-
-                    <div>
-                        <strong>Logout</strong>
-                        <span>Sign out of your account</span>
-                    </div>
-                </button>
-
-            </div>
-
-
-            <div class="menu-panel-footer">
-                <span>JS UNDEFINED</span>
-                <small>B2B Business Platform</small>
-            </div>
-
-        </aside>
-
-
-        <!-- =================================================
-             MAIN
-             ================================================= -->
-        <main class="main">
-
-            <section class="content">
-
-                <!-- =================================================
-                     DASHBOARD
-                     ================================================= -->
-                <section
-                    id="dashboard"
-                    class="page-section active-section"
-                >
-
-                    <div class="welcome">
-
-                        <div>
-                            <p class="eyebrow">
-                                WHOLESALER DASHBOARD
-                            </p>
-
-                            <h1>
-                                Welcome back,
-                                <span id="welcomeName">Wholesaler</span>
-                            </h1>
-
-                            <p>
-                                Manage your B2B products, orders,
-                                customers and payments from one place.
-                            </p>
-                        </div>
-
-                        <div class="hero-logo">W</div>
-
-                    </div>
-
-
-                    <!-- QUICK ACTIONS -->
-                    <div class="section-heading">
-                        <div>
-                            <h2>Quick Actions</h2>
-                            <p>Access your most important tools.</p>
-                        </div>
-                    </div>
-
-
-                    <div class="action-grid">
-
-                        <button
-                            type="button"
-                            class="action-card blue"
-                            data-section="products"
-                        >
-                            <div class="action-icon">📦</div>
-
-                            <div>
-                                <h3>See B2B Products</h3>
-                                <p>
-                                    Manage products available
-                                    to B2B customers.
-                                </p>
-                            </div>
-
-                            <span class="arrow">→</span>
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="action-card purple"
-                            data-section="buy"
-                        >
-                            <div class="action-icon">🛒</div>
-
-                            <div>
-                                <h3>Buy Products</h3>
-                                <p>
-                                    Browse and purchase B2B products.
-                                </p>
-                            </div>
-
-                            <span class="arrow">→</span>
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="action-card orange"
-                            data-section="orders"
-                        >
-                            <div class="action-icon">📋</div>
-
-                            <div>
-                                <h3>My Orders</h3>
-                                <p>
-                                    Track your orders and deliveries.
-                                </p>
-                            </div>
-
-                            <span class="arrow">→</span>
-                        </button>
-
-
-                        <button
-                            type="button"
-                            class="action-card green"
-                            data-section="payments"
-                        >
-                            <div class="action-icon">💳</div>
-
-                            <div>
-                                <h3>Payments</h3>
-                                <p>
-                                    View payments and transaction history.
-                                </p>
-                            </div>
-
-                            <span class="arrow">→</span>
-                        </button>
-
-                    </div>
-
-
-                    <!-- BUSINESS OVERVIEW -->
-                    <div class="section-heading stats-heading">
-                        <div>
-                            <h2>Business Overview</h2>
-                            <p>Your current wholesaler activity.</p>
-                        </div>
-                    </div>
-
-
-                    <div class="stats-grid">
-
-                        <div class="stat-card">
-                            <div class="stat-icon blue-bg">👥</div>
-
-                            <div>
-                                <span>B2B Customers</span>
-                                <strong id="customerCount">0</strong>
-                            </div>
-                        </div>
-
-
-                        <div class="stat-card">
-                            <div class="stat-icon purple-bg">📦</div>
-
-                            <div>
-                                <span>Products</span>
-                                <strong id="productCount">0</strong>
-                            </div>
-                        </div>
-
-
-                        <div class="stat-card">
-                            <div class="stat-icon orange-bg">📋</div>
-
-                            <div>
-                                <span>Orders Received</span>
-                                <strong id="orderCount">0</strong>
-                            </div>
-                        </div>
-
-
-                        <div class="stat-card">
-                            <div class="stat-icon green-bg">₹</div>
-
-                            <div>
-                                <span>Payments</span>
-                                <strong id="paymentTotal">₹0</strong>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <!-- GRAPHS -->
-                    <div class="charts-grid">
-
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <h3>Users / Customers</h3>
-                                    <p>B2B customer activity</p>
-                                </div>
-                            </div>
-
-                            <div class="fake-chart">
-                                <div class="chart-line">
-                                    <span style="height:30%"></span>
-                                    <span style="height:48%"></span>
-                                    <span style="height:42%"></span>
-                                    <span style="height:68%"></span>
-                                    <span style="height:58%"></span>
-                                    <span style="height:82%"></span>
-                                    <span style="height:72%"></span>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <h3>Orders Received</h3>
-                                    <p>Orders from B2B customers</p>
-                                </div>
-                            </div>
-
-                            <div class="fake-chart">
-                                <div class="chart-bars">
-                                    <span style="height:35%"></span>
-                                    <span style="height:52%"></span>
-                                    <span style="height:45%"></span>
-                                    <span style="height:72%"></span>
-                                    <span style="height:61%"></span>
-                                    <span style="height:88%"></span>
-                                    <span style="height:76%"></span>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <h3>Orders Confirmed</h3>
-                                    <p>Confirmed order activity</p>
-                                    </div>
-                            </div>
-
-                            <div class="empty-chart">
-                                <span>📊</span>
-                                <p>
-                                    Order confirmation data
-                                    will appear here.
-                                </p>
-                            </div>
-                        </div>
-
-
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <h3>Deliveries</h3>
-                                    <p>Delivery status overview</p>
-                                </div>
-                            </div>
-
-                            <div class="empty-chart">
-                                <span>🚚</span>
-                                <p>
-                                    Delivery data will appear here.
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     PRODUCTS
-                     ================================================= -->
-                <section id="products" class="page-section">
-
-                    <div class="page-title">
-                        <button
-                            type="button"
-                            class="back-dashboard-button"
-                            data-section="dashboard"
-                        >
-                            ← Dashboard
-                        </button>
-
-                        <div>
-                            <p class="eyebrow">PRODUCT MANAGEMENT</p>
-
-                            <h1>B2B Products</h1>
-
-                            <p>
-                                Manage products offered to B2B customers.
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="primary-button"
-                            id="addProductButton"
-                        >
-                            + ADD NEW PRODUCT
-                        </button>
-                    </div>
-
-
-                    <div class="product-actions">
-
-                        <button
-                            type="button"
-                            id="addProductButton2"
-                        >
-                            ADD NEW PRODUCT
-                        </button>
-
-                        <button
-                            type="button"
-                            id="updateProductButton"
-                        >
-                            UPDATE PRODUCT
-                        </button>
-
-                        <button
-                            type="button"
-                            id="deleteProductButton"
-                        >
-                            DELETE PRODUCT
-                        </button>
-
-                    </div>
-
-
-                    <div class="table-card">
-
-                        <div class="table-header">
-                            <h3>My Products</h3>
-
-                            <button
-                                type="button"
-                                id="refreshProducts"
-                                class="small-button"
-                            >
-                                ↻ Refresh
-                            </button>
-                        </div>
-
-
-                        <div class="table-wrapper">
-                            <table>
-
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Price</th>
-                                        <th>Minimum Qty</th>
-                                        <th>Bulk Qty</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="productsTableBody">
-                                    <tr>
-                                        <td colspan="5" class="empty-row">
-                                            Loading products...
-                                        </td>
-                                    </tr>
-                                </tbody>
-
-                            </table>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     BUY PRODUCTS
-                     ================================================= -->
-                <section id="buy" class="page-section">
-
-                    <div class="page-title">
-                        <button
-                            type="button"
-                            class="back-dashboard-button"
-                            data-section="dashboard"
-                        >
-                            ← Dashboard
-                        </button>
-
-                        <div>
-                            <p class="eyebrow">B2B MARKETPLACE</p>
-
-                            <h1>Buy Products</h1>
-
-                            <p>
-                                Browse active B2B products.
-                            </p>
-                        </div>
-                    </div>
-
-
-                    <div
-                        id="buyProductsGrid"
-                        class="marketplace-grid"
-                    >
-                        <div class="empty-state">
-                            <span>📦</span>
-                            <h3>No products yet</h3>
-                            <p>
-                                Active B2B products will appear here.
-                            </p>
-                        </div>
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     ORDERS
-                     ================================================= -->
-                <section id="orders" class="page-section">
-
-                    <div class="page-title">
-                        <button
-                            type="button"
-                            class="back-dashboard-button"
-                            data-section="dashboard"
-                        >
-                            ← Dashboard
-                        </button>
-
-                        <div>
-                            <p class="eyebrow">ORDER MANAGEMENT</p>
-
-                            <h1>My Orders</h1>
-
-                            <p>
-                                Track orders connected to your account.
-                            </p>
-                        </div>
-                    </div>
-
-
-                    <div class="table-card">
-
-                        <div class="table-header">
-                            <h3>Orders</h3>
-
-                            <button
-                                type="button"
-                                id="refreshOrders"
-                                class="small-button"
-                            >
-                                ↻ Refresh
-                            </button>
-                        </div>
-
-
-                        <div class="table-wrapper">
-                            <table>
-
-                                <thead>
-                                    <tr>
-                                        <th>Order</th>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                        <th>Tracking</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="ordersTableBody">
-                                    <tr>
-                                        <td colspan="6" class="empty-row">
-                                            Loading orders...
-                                        </td>
-                                    </tr>
-                                </tbody>
-
-                            </table>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     PAYMENTS
-                     ================================================= -->
-                <section id="payments" class="page-section">
-
-                    <div class="page-title">
-                        <button
-                            type="button"
-                            class="back-dashboard-button"
-                            data-section="dashboard"
-                        >
-                            ← Dashboard
-                        </button>
-
-                        <div>
-                            <p class="eyebrow">FINANCIAL MANAGEMENT</p>
-
-                            <h1>Payments</h1>
-
-                            <p>
-                                View your payment activity.
-                            </p>
-                        </div>
-                    </div>
-
-
-                    <div class="payment-summary">
-                        <div class="payment-total-card">
-                            <span>Total Payment Amount</span>
-                            <strong id="paymentsPageTotal">₹0.00</strong>
-                        </div>
-                    </div>
-
-
-                    <div class="table-card">
-
-                        <div class="table-header">
-                            <h3>Payment History</h3>
-
-                            <button
-                                type="button"
-                                id="refreshPayments"
-                                class="small-button"
-                            >
-                                ↻ Refresh
-                            </button>
-                        </div>
-
-
-                        <div class="table-wrapper">
-                            <table>
-
-                                <thead>
-                                    <tr>
-                                        <th>Transaction</th>
-                                        <th>Order</th>
-                                        <th>Amount</th>
-                                        <th>Mode</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="paymentsTableBody">
-                                    <tr>
-                                        <td colspan="6" class="empty-row">
-                                            Loading payments...
-                                        </td>
-                                    </tr>
-                                </tbody>
-
-                            </table>
-                        </div>
-
-                    </div>
-
-
-                    <div class="chart-card payment-chart">
-
-                        <div class="chart-header">
-                            <div>
-                                <h3>Payment Overview</h3>
-                                <p>Payment activity</p>
-                            </div>
-                        </div>
-
-                        <div class="empty-chart">
-                            <span>₹</span>
-                            <p>
-                                Payment graph will be connected
-                                to transaction data.
-                            </p>
-                        </div>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     PROFILE
-                     ================================================= -->
-                <section id="profile" class="page-section">
-
-                    <div class="page-title">
-                        <button
-                            type="button"
-                            class="back-dashboard-button"
-                            data-section="dashboard"
-                        >
-                            ← Dashboard
-                        </button>
-
-                        <div>
-                            <p class="eyebrow">ACCOUNT</p>
-                            <h1>My Profile</h1>
-                        </div>
-                    </div>
-
-
-                    <div class="profile-card">
-
-                        <div class="profile-avatar" id="profileAvatar">
-                            W
-                        </div>
-
-                        <div>
-                            <h2 id="profileName">-</h2>
-
-                            <p id="profileEmail">-</p>
-
-                            <span
-                                id="profileType"
-                                class="status active"
-                            >
-                                -
-                            </span>
-                        </div>
-
-                    </div>
-
-
-                    <div class="profile-details">
-
-                        <div>
-                            <span>Business Name</span>
-                            <strong id="profileBusiness">-</strong>
-                        </div>
-
-                        <div>
-                            <span>Mobile</span>
-                            <strong id="profileMobile">-</strong>
-                        </div>
-
-                        <div>
-                            <span>GST Number</span>
-                            <strong id="profileGST">-</strong>
-                        </div>
-
-                        <div>
-                            <span>PAN Number</span>
-                            <strong id="profilePAN">-</strong>
-                        </div>
-
-                        <div>
-                            <span>Business Address</span>
-                            <strong id="profileAddress">-</strong>
-                        </div>
-
-                    </div>
-
-                </section>
-
-            </section>
-
-        </main>
-
+  <div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Loading dashboard…</p></div>
+
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <div class="brand">
+        <button id="menuButton" class="icon-btn mobile-only" aria-label="Menu">☰</button>
+        <div class="brand-mark">JS</div>
+        <div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" data-section="notifications" title="Notifications">🔔 <span id="notificationBadge" class="badge hidden">0</span></button>
+        <span id="headerUserName" class="user-name">Wholesaler</span>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside id="sidebar" class="sidebar">
+        <nav>
+          <button class="nav-item active" data-section="dashboard">📊 <span>Dashboard</span></button>
+          <button class="nav-item" data-section="products">📦 <span>My Products</span></button>
+          <button class="nav-item" data-section="buy">🛒 <span>Buy Products</span></button>
+          <button class="nav-item" data-section="cart">🧺 <span>Cart <b id="cartCount" class="nav-count">0</b></span></button>
+          <button class="nav-item" data-section="orders">🚚 <span>Orders</span></button>
+          <button class="nav-item" data-section="payments">💳 <span>Payments</span></button>
+          <button class="nav-item" data-section="customers">👥 <span>Customers</span></button>
+          <button class="nav-item" data-section="inventory">🏷️ <span>Inventory</span></button>
+          <button class="nav-item" data-section="reports">📈 <span>Reports</span></button>
+          <button class="nav-item" data-section="notifications">🔔 <span>Notifications</span></button>
+          <button class="nav-item" data-section="profile">👤 <span>Profile</span></button>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <section id="dashboard" class="page-section active">
+          <div class="page-head"><div><h1>Dashboard</h1><p>Business overview and recent activity</p></div><button id="refreshDashboard" class="btn secondary">↻ Refresh</button></div>
+          <div class="stats-grid">
+            <div class="stat-card"><span>Products</span><strong id="statProducts">0</strong><small>Active / total</small></div>
+            <div class="stat-card"><span>Orders</span><strong id="statOrders">0</strong><small>Orders received</small></div>
+            <div class="stat-card"><span>Payments</span><strong id="statPayments">₹0</strong><small>Payment records</small></div>
+            <div class="stat-card"><span>Customers</span><strong id="statCustomers">0</strong><small>Unique buyers</small></div>
+          </div>
+          <div class="chart-grid">
+            <div class="panel"><div class="panel-head"><h3>Sales Graph</h3></div><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
+            <div class="panel"><div class="panel-head"><h3>Payment Status</h3></div><div class="chart-wrap"><canvas id="paymentChart"></canvas></div></div>
+          </div>
+          <div class="panel"><div class="panel-head"><h3>Recent Orders</h3><button class="text-btn" data-section="orders">View all</button></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th></tr></thead><tbody id="recentOrdersBody"></tbody></table></div></div>
+        </section>
+
+        <section id="products" class="page-section">
+          <div class="page-head"><div><h1>My Products</h1><p>Add and manage your wholesale catalogue</p></div><button id="addProductBtn" class="btn primary">＋ Add Product</button></div>
+          <div class="toolbar"><input id="myProductSearch" class="input" placeholder="Search my products…"><select id="myProductStatus" class="input"><option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Price</th><th>MOQ</th><th>Bulk Qty</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
+        </section>
+
+        <section id="buy" class="page-section">
+          <div class="page-head"><div><h1>Buy Products</h1><p>Purchase products from other sellers</p></div><button class="btn secondary" data-section="cart">🧺 Cart <span id="buyCartCount">0</span></button></div>
+          <div class="toolbar"><input id="marketSearch" class="input" placeholder="Search products…"><select id="marketCategory" class="input"><option value="">All types</option><option value="Women">Women</option><option value="Men">Men</option><option value="Kids">Kids</option><option value="Unisex">Unisex</option></select></div>
+          <div id="marketGrid" class="product-grid"></div>
+        </section>
+
+        <section id="cart" class="page-section">
+          <div class="page-head"><div><h1>Cart</h1><p>Review quantities before checkout</p></div></div>
+          <div id="cartList" class="cart-list"></div>
+          <div class="checkout-bar"><div><span>Cart Total</span><strong id="cartTotal">₹0</strong></div><button id="checkoutBtn" class="btn primary">Checkout</button></div>
+        </section>
+
+        <section id="orders" class="page-section">
+          <div class="page-head"><div><h1>Orders</h1><p>Sales received and purchases made</p></div><button id="refreshOrders" class="btn secondary">↻ Refresh</button></div>
+          <div class="tabs"><button class="tab active" data-order-tab="received">Received</button><button class="tab" data-order-tab="purchased">Purchased</button></div>
+          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Order</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th><th>Tracking</th><th>Action</th></tr></thead><tbody id="ordersBody"></tbody></table></div></div>
+        </section>
+
+        <section id="payments" class="page-section">
+          <div class="page-head"><div><h1>Payments</h1><p>Payment history for your sales and purchases</p></div><button id="refreshPayments" class="btn secondary">↻ Refresh</button></div>
+          <div class="stats-grid compact"><div class="stat-card"><span>Total Paid</span><strong id="paidTotal">₹0</strong></div><div class="stat-card"><span>Pending</span><strong id="pendingTotal">₹0</strong></div></div>
+          <div class="chart-grid"><div class="panel"><div class="chart-wrap"><canvas id="paymentHistoryChart"></canvas></div></div></div>
+          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Transaction</th><th>Order</th><th>Amount</th><th>Mode</th><th>Status</th><th>Date</th></tr></thead><tbody id="paymentsBody"></tbody></table></div></div>
+        </section>
+
+        <section id="customers" class="page-section">
+          <div class="page-head"><div><h1>Customers</h1><p>Businesses that have purchased from you</p></div></div>
+          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Business</th><th>Mobile</th><th>Email</th><th>Orders</th><th>Total</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
+        </section>
+
+        <section id="inventory" class="page-section">
+          <div class="page-head"><div><h1>Inventory</h1><p>Current stock and low-stock products</p></div><button id="refreshInventory" class="btn secondary">↻ Refresh</button></div>
+          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Stock</th><th>MOQ</th><th>Bulk Qty</th><th>Status</th><th>Update</th></tr></thead><tbody id="inventoryBody"></tbody></table></div></div>
+        </section>
+
+        <section id="reports" class="page-section">
+          <div class="page-head"><div><h1>Reports</h1><p>Sales, orders and inventory summary</p></div><button id="printReport" class="btn secondary">🖨 Print Report</button></div>
+          <div id="reportCards" class="stats-grid"></div>
+          <div class="panel"><div class="panel-head"><h3>Monthly Sales</h3></div><div class="chart-wrap"><canvas id="reportChart"></canvas></div></div>
+        </section>
+
+        <section id="notifications" class="page-section">
+          <div class="page-head"><div><h1>Notifications</h1><p>Important account and order activity</p></div></div>
+          <div id="notificationsList" class="notice-list"></div>
+        </section>
+
+        <section id="profile" class="page-section">
+          <div class="page-head"><div><h1>Profile</h1><p>Business and verification information</p></div></div>
+          <form id="profileForm" class="panel form-grid">
+            <label>Full Name<input id="profileName" class="input" required></label>
+            <label>Email<input id="profileEmail" class="input" type="email" disabled></label>
+            <label>Mobile<input id="profileMobile" class="input"></label>
+            <label>Business Name<input id="profileBusiness" class="input"></label>
+            <label>GST Number<input id="profileGST" class="input"></label>
+            <label>PAN Number<input id="profilePAN" class="input"></label>
+            <label class="full">Business Address<textarea id="profileAddress" class="input" rows="4"></textarea></label>
+            <div class="full verification-box"><strong>Verification:</strong> <span id="verificationStatus">Not submitted</span></div>
+            <button class="btn primary" type="submit">Save Profile</button>
+          </form>
+        </section>
+      </main>
     </div>
-
-
-    <!-- =====================================================
-         LEGACY JS COMPATIBILITY
-         These elements are invisible. They exist only because
-         the current app.js still references the old IDs.
-         ===================================================== -->
-
-    <button
-        type="button"
-        id="legacyMobileMenuButton"
-        aria-hidden="true"
-        tabindex="-1"
-    ></button>
-
-    <button
-        type="button"
-        id="legacyLogoutButton"
-        aria-hidden="true"
-        tabindex="-1"
-    ></button>
-
-    <div
-        id="legacySidebar"
-        class="sidebar"
-        aria-hidden="true"
-    ></div>
-
-
-    <!-- =====================================================
-         OLD IDs REQUIRED BY CURRENT app.js
-         ===================================================== -->
-
-    <!--
-        Current app.js searches for these exact IDs.
-        Keeping them hidden prevents startup errors while the
-        old JS is being migrated to the new header/menu.
-    -->
-    <button
-        type="button"
-        id="mobileMenuButton"
-        aria-hidden="true"
-        tabindex="-1"
-        style="display:none !important;"
-    ></button>
-
-    <button
-        type="button"
-        id="logoutButton"
-        aria-hidden="true"
-        tabindex="-1"
-        style="display:none !important;"
-    ></button>
-
-
-    <!-- =====================================================
-         HIDDEN LEGACY PROFILE IDs
-         Current app.js still updates these IDs.
-         They are invisible because the new header owns the visible UI.
-         ===================================================== -->
-    <span id="userName" aria-hidden="true" style="display:none !important;"></span>
-    <span id="userEmail" aria-hidden="true" style="display:none !important;"></span>
-    <span id="userAvatar" aria-hidden="true" style="display:none !important;"></span>
-
-    <!-- =====================================================
-         ADD PRODUCT MODAL
-         ===================================================== -->
-    <div
-        id="productModal"
-        class="modal"
-        aria-hidden="true"
-    >
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-                    <p class="eyebrow">PRODUCT</p>
-                    <h2>Add New Product</h2>
-                </div>
-
-                <button
-                    type="button"
-                    id="closeProductModal"
-                    class="close-button"
-                    aria-label="Close"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <form id="productForm">
-
-                <div class="form-grid">
-
-                    <div class="form-group full">
-                        <label for="productName">
-                            Product Name
-                        </label>
-
-                        <input
-                            id="productName"
-                            type="text"
-                            required
-                            placeholder="Enter product name"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productType">
-                            Product Type
-                        </label>
-
-                        <input
-                            id="productType"
-                            type="text"
-                            placeholder="Example: Electronics"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productSubType">
-                            Product Sub Type
-                        </label>
-
-                        <input
-                            id="productSubType"
-                            type="text"
-                            placeholder="Example: Mobile Accessories"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productPrice">
-                            Price
-                        </label>
-
-                        <input
-                            id="productPrice"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            required
-                            placeholder="0.00"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productOriginalPrice">
-                            Original Price
-                        </label>
-
-                        <input
-                            id="productOriginalPrice"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productDiscount">
-                            Discount
-                        </label>
-
-                        <input
-                            id="productDiscount"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productMinimumQuantity">
-                            Minimum Quantity
-                        </label>
-
-                        <input
-                            id="productMinimumQuantity"
-                            type="number"
-                            min="1"
-                            placeholder="1"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productBulkQuantity">
-                            Bulk Quantity
-                        </label>
-
-                        <input
-                            id="productBulkQuantity"
-                            type="number"
-                            min="1"
-                            placeholder="100"
-                        >
-                    </div>
-
-
-                    <div class="form-group full">
-                        <label for="productImage">
-                            Product Image URL
-                        </label>
-
-                        <input
-                            id="productImage"
-                            type="url"
-                            placeholder="https://..."
-                        >
-                    </div>
-
-
-                    <div class="form-group full">
-                        <label for="productDescription">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="productDescription"
-                            rows="4"
-                            placeholder="Describe your product"
-                        ></textarea>
-                    </div>
-
-
-                    <div class="form-group full">
-                        <label for="productMoreInfo">
-                            More Information
-                        </label>
-
-                        <textarea
-                            id="productMoreInfo"
-                            rows="3"
-                            placeholder="Additional information"
-                        ></textarea>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productTarget">
-                            Target For
-                        </label>
-
-                        <select id="productTarget">
-                            <option value="b2b">B2B</option>
-                        </select>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="productActive">
-                            Product Status
-                        </label>
-
-                        <select id="productActive">
-                            <option value="true">Active</option>
-                            <option value="false">Inactive</option>
-                        </select>
-                    </div>
-
-                </div>
-
-
-                <div class="modal-actions">
-
-                    <button
-                        type="button"
-                        id="cancelProduct"
-                        class="secondary-button"
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        class="primary-button"
-                    >
-                        SAVE PRODUCT
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
+  </div>
+
+  <div id="productModal" class="modal hidden">
+    <div class="modal-card large">
+      <div class="modal-head"><h2 id="productModalTitle">Add Product</h2><button class="icon-btn" data-close="productModal">✕</button></div>
+      <form id="productForm" class="form-grid">
+        <input type="hidden" id="productId">
+        <label>Product Name*<input id="pName" class="input" required></label>
+        <label>Product Type<select id="pType" class="input"><option>Women</option><option>Men</option><option>Kids</option><option>Unisex</option></select></label>
+        <label>Sub Type<input id="pSubType" class="input"></label>
+        <label>Target For<select id="pTarget" class="input"><option value="B2B">B2B</option><option value="User">User</option><option value="Both">Both</option></select></label>
+        <label>Price (₹)*<input id="pPrice" class="input" type="number" min="0" step="0.01" required></label>
+        <label>Original Price (₹)<input id="pOriginalPrice" class="input" type="number" min="0" step="0.01"></label>
+        <label>Discount (₹)<input id="pDiscount" class="input" type="number" min="0" step="0.01" value="0"></label>
+        <label>MOQ*<input id="pMOQ" class="input" type="number" min="1" value="1" required></label>
+        <label>Bulk Qty<input id="pBulkQty" class="input" type="number" min="0" value="0"></label>
+        <label>Bulk Price (₹)<input id="pBulkPrice" class="input" type="number" min="0" step="0.01" placeholder="Optional"></label>
+        <label>Stock Quantity<input id="pStock" class="input" type="number" min="0" value="0"></label>
+        <label>Image URLs <small>(one URL per line)</small><textarea id="pImages" class="input" rows="3" placeholder="https://..."></textarea></label>
+        <label class="full">Description<textarea id="pDescription" class="input" rows="4"></textarea></label>
+        <label class="full">More Information<textarea id="pMoreInfo" class="input" rows="3"></textarea></label>
+        <div class="full modal-actions"><button type="button" class="btn secondary" data-close="productModal">Cancel</button><button type="submit" class="btn primary">Save Product</button></div>
+      </form>
     </div>
+  </div>
 
+  <div id="productDetailsModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Product Details</h2><button class="icon-btn" data-close="productDetailsModal">✕</button></div><div id="productDetails"></div></div></div>
+  <div id="checkoutModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Checkout</h2><button class="icon-btn" data-close="checkoutModal">✕</button></div><form id="checkoutForm"><div id="checkoutSummary"></div><label>Payment Mode<select id="checkoutPaymentMode" class="input"><option>COD</option><option>UPI</option><option>Bank Transfer</option><option>Pay Later</option></select></label><label>Note<textarea id="checkoutNote" class="input" rows="3"></textarea></label><button class="btn primary full" type="submit">Place Order</button></form></div></div>
 
-    <!-- =====================================================
-         TOAST
-         ===================================================== -->
-    <div id="toast" class="toast">
-        <span id="toastMessage"></span>
-    </div>
-
+  <div id="toast" class="toast"></div>
+  <script src="wholesaler.js"></script>
 </body>
 </html>
-
