@@ -933,54 +933,79 @@
 
     console.log("Current user ID:", state.user?.id);
 
+    if (!state.user?.id) {
+        console.error("No logged-in user ID");
+        state.products = [];
+        return;
+    }
+
     const { data, error } = await sb
         .from("products")
         .select("*")
         .eq("seller_id", state.user.id)
-        .order("created_at", { ascending: false });
+        .order("created_at", {
+            ascending: false
+        });
 
     console.log("PRODUCT DATA:", data);
     console.log("PRODUCT ERROR:", error);
 
     if (error) {
+
         console.error("Products:", error);
 
-        document.body.innerHTML += `
-            <div style="
-                background:#ffe5e5;
-                color:#b00000;
-                padding:20px;
-                margin:20px;
-                border-radius:10px;
-                font-family:Arial;
-            ">
-                <h3>PRODUCT DATABASE ERROR</h3>
-                <p>${error.message}</p>
-                <p>Code: ${error.code || "unknown"}</p>
-            </div>
+        const errorBox = document.createElement("div");
+
+        errorBox.style.cssText = `
+            background:#ffe5e5;
+            color:#b00000;
+            padding:20px;
+            margin:20px;
+            border-radius:10px;
+            font-family:Arial;
+            position:relative;
+            z-index:99999;
         `;
 
+        errorBox.innerHTML = `
+            <h3>PRODUCT DATABASE ERROR</h3>
+            <p>${esc(error.message)}</p>
+            <p>Code: ${esc(error.code || "unknown")}</p>
+        `;
+
+        document.body.prepend(errorBox);
+
         state.products = [];
+
         return;
     }
 
     state.products = data || [];
 
-    document.body.innerHTML += `
-        <div style="
-            background:#e5ffe5;
-            color:#006400;
-            padding:20px;
-            margin:20px;
-            border-radius:10px;
-            font-family:Arial;
-        ">
-            <h3>PRODUCT DATABASE SUCCESS</h3>
-            <p>Products found: ${state.products.length}</p>
-        </div>
+    console.log(
+        "Products successfully loaded:",
+        state.products.length
+    );
+
+    const successBox = document.createElement("div");
+
+    successBox.style.cssText = `
+        background:#e5ffe5;
+        color:#006400;
+        padding:15px;
+        margin:20px;
+        border-radius:10px;
+        font-family:Arial;
+        position:relative;
+        z-index:99999;
     `;
 
-    console.log("Products loaded:", state.products.length);
+    successBox.innerHTML = `
+        <strong>Supabase Connected</strong><br>
+        Products found: ${state.products.length}
+    `;
+
+    document.body.prepend(successBox);
 }
 
     function renderMyProducts() {
@@ -4772,33 +4797,15 @@ function cartQuantityChange(event) {
         openProduct:
             openProduct
     };
-console.log("INIT STARTED");
 
-const { data: sessionData, error: sessionError } =
-    await sb.auth.getSession();
 
-console.log("SESSION DATA:", sessionData);
-console.log("SESSION ERROR:", sessionError);
 
-if (sessionError) {
-    document.body.innerHTML += `
-        <div style="padding:20px;color:red;font-size:18px;">
-            Session Error: ${sessionError.message}
-        </div>
-    `;
-    return;
-}
 
-if (!sessionData.session) {
-    document.body.innerHTML += `
-        <div style="padding:20px;color:red;font-size:18px;">
-            NO LOGIN SESSION FOUND
-        </div>
-    `;
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+        init();
+    }
+);
 
-    window.location.href = "login.html";
-    return;
-}
-
-console.log("LOGGED IN USER:", sessionData.session.user);
-console.log("USER ID:", sessionData.session.user.id);
+})();
