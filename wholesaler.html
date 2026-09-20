@@ -29,93 +29,106 @@
 
     <!-- ================= SIDEBAR ================= -->
 
-    <aside class="sidebar">
+   <aside class="sidebar">
 
-        <div class="brand">
+    <!-- LOGO -->
+    <div class="sidebar-logo">
+        <div class="logo-icon">W</div>
 
-            <div class="brand-logo">
+        <div>
+            <h2>Wholesale Hub</h2>
+            <span>B2B Business</span>
+        </div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div class="sidebar-section-title">
+        Main Menu
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <a href="#" class="nav-item active" data-section="dashboard">
+            <span class="icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item" data-section="products">
+            <span class="icon">▣</span>
+            <span>B2B Products</span>
+        </a>
+
+        <a href="#" class="nav-item" data-section="buy-products">
+            <span class="icon">🛒</span>
+            <span>Buy Products</span>
+        </a>
+
+        <a href="#" class="nav-item" data-section="orders">
+            <span class="icon">▤</span>
+            <span>My Orders</span>
+        </a>
+
+        <a href="#" class="nav-item" data-section="payments">
+            <span class="icon">₹</span>
+            <span>Payments</span>
+        </a>
+
+    </nav>
+
+    <!-- MANAGEMENT -->
+    <div class="sidebar-section-title">
+        Management
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <a href="#" class="nav-item add-product" data-section="add-product">
+            <span class="icon">＋</span>
+            <span>Add Product</span>
+        </a>
+
+        <a href="#" class="nav-item" data-section="customers">
+            <span class="icon">♙</span>
+            <span>Customers</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- BOTTOM -->
+    <div class="sidebar-bottom">
+
+        <div class="sidebar-user">
+
+            <div class="sidebar-user-avatar">
                 W
             </div>
 
-            <div>
-                <h2>WHOLESALE</h2>
-                <span>B2B PLATFORM</span>
+            <div class="sidebar-user-info">
+                <strong id="sidebarUserName">
+                    Wholesaler
+                </strong>
+
+                <span>
+                    Business Account
+                </span>
             </div>
 
         </div>
 
+        <div class="sidebar-logout">
 
-        <nav class="navigation">
-
-            <button
-                class="nav-item active"
-                data-section="dashboard"
-            >
-                <span>⌂</span>
-                Dashboard
-            </button>
-
-
-            <button
-                class="nav-item"
-                data-section="products"
-            >
-                <span>▣</span>
-                See B2B Products
-            </button>
-
-
-            <button
-                class="nav-item"
-                data-section="buy"
-            >
-                <span>🛒</span>
-                Buy Products
-            </button>
-
-
-            <button
-                class="nav-item"
-                data-section="orders"
-            >
-                <span>▤</span>
-                My Orders
-            </button>
-
-
-            <button
-                class="nav-item"
-                data-section="payments"
-            >
-                <span>₹</span>
-                Payments
-            </button>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <button
-                class="nav-item"
-                data-section="profile"
-            >
-                <span>◉</span>
-                Profile
-            </button>
-
-            <button
-                id="logoutButton"
-                class="logout-button"
-            >
-                <span>↪</span>
-                Logout
-            </button>
+            <a href="#" class="nav-item" id="logoutBtn">
+                <span class="icon">↪</span>
+                <span>Logout</span>
+            </a>
 
         </div>
 
-    </aside>
+    </div>
 
+</aside>
 
     <!-- ================= MAIN ================= -->
 
