@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wholesaler Dashboard</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================
+         APP CONTAINER
+    ========================================== -->
+    <div class="app">
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    <span>W</span>
+                </div>
+
+                <div class="brand-text">
+                    <h2>Wholesale</h2>
+                    <p>B2B Portal</p>
+                </div>
+
+            </div>
+
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+
+                <button
+                    class="nav-item active"
+                    data-section="dashboard"
+                >
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    data-section="products"
+                >
+                    <i class="fa-solid fa-box"></i>
+                    <span>B2B Products</span>
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    data-section="buy-products"
+                >
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Buy Products</span>
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    data-section="orders"
+                >
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>My Orders</span>
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    data-section="payments"
+                >
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Payments</span>
+                </button>
+
+
+                <div class="nav-divider"></div>
+
+
+                <button
+                    class="nav-item"
+                    data-section="settings"
+                >
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </button>
+
+            </nav>
+
+
+            <!-- Sidebar bottom -->
+            <div class="sidebar-bottom">
+
+                <div class="account-mini">
+
+                    <div class="avatar">
+                        W
+                    </div>
+
+                    <div>
+                        <strong id="sidebarUserName">
+                            Wholesaler
+                        </strong>
+
+                        <small>
+                            Business Account
+                        </small>
+                    </div>
+
+                </div>
+
+                <button
+                    class="logout-btn"
+                    id="logoutBtn"
+                    title="Logout"
+                >
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================
+             MAIN CONTENT
+        ====================================== -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        class="mobile-menu-btn"
+                        id="mobileMenuBtn"
+                    >
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div>
+                        <p class="welcome-small">
+                            Welcome back
+                        </p>
+
+                        <h1 id="pageTitle">
+                            Wholesaler Dashboard
+                        </h1>
+                    </div>
+
+                </div>
+
+
+                <div class="topbar-right">
+
+                    <button
+                        class="icon-btn"
+                        title="Notifications"
+                    >
+                        <i class="fa-regular fa-bell"></i>
+
+                        <span class="notification-dot"></span>
+                    </button>
+
+
+                    <div class="user-profile">
+
+                        <div class="profile-avatar">
+                            W
+                        </div>
+
+                        <div class="profile-info">
+
+                            <strong id="profileName">
+                                Wholesaler
+                            </strong>
+
+                            <span>
+                                B2B Account
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================
+                 PAGE CONTENT
+            ================================== -->
+            <section class="content">
+
+
+                <!-- ==============================
+                     DASHBOARD SECTION
+                =============================== -->
+                <section
+                    class="page-section active"
+                    id="dashboard"
+                >
+
+                    <div class="hero-card">
+
+                        <div class="hero-content">
+
+                            <span class="hero-label">
+                                <i class="fa-solid fa-chart-line"></i>
+                                B2B BUSINESS CENTER
+                            </span>
+
+                            <h2>
+                                Manage your wholesale
+                                business in one place.
+                            </h2>
+
+                            <p>
+                                Manage products, orders, customers
+                                and payments from your wholesaler
+                                dashboard.
+                            </p>
+
+                        </div>
+
+
+                        <div class="hero-logo">
+
+                            <div class="logo-orbit orbit-one"></div>
+                            <div class="logo-orbit orbit-two"></div>
+
+                            <div class="hero-3d-logo">
+                                W
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Quick Stats -->
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon blue">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+
+                            <div>
+                                <span>Total Users</span>
+                                <strong id="totalUsers">
+                                    0
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon purple">
+                                <i class="fa-solid fa-box"></i>
+                            </div>
+
+                            <div>
+                                <span>Total Products</span>
+                                <strong id="totalProducts">
+                                    0
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon green">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </div>
+
+                            <div>
+                                <span>Total Orders</span>
+                                <strong id="totalOrders">
+                                    0
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-icon orange">
+                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                            </div>
+
+                            <div>
+                                <span>Total Revenue</span>
+                                <strong id="totalRevenue">
+                                    ₹0
+                                </strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Dashboard Welcome -->
+                    <div class="empty-dashboard">
+
+                        <div class="empty-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+
+                        <h3>
+                            Your B2B workspace is ready
+                        </h3>
+
+                        <p>
+                            Products, orders, payments and analytics
+                            will appear here as you use the platform.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==============================
+                     PRODUCTS
+                =============================== -->
+                <section
+                    class="page-section"
+                    id="products"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-kicker">
+                                CATALOG
+                            </span>
+
+                            <h2>
+                                B2B Products
+                            </h2>
+
+                            <p>
+                                Manage your wholesale product catalog.
+                            </p>
+                        </div>
+
+                        <button class="primary-btn">
+                            <i class="fa-solid fa-plus"></i>
+                            Add Product
+                        </button>
+
+                    </div>
+
+
+                    <div class="placeholder-card">
+
+                        <i class="fa-solid fa-box-open"></i>
+
+                        <h3>
+                            Product Management
+                        </h3>
+
+                        <p>
+                            Product management will be added
+                            in Part 4 and Part 5.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==============================
+                     BUY PRODUCTS
+                =============================== -->
+                <section
+                    class="page-section"
+                    id="buy-products"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-kicker">
+                                B2B MARKET
+                            </span>
+
+                            <h2>
+                                Buy Products
+                            </h2>
+
+                            <p>
+                                Browse products available from B2B sellers.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="placeholder-card">
+
+                        <i class="fa-solid fa-cart-shopping"></i>
+
+                        <h3>
+                            B2B Marketplace
+                        </h3>
+
+                        <p>
+                            Marketplace functionality will be added
+                            in a later part.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==============================
+                     ORDERS
+                =============================== -->
+                <section
+                    class="page-section"
+                    id="orders"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-kicker">
+                                SALES
+                            </span>
+
+                            <h2>
+                                My Orders
+                            </h2>
+
+                            <p>
+                                Track your wholesale orders.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="placeholder-card">
+
+                        <i class="fa-solid fa-clipboard-list"></i>
+
+                        <h3>
+                            Orders
+                        </h3>
+
+                        <p>
+                            Order management will be added
+                            in Part 7 and Part 8.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==============================
+                     PAYMENTS
+                =============================== -->
+                <section
+                    class="page-section"
+                    id="payments"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-kicker">
+                                FINANCE
+                            </span>
+
+                            <h2>
+                                Payments
+                            </h2>
+
+                            <p>
+                                Track payments and business revenue.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="placeholder-card">
+
+                        <i class="fa-solid fa-credit-card"></i>
+
+                        <h3>
+                            Payment Center
+                        </h3>
+
+                        <p>
+                            Payment tables and graphs will be
+                            added in Part 9.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==============================
+                     SETTINGS
+                =============================== -->
+                <section
+                    class="page-section"
+                    id="settings"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+                            <span class="section-kicker">
+                                ACCOUNT
+                            </span>
+
+                            <h2>
+                                Settings
+                            </h2>
+
+                            <p>
+                                Manage your wholesaler account.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="placeholder-card">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                        <h3>
+                            Account Settings
+                        </h3>
+
+                        <p>
+                            Settings functionality will be
+                            expanded later.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- Supabase JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <!-- Supabase configuration -->
+    <script src="supabase.js"></script>
+
+    <!-- Application JS -->
+    <script src="app.js"></script>
+
+</body>
+</html>
