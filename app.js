@@ -8,6 +8,8 @@
 
 const sb = supabaseClient;
 
+document.write(supabaseClient);
+
 /* =========================================================
    JS UNDEFINED - WHOLESALER DASHBOARD
    ========================================================= */
