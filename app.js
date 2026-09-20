@@ -9,46 +9,40 @@
     /* =====================================================
        SUPABASE
        ===================================================== */
+console.log("Checking Supabase...");
+console.log("window.supabase =", window.supabase);
+console.log("window.supabaseClient =", window.supabaseClient);
 
-    const sb = window.supabaseClient;
+const sb = window.supabaseClient;
 
-    if (!sb) {
-        console.error("Supabase client not found.");
+if (!sb) {
+    console.error("Supabase client not found.");
 
-        const loading = document.getElementById("loadingScreen");
+    alert("Supabase client not initialized!");
 
-        if (loading) {
-            loading.innerHTML = `
-                <div style="
-                    padding:30px;
-                    text-align:center;
-                    font-family:Arial,sans-serif;
-                ">
-                    <h2>Supabase Connection Error</h2>
-                    <p>Supabase client was not initialized.</p>
+    const loading = document.getElementById("loadingScreen");
 
-                    <button
-                        onclick="location.reload()"
-                        style="
-                            padding:10px 20px;
-                            border:0;
-                            border-radius:8px;
-                            cursor:pointer;
-                        "
-                    >
-                        Retry
-                    </button>
-                </div>
-            `;
-        }
-alert("kd");
-
-        return;
+    if (loading) {
+        loading.innerHTML = `
+            <div style="
+                padding:30px;
+                text-align:center;
+                font-family:Arial,sans-serif;
+            ">
+                <h2>Supabase Connection Error</h2>
+                <p>Supabase client was not initialized.</p>
+                <button onclick="location.reload()">
+                    Retry
+                </button>
+            </div>
+        `;
     }
 
-    console.log("JS UNDEFINED: Supabase connected");
+    return;
+}
 
-
+console.log("JS UNDEFINED: Supabase connected");
+    
     /* =====================================================
        STATE
        ===================================================== */
@@ -4776,7 +4770,8 @@ function cartQuantityChange(event) {
        START
        ===================================================== */
 
-    init();
+   document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded");
 
-})
-   
+    init();
+});
