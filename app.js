@@ -672,8 +672,7 @@ console.log("AUTH USER ID:", state.user.id);
 
 
         $("myProductSearch")
-            ?.addEventListener(
-                "input",
+            ?.addEventListener(          "input",
                 renderMyProducts
             );
 
@@ -924,7 +923,7 @@ if (id === "payments") {
 
         renderOrders();
 
-        renderPayments();
+        
 
         renderCustomers();
 
@@ -1600,9 +1599,7 @@ const product =
             ) {
                 return;
             }
-
-
-            const {
+const {
                 error
             } =
                 await sb
@@ -2267,13 +2264,6 @@ const product =
 
         renderCart();
     }
-
-
-
-
-
-
-
 function cartQuantityChange(event) {
 
         const id =
@@ -2931,7 +2921,6 @@ const paymentRows =
             renderDashboard();
         }
     }
-
 
     /* =====================================================
        PAYMENTS
@@ -4757,7 +4746,7 @@ function drawPaymentGraph(payments) {
       box.innerHTML = `
         <div class="panel">
           No new notifications.
-        </div>
+       </div>
       `;
 
       return;
@@ -5786,8 +5775,7 @@ function drawPaymentGraph(payments) {
                         </td>
 
                     </tr>
-
-                </table>
+        </table>
 
                 <h3>
                     Total:
@@ -5847,3 +5835,9 @@ document.addEventListener(
 );
 
 })();
+
+              
+
+
+
+            
