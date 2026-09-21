@@ -868,6 +868,9 @@ console.log("AUTH USER ID:", state.user.id);
         if (id === "cart") {
             renderCart();
         }
+if (id === "payments") {
+    renderPayments();
+}
 
         if (id === "orders") {
             renderOrders();
@@ -2897,95 +2900,73 @@ async function loadPayments() {
 }
 
 
+function renderPayments() {
 
-    function renderPayments() {
+    const payments = state.payments || [];
 
-    const payments =
-        state.payments || [];
+    /* =========================
+       TOTAL PAID
+       ========================= */
 
-
-    const paid =
-        payments
-            .filter(
-                payment =>
-                    String(
-                        payment.payment_status ||
-                        ""
-                    ).toLowerCase() ===
-                    "paid"
-            )
-            .reduce(
-                (
-                    sum,
-                    payment
-                ) =>
-                    sum +
-                    Number(
-                        payment.amount || 0
-                    ),
-                0
-            );
-
-
-    const pending =
-        payments
-            .filter(
-                payment =>
-                    String(
-                        payment.payment_status ||
-                        ""
-                    ).toLowerCase() ===
-                    "pending"
-            )
-            .reduce(
-                (
-                    sum,
-                    payment
-                ) =>
-                    sum +
-                    Number(
-                        payment.amount || 0
-                    ),
-                0
-            );
-
-
-    const paidElement =
-        document.getElementById(
-            "paidTotal"
+    const paid = payments
+        .filter(payment =>
+            String(payment.payment_status || "")
+                .toLowerCase() === "paid"
+        )
+        .reduce(
+            (sum, payment) =>
+                sum + Number(payment.amount || 0),
+            0
         );
+
+    /* =========================
+       TOTAL PENDING
+       ========================= */
+
+    const pending = payments
+        .filter(payment =>
+            String(payment.payment_status || "")
+                .toLowerCase() === "pending"
+        )
+        .reduce(
+            (sum, payment) =>
+                sum + Number(payment.amount || 0),
+            0
+        );
+
+    const paidElement = $("paidTotal");
 
     if (paidElement) {
-        paidElement.textContent =
-            money(paid);
+        paidElement.textContent = money(paid);
     }
 
-
-    const pendingElement =
-        document.getElementById(
-            "pendingTotal"
-        );
+    const pendingElement = $("pendingTotal");
 
     if (pendingElement) {
-        pendingElement.textContent =
-            money(pending);
+        pendingElement.textContent = money(pending);
     }
 
 
-    const body =
-        document.getElementById(
-            "paymentsBody"
-        );
+    /* =========================
+       PAYMENT GRAPH
+       ========================= */
+
+    renderPaymentHistoryChart();
+
+
+    /* =========================
+       PAYMENT TABLE
+       ========================= */
+
+    const body = $("paymentsBody");
 
     if (!body) return;
-
 
     if (!payments.length) {
 
         body.innerHTML = `
             <tr>
-                <td colspan="6"
-                    class="empty-row">
+                <td colspan="6" class="empty-row">
                     No payments found.
                 </td>
             </tr>
@@ -2995,64 +2976,460 @@ async function loadPayments() {
     }
 
 
-    body.innerHTML =
-        payments
-            .map(
-                payment => {
+    body.innerHTML = payments
+        .map(payment => {
 
-                    return `
-                        <tr>
+            return `
+                <tr>
 
-                            <td>
-                                ${esc(
-                                    payment.transaction_id ||
-                                    "—"
-                                )}
-                            </td>
+                    <td>
+                        ${esc(
+                            payment.transaction_id ||
+                            "—"
+                        )}
+                    </td>
 
-                            <td>
-                                ${esc(
-                                    payment.order_id
-                                        ?.slice(0, 8) ||
-                                    "—"
-                                )}
-                            </td>
+                    <td>
+                        ${esc(
+                            payment.order_id
+                                ?.slice(0, 8) ||
+                            "—"
+                        )}
+                    </td>
 
-                            <td>
-                                ${money(
-                                    payment.amount
-                                )}
-                            </td>
+                    <td>
+                        ${money(payment.amount)}
+                    </td>
 
-                            <td>
-                                ${esc(
-                                    payment.payment_mode ||
-                                    "—"
-                                )}
-                            </td>
+                    <td>
+                        ${esc(
+                            payment.payment_mode ||
+                            "—"
+                        )}
+                    </td>
 
-                            <td>
-                                ${statusPill(
-                                    payment.payment_status
-                                )}
-                            </td>
+                    <td>
+                        ${statusPill(
+                            payment.payment_status
+                        )}
+                    </td>
 
-                            <td>
-                                ${date(
-                                    payment.paid_at ||
-                                    payment.created_at
-                                )}
-                            </td>
+                    <td>
+                        ${date(
+                            payment.paid_at ||
+                            payment.created_at
+                        )}
+                    </td>
 
-                        </tr>
-                    `;
+                </tr>
+            `;
 
-                }
-            )
-            .join("");
+        })
+        .join("");
+}
+
+function renderPaymentHistoryChart() {
+
+    const canvas = $("paymentHistoryChart");
+
+    if (!canvas) return;
+
+    const container = canvas.parentElement;
+
+    if (!container) return;
+
+
+    const payments = state.payments || [];
+
+
+    /* =========================
+       GROUP PAYMENTS BY DATE
+       ========================= */
+
+    const grouped = {};
+
+    payments.forEach(payment => {
+
+        const rawDate =
+            payment.paid_at ||
+            payment.created_at;
+
+        if (!rawDate) return;
+
+        const d = new Date(rawDate);
+
+        if (isNaN(d.getTime())) return;
+
+        const key =
+            d.toLocaleDateString("en-IN");
+
+        if (!grouped[key]) {
+            grouped[key] = {
+                paid: 0,
+                pending: 0
+            };
+        }
+
+        const status =
+            String(
+                payment.payment_status || ""
+            ).toLowerCase();
+
+        const amount =
+            Number(payment.amount || 0);
+
+        if (status === "paid") {
+
+            grouped[key].paid += amount;
+
+        } else if (status === "pending") {
+
+            grouped[key].pending += amount;
+
+        }
+
+    });
+
+
+    /* =========================
+       SORT DATES
+       ========================= */
+
+    const rows =
+        Object.entries(grouped)
+            .map(([date, values]) => ({
+                date,
+                paid: values.paid,
+                pending: values.pending
+            }))
+            .sort((a, b) => {
+
+                const da =
+                    new Date(
+                        a.date.split("/").reverse().join("-")
+                    );
+
+                const db =
+                    new Date(
+                        b.date.split("/").reverse().join("-")
+                    );
+
+                return da - db;
+
+            })
+            .slice(-10);
+
+
+    /* =========================
+       CANVAS SIZE
+       ========================= */
+
+    const width =
+        Math.max(
+            container.clientWidth || 500,
+            300
+        );
+
+    const height = 300;
+
+    const dpr =
+        window.devicePixelRatio || 1;
+
+    canvas.width =
+        width * dpr;
+
+    canvas.height =
+        height * dpr;
+
+    canvas.style.width =
+        width + "px";
+
+    canvas.style.height =
+        height + "px";
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+    ctx.scale(dpr, dpr);
+
+
+    /* =========================
+       BACKGROUND
+       ========================= */
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const paddingLeft = 60;
+    const paddingRight = 20;
+    const paddingTop = 35;
+    const paddingBottom = 55;
+
+    const chartWidth =
+        width -
+        paddingLeft -
+        paddingRight;
+
+    const chartHeight =
+        height -
+        paddingTop -
+        paddingBottom;
+
+
+    /* =========================
+       NO DATA
+       ========================= */
+
+    if (!rows.length) {
+
+        ctx.fillStyle = "#64748b";
+
+        ctx.font =
+            "14px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            "No payment data available",
+            width / 2,
+            height / 2
+        );
+
+        return;
+    }
+
+
+    /* =========================
+       MAX VALUE
+       ========================= */
+
+    const maxValue =
+        Math.max(
+            ...rows.map(row =>
+                Math.max(
+                    row.paid,
+                    row.pending
+                )
+            ),
+            100
+        );
+
+
+    /* =========================
+       GRID
+       ========================= */
+
+    ctx.strokeStyle =
+        "#e2e8f0";
+
+    ctx.lineWidth = 1;
+
+    ctx.font =
+        "11px Arial";
+
+    ctx.fillStyle =
+        "#64748b";
+
+    ctx.textAlign =
+        "right";
+
+
+    for (let i = 0; i <= 4; i++) {
+
+        const value =
+            maxValue * i / 4;
+
+        const y =
+            paddingTop +
+            chartHeight -
+            (chartHeight * i / 4);
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            paddingLeft,
+            y
+        );
+
+        ctx.lineTo(
+            width - paddingRight,
+            y
+        );
+
+        ctx.stroke();
+
+
+        ctx.fillText(
+            "₹" +
+            Math.round(value)
+                .toLocaleString("en-IN"),
+            paddingLeft - 8,
+            y + 4
+        );
+    }
+
+
+    /* =========================
+       BARS
+       ========================= */
+
+    const groupWidth =
+        chartWidth / rows.length;
+
+    const barWidth =
+        Math.min(
+            30,
+            groupWidth * 0.55
+        );
+
+
+    rows.forEach((row, index) => {
+
+        const centerX =
+            paddingLeft +
+            groupWidth * index +
+            groupWidth / 2;
+
+
+        /* PAID BAR */
+
+        const paidHeight =
+            (row.paid / maxValue) *
+            chartHeight;
+
+        const paidY =
+            paddingTop +
+            chartHeight -
+            paidHeight;
+
+
+        ctx.fillStyle =
+            "#16a34a";
+
+        ctx.beginPath();
+
+        ctx.roundRect(
+            centerX - barWidth / 2,
+            paidY,
+            barWidth,
+            paidHeight,
+            6
+        );
+
+        ctx.fill();
+
+
+        /* PENDING BAR */
+
+        const pendingHeight =
+            (row.pending / maxValue) *
+            chartHeight;
+
+        const pendingY =
+            paidY -
+            pendingHeight;
+
+
+        if (row.pending > 0) {
+
+            ctx.fillStyle =
+                "#f59e0b";
+
+            ctx.beginPath();
+
+            ctx.roundRect(
+                centerX - barWidth / 2,
+                pendingY,
+                barWidth,
+                pendingHeight,
+                6
+            );
+
+            ctx.fill();
+
+        }
+
+
+        /* DATE */
+
+        ctx.fillStyle =
+            "#64748b";
+
+        ctx.font =
+            "10px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            row.date,
+            centerX,
+            height - 25
+        );
+
+    });
+
+
+    /* =========================
+       LEGEND
+       ========================= */
+
+    ctx.font =
+        "12px Arial";
+
+    ctx.textAlign =
+        "left";
+
+
+    ctx.fillStyle =
+        "#16a34a";
+
+    ctx.fillRect(
+        paddingLeft,
+        12,
+        10,
+        10
+    );
+
+    ctx.fillStyle =
+        "#475569";
+
+    ctx.fillText(
+        "Paid",
+        paddingLeft + 16,
+        21
+    );
+
+
+    ctx.fillStyle =
+        "#f59e0b";
+
+    ctx.fillRect(
+        paddingLeft + 70,
+        12,
+        10,
+        10
+    );
+
+    ctx.fillStyle =
+        "#475569";
+
+    ctx.fillText(
+        "Pending",
+        paddingLeft + 86,
+        21
+    );
 }
 
 
+    
 
 
 
