@@ -779,6 +779,11 @@ console.log("AUTH USER ID:", state.user.id);
                 "click",
                 productAction
             );
+$("customersBody")
+    ?.addEventListener(
+        "click",
+        customerAction
+    );
 
 
         $("marketGrid")
@@ -3440,101 +3445,672 @@ function renderPaymentHistoryChart() {
      CUSTOMERS
      ========================================== */
 
-  async function loadCustomers(){
-    const ids = [
-      ...new Set(
-        state.ordersReceived
-          .map(o => o.user_id)
-          .filter(id => id && id !== state.user.id)
-      )
+  async function loadCustomers() {
+
+    if (!state.user?.id) {
+        state.customers = [];
+        return;
+    }
+
+    /* ==========================================
+       ONLY ORDERS SOLD BY THIS WHOLESALER
+       ========================================== */
+
+    const { data: orders, error: ordersError } =
+        await sb
+            .from("orders")
+            .select("*")
+            .eq("seller_id", state.user.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+    if (ordersError) {
+
+        console.error(
+            "Customer orders:",
+            ordersError
+        );
+
+        state.customers = [];
+        return;
+    }
+
+
+    /* ==========================================
+       FIND UNIQUE BUYERS
+       ========================================== */
+
+    const customerIds = [
+        ...new Set(
+            (orders || [])
+                .map(order => order.user_id)
+                .filter(
+                    id =>
+                        id &&
+                        id !== state.user.id
+                )
+        )
     ];
 
-    if (!ids.length) {
-      state.customers = [];
-      return;
+
+    if (!customerIds.length) {
+
+        state.customers = [];
+        return;
     }
 
-    const { data, error } = await sb
-      .from("profiles")
-      .select("id,full_name,email,mobile")
-      .in("id", ids);
 
-    if (error) {
-      console.warn("Customers:", error.message);
+    /* ==========================================
+       LOAD BUYER PROFILES
+       ========================================== */
 
-      // Fallback if profile RLS does not allow seller to read profiles
-      state.customers = ids.map(id => ({
-        id,
-        full_name: "Customer",
-        email: "",
-        mobile: ""
-      }));
+    const {
+        data: profiles,
+        error: profileError
+    } = await sb
+        .from("profiles")
+        .select(`
+            id,
+            full_name,
+            email,
+            mobile,
+            user_type,
+            business_name,
+            gst_number,
+            business_address
+        `)
+        .in("id", customerIds);
 
-      return;
+
+    if (profileError) {
+
+        console.error(
+            "Customer profiles:",
+            profileError
+        );
+
+        state.customers = customerIds.map(id => ({
+            id,
+            full_name: "Customer",
+            email: "",
+            mobile: "",
+            user_type: "User",
+            business_name: "",
+            gst_number: "",
+            business_address: ""
+        }));
+
+        return;
     }
 
-    state.customers = data || [];
-  }
+
+    /* ==========================================
+       BUILD CUSTOMER DATA
+       ========================================== */
+
+    state.customers =
+        (profiles || []).map(profile => {
+
+            const customerOrders =
+                (orders || []).filter(
+                    order =>
+                        order.user_id ===
+                        profile.id
+                );
 
 
-  function renderCustomers(){
+            const totalPurchase =
+                customerOrders.reduce(
+                    (sum, order) =>
+                        sum +
+                        Number(
+                            order.total_price || 0
+                        ),
+                    0
+                );
+
+
+            const lastOrder =
+                customerOrders.length
+                    ? customerOrders[0]
+                    : null;
+
+
+            return {
+
+                ...profile,
+
+                order_count:
+                    customerOrders.length,
+
+                total_purchase:
+                    totalPurchase,
+
+                last_order:
+                    lastOrder?.created_at ||
+                    null,
+
+                orders:
+                    customerOrders
+
+            };
+
+        });
+
+
+    console.log(
+        "WHOLESALER CUSTOMERS:",
+        state.customers
+    );
+}
+
+function renderCustomers() {
 
     const body =
-      $("customersBody") ||
-      $("customerTableBody");
+        $("customersBody") ||
+        $("customerTableBody");
 
     if (!body) return;
 
-    if (!state.customers.length) {
-      body.innerHTML = `
-        <tr>
-          <td colspan="5">
-            No customers found.
-          </td>
-        </tr>
-      `;
-      return;
+
+    /* ==========================================
+       CUSTOMER COUNT
+       ========================================== */
+
+    const count =
+        $("customerCount");
+
+    if (count) {
+        count.textContent =
+            state.customers.length;
     }
 
-    body.innerHTML = state.customers.map(c => {
 
-      const customerOrders =
-        state.ordersReceived.filter(
-          o => o.user_id === c.id
+    /* ==========================================
+       EMPTY
+       ========================================== */
+
+    if (!state.customers.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    <div class="customer-empty">
+
+                        <div class="customer-empty-icon">
+                            👥
+                        </div>
+
+                        <strong>
+                            No customers yet
+                        </strong>
+
+                        <span>
+                            Customers will appear here
+                            after someone purchases
+                            your products.
+                        </span>
+
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    /* ==========================================
+       CUSTOMER ROWS
+       ========================================== */
+
+    body.innerHTML =
+        state.customers
+            .map(customer => {
+
+                const name =
+                    customer.full_name ||
+                    "Customer";
+
+
+                const initials =
+                    name
+                        .split(" ")
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map(
+                            word =>
+                                word
+                                    .charAt(0)
+                                    .toUpperCase()
+                        )
+                        .join("");
+
+
+                const type =
+                    customer.user_type ||
+                    "User";
+
+
+                const business =
+                    customer.business_name ||
+                    "Individual";
+
+
+                return `
+                    <tr class="customer-row">
+
+                        <!-- CUSTOMER -->
+
+                        <td>
+
+                            <div class="customer-profile">
+
+                                <div class="customer-avatar">
+                                    ${esc(
+                                        initials || "C"
+                                    )}
+                                </div>
+
+                                <div class="customer-name-box">
+
+                                    <strong>
+                                        ${esc(name)}
+                                    </strong>
+
+                                    <small>
+                                        Buyer
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- TYPE -->
+
+                        <td>
+
+                            <span class="
+                                customer-type
+                                ${String(type)
+                                    .toLowerCase()
+                                    .replace(
+                                        /[^a-z0-9]/g,
+                                        "-"
+                                    )}
+                            ">
+                                ${esc(type)}
+                            </span>
+
+                        </td>
+
+
+                        <!-- BUSINESS -->
+
+                        <td>
+
+                            <div class="customer-business">
+
+                                <strong>
+                                    ${esc(business)}
+                                </strong>
+
+                                ${
+                                    customer.gst_number
+                                        ? `
+                                            <small>
+                                                GST:
+                                                ${esc(
+                                                    customer.gst_number
+                                                )}
+                                            </small>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- MOBILE -->
+
+                        <td>
+
+                            ${
+                                customer.mobile
+                                    ? `
+                                        <a
+                                            class="customer-phone"
+                                            href="tel:${esc(
+                                                customer.mobile
+                                            )}"
+                                        >
+                                            📞
+                                            ${esc(
+                                                customer.mobile
+                                            )}
+                                        </a>
+                                    `
+                                    : "—"
+                            }
+
+                        </td>
+
+
+                        <!-- ORDERS -->
+
+                        <td>
+
+                            <span class="order-count-badge">
+                                ${Number(
+                                    customer.order_count ||
+                                    0
+                                )}
+                            </span>
+
+                        </td>
+
+
+                        <!-- TOTAL PURCHASE -->
+
+                        <td>
+
+                            <strong class="customer-total">
+                                ${money(
+                                    customer.total_purchase
+                                )}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- LAST ORDER -->
+
+                        <td>
+
+                            <span class="last-order">
+                                ${
+                                    customer.last_order
+                                        ? date(
+                                            customer.last_order
+                                        )
+                                        : "—"
+                                }
+                            </span>
+
+                        </td>
+
+
+                        <!-- VIEW -->
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="view-customer-btn"
+                                data-customer-id="${esc(
+                                    customer.id
+                                )}"
+                            >
+                                <span>View Customer</span>
+                                <b>→</b>
+                            </button>
+
+                        </td>
+
+                    </tr>
+                `;
+
+            })
+            .join("");
+}
+
+
+function customerAction(event) {
+
+    const button =
+        event.target.closest(
+            "[data-customer-id]"
         );
 
-      const total =
-        customerOrders.reduce(
-          (sum, o) => sum + Number(o.total_price || 0),
-          0
+    if (!button) return;
+
+
+    const customer =
+        state.customers.find(
+            item =>
+                item.id ===
+                button.dataset.customerId
         );
 
-      return `
-        <tr>
-          <td>
-            <b>${esc(c.full_name || "Customer")}</b>
-          </td>
 
-          <td>
-            ${esc(c.email || "—")}
-          </td>
+    if (!customer) return;
 
-          <td>
-            ${esc(c.mobile || "—")}
-          </td>
 
-          <td>
-            ${customerOrders.length}
-          </td>
+    openCustomerDetails(customer);
+}
+function openCustomerDetails(customer) {
 
-          <td>
-            ${money(total)}
-          </td>
-        </tr>
-      `;
-    }).join("");
-  }
+    const modal =
+        $("customerDetailsModal");
 
+    const content =
+        $("customerDetailsContent");
+
+    if (!modal || !content) return;
+
+
+    const orders =
+        customer.orders || [];
+
+
+    const total =
+        Number(
+            customer.total_purchase || 0
+        );
+
+
+    content.innerHTML = `
+
+        <div class="customer-detail-top">
+
+            <div class="customer-detail-avatar">
+                ${esc(
+                    (customer.full_name || "C")
+                        .charAt(0)
+                        .toUpperCase()
+                )}
+            </div>
+
+            <div>
+
+                <h2>
+                    ${esc(
+                        customer.full_name ||
+                        "Customer"
+                    )}
+                </h2>
+
+                <span class="customer-type">
+                    ${esc(
+                        customer.user_type ||
+                        "User"
+                    )}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="customer-detail-grid">
+
+            <div class="customer-detail-card">
+                <small>Business</small>
+                <strong>
+                    ${esc(
+                        customer.business_name ||
+                        "Individual"
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="customer-detail-card">
+                <small>Mobile</small>
+                <strong>
+                    ${esc(
+                        customer.mobile ||
+                        "—"
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="customer-detail-card">
+                <small>Email</small>
+                <strong>
+                    ${esc(
+                        customer.email ||
+                        "—"
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="customer-detail-card">
+                <small>GST Number</small>
+                <strong>
+                    ${esc(
+                        customer.gst_number ||
+                        "—"
+                    )}
+                </strong>
+            </div>
+
+
+            <div class="customer-detail-card">
+                <small>Total Orders</small>
+                <strong>
+                    ${orders.length}
+                </strong>
+            </div>
+
+
+            <div class="customer-detail-card">
+                <small>Total Purchase</small>
+                <strong class="customer-total">
+                    ${money(total)}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="customer-address-card">
+
+            <small>Business Address</small>
+
+            <p>
+                ${esc(
+                    customer.business_address ||
+                    "Address not available"
+                )}
+            </p>
+
+        </div>
+
+
+        <div class="customer-orders-section">
+
+            <div class="customer-detail-section-title">
+                <h3>Purchase History</h3>
+
+                <span>
+                    ${orders.length} orders
+                </span>
+            </div>
+
+
+            ${
+                orders.length
+                    ? `
+                        <div class="customer-orders-list">
+
+                            ${orders.map(order => `
+
+                                <div class="
+                                    customer-order-item
+                                ">
+
+                                    <div>
+
+                                        <strong>
+                                            ${esc(
+                                                order.order_number ||
+                                                order.id?.slice(
+                                                    0,
+                                                    8
+                                                ) ||
+                                                "Order"
+                                            )}
+                                        </strong>
+
+                                        <small>
+                                            ${esc(
+                                                order.product_name ||
+                                                "Product"
+                                            )}
+                                        </small>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <strong>
+                                            ${money(
+                                                order.total_price
+                                            )}
+                                        </strong>
+
+                                        <small>
+                                            ${date(
+                                                order.created_at
+                                            )}
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            `).join("")}
+
+                        </div>
+                    `
+                    : `
+                        <div class="
+                            customer-no-orders
+                        ">
+                            No purchase history.
+                        </div>
+                    `
+            }
+
+        </div>
+
+    `;
+
+
+    openModal(
+        "customerDetailsModal"
+    );
+}
 
   /* ==========================================
      INVENTORY
