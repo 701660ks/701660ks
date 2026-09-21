@@ -381,10 +381,95 @@ body {
           <div class="panel"><div class="table-wrap"><table><thead><tr><th>Transaction</th><th>Order</th><th>Amount</th><th>Mode</th><th>Status</th><th>Date</th></tr></thead><tbody id="paymentsBody"></tbody></table></div></div>
         </section>
 
-        <section id="customers" class="page-section">
-          <div class="page-head"><div><h1>Customers</h1><p>Businesses that have purchased from you</p></div></div>
-          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Business</th><th>Mobile</th><th>Email</th><th>Orders</th><th>Total</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
-        </section>
+       <section id="customers" class="page-section">
+
+    <div class="page-head">
+
+        <div>
+            <h1>Customers</h1>
+
+            <p>
+                People and businesses that purchased your products
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="customer-summary-bar">
+
+        <div>
+
+            <span class="customer-summary-icon">
+                👥
+            </span>
+
+            <div>
+                <strong>My Customers</strong>
+
+                <small>
+                    Buyers from your products
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="customer-count-box">
+
+            <strong id="customerCount">
+                0
+            </strong>
+
+            <span>
+                Customers
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="panel customer-panel">
+
+        <div class="table-wrap customer-table-wrap">
+
+            <table class="customer-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Customer</th>
+
+                        <th>Type</th>
+
+                        <th>Business</th>
+
+                        <th>Mobile</th>
+
+                        <th>Orders</th>
+
+                        <th>Total Purchase</th>
+
+                        <th>Last Order</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="customersBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
 
         <section id="inventory" class="page-section">
           <div class="page-head"><div><h1>Inventory</h1><p>Current stock and low-stock products</p></div><button id="refreshInventory" class="btn secondary">↻ Refresh</button></div>
@@ -446,6 +531,53 @@ body {
 
   <div id="productDetailsModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Product Details</h2><button class="icon-btn" data-close="productDetailsModal">✕</button></div><div id="productDetails"></div></div></div>
   <div id="checkoutModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Checkout</h2><button class="icon-btn" data-close="checkoutModal">✕</button></div><form id="checkoutForm"><div id="checkoutSummary"></div><label>Payment Mode<select id="checkoutPaymentMode" class="input"><option>COD</option><option>UPI</option><option>Bank Transfer</option><option>Pay Later</option></select></label><label>Note<textarea id="checkoutNote" class="input" rows="3"></textarea></label><button class="btn primary full" type="submit">Place Order</button></form></div></div>
+
+
+<div
+    id="customerDetailsModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card customer-details-modal">
+
+        <div class="modal-head">
+
+            <div>
+                <h2>Customer Details</h2>
+
+                <small>
+                    Customer information and purchase history
+                </small>
+            </div>
+
+            <button
+                class="icon-btn"
+                data-close="customerDetailsModal"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div id="customerDetailsContent"></div>
+
+
+        <div class="customer-modal-actions">
+
+            <button
+                type="button"
+                class="btn secondary"
+                data-close="customerDetailsModal"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
   <div id="toast" class="toast"></div>
   <script src="wholesaler.js"></script>
