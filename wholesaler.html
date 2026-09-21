@@ -233,6 +233,42 @@ body {
         width: 18%;
     }
 }
+
+
+/* PAYMENT GRAPH */
+
+.payment-chart-panel {
+    margin-top: 16px;
+}
+
+.payment-chart-wrap {
+    width: 100%;
+    min-height: 300px;
+    height: 300px;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#paymentChart {
+    display: block;
+    width: 100% !important;
+    height: 260px !important;
+}
+
+@media (max-width: 700px) {
+
+    .payment-chart-wrap {
+        height: 280px;
+        min-height: 280px;
+        padding: 5px;
+    }
+
+    #paymentChart {
+        height: 250px !important;
+    }
+
+}
 </style>
 
 
