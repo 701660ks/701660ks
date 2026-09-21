@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS UNDEFINED — Payments</title>
+<link rel="stylesheet" href="style.css">
+<style>
+:root{
+  --pay-primary:#4f46e5;
+  --pay-bg:#f5f7fb;
+  --pay-card:#fff;
+  --pay-text:#0f172a;
+  --pay-muted:#64748b;
+  --pay-border:#e5e7eb;
+  --pay-green:#16a34a;
+  --pay-orange:#f59e0b;
+  --pay-red:#dc2626;
+}
+html,body{margin:0;min-height:100%;background:var(--pay-bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--pay-text);overflow-x:hidden}
+*{box-sizing:border-box}
+.pay-app{min-height:100vh}
+.pay-content{padding:22px;min-width:0}
+.pay-page-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}
+.pay-page-head h1{margin:0;font-size:28px}
+.pay-page-head p{margin:5px 0 0;color:var(--pay-muted)}
+.pay-actions{display:flex;gap:10px;flex-wrap:wrap}
+.pay-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;cursor:pointer;background:#eef2ff;color:#3730a3}
+.pay-btn.primary{background:var(--pay-primary);color:#fff}
+.pay-btn:hover{filter:brightness(.98);transform:translateY(-1px)}
+.pay-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.pay-stat{background:#fff;border:1px solid var(--pay-border);border-radius:16px;padding:17px;box-shadow:0 6px 22px rgba(15,23,42,.05)}
+.pay-stat .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#eef2ff;margin-bottom:10px;font-size:19px}
+.pay-stat span{display:block;color:var(--pay-muted);font-size:13px}
+.pay-stat strong{display:block;font-size:24px;margin-top:3px}
+.pay-stat small{color:var(--pay-muted);display:block;margin-top:3px}
+.pay-card{background:#fff;border:1px solid var(--pay-border);border-radius:18px;box-shadow:0 8px 28px rgba(15,23,42,.06);margin-bottom:16px;overflow:hidden}
+.pay-card-head{padding:17px 19px;border-bottom:1px solid var(--pay-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pay-card-head h3{margin:0;font-size:17px}
+.pay-card-head p{margin:4px 0 0;color:var(--pay-muted);font-size:13px}
+.pay-search{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pay-search input,.pay-search select{height:40px;border:1px solid #dbe1ea;border-radius:10px;padding:0 12px;background:#fff;outline:none}
+.pay-search input{min-width:230px}
+.pay-search input:focus,.pay-search select:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+.pay-table-wrap{width:100%;overflow:auto}
+.pay-table{width:100%;border-collapse:collapse;min-width:1000px}
+.pay-table th{background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:13px 14px;white-space:nowrap}
+.pay-table td{padding:14px;border-top:1px solid #edf0f4;vertical-align:middle;font-size:13px}
+.pay-table tr:hover td{background:#fafbff}
+.order-main{font-weight:800}
+.order-sub,.muted{display:block;color:#64748b;font-size:11px;margin-top:3px}
+.amount{font-weight:800;white-space:nowrap}
+.customer-name{font-weight:700}
+.product-name{max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.type-badge,.mode-badge,.status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.type-badge{background:#f1f5f9;color:#334155}
+.mode-badge{background:#eef2ff;color:#3730a3}
+.status-paid{background:#dcfce7;color:#166534}
+.status-pending{background:#fef3c7;color:#92400e}
+.status-failed{background:#fee2e2;color:#991b1b}
+.status-other{background:#e2e8f0;color:#334155}
+.view-btn{border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:9px;padding:8px 11px;font-weight:800;cursor:pointer;white-space:nowrap}
+.empty{padding:42px;text-align:center;color:#64748b}
+.chart-box{height:280px;padding:14px 18px}
+canvas{width:100%;height:100%}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:18px}
+.detail-section{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fbfcff}
+.detail-section h4{margin:0 0 12px;font-size:14px}
+.detail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.detail-item{min-width:0}
+.detail-item label{display:block;color:#64748b;font-size:11px;margin-bottom:3px}
+.detail-item div{font-weight:700;word-break:break-word}
+.detail-full{grid-column:1/-1}
+.advance-banner{margin:0 18px 18px;padding:13px 14px;border-radius:12px;background:#eef2ff;color:#3730a3;font-size:13px}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:15px;z-index:9999}
+.modal-bg.show{display:flex}
+.pay-modal{background:#fff;width:min(820px,100%);max-height:90vh;overflow:auto;border-radius:20px;box-shadow:0 25px 80px rgba(15,23,42,.25)}
+.pay-modal-head{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.pay-modal-head h2{margin:0;font-size:19px}
+.close-btn{border:0;background:#f1f5f9;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:17px}
+.toast{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:10000}
+.toast.show{display:block}
+.loading{padding:55px;text-align:center;color:#64748b}
+@media(max-width:1050px){.pay-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){
+  .pay-content{padding:12px}
+  .pay-page-head{align-items:stretch;flex-direction:column}
+  .pay-page-head h1{font-size:23px}
+  .pay-actions{justify-content:space-between}
+  .pay-search{width:100%}
+  .pay-search input{min-width:0;flex:1;width:100%}
+  .detail-grid{grid-template-columns:1fr}
+  .detail-full{grid-column:auto}
+  .detail-list{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+  .pay-stats{grid-template-columns:1fr 1fr;gap:8px}
+  .pay-stat{padding:12px}
+  .pay-stat strong{font-size:19px}
+  .pay-stat .icon{width:34px;height:34px}
+  .detail-list{grid-template-columns:1fr}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase.js"></script>
+<script defer src="payment.js"></script>
+</head>
+<body>
+<div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Loading payments…</p></div>
+
+<div id="payApp" class="app hidden pay-app">
+<header class="topbar">
+  <div class="brand">
+    <button id="menuButton" class="icon-btn mobile-only" aria-label="Menu">☰</button>
+    <div class="brand-mark">JS</div>
+    <div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
+  </div>
+  <div class="top-actions">
+    <span id="headerUserName" class="user-name">Wholesaler</span>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<nav>
+  <button class="nav-item" data-page="wholesaler.html">📊 <span>Dashboard</span></button>
+  <button class="nav-item" data-page="wholesaler.html">📦 <span>My Products</span></button>
+  <button class="nav-item" data-page="wholesaler.html">🛒 <span>Buy Products</span></button>
+  <button class="nav-item" data-page="wholesaler.html">🧺 <span>Cart</span></button>
+  <button class="nav-item" data-page="wholesaler.html">🚚 <span>Orders</span></button>
+  <button class="nav-item active">💳 <span>Payments</span></button>
+  <button class="nav-item" data-page="wholesaler.html">👥 <span>Customers</span></button>
+  <button class="nav-item" data-page="wholesaler.html">🏷️ <span>Inventory</span></button>
+  <button class="nav-item" data-page="wholesaler.html">📈 <span>Reports</span></button>
+  <button class="nav-item" data-page="wholesaler.html">🔔 <span>Notifications</span></button>
+  <button class="nav-item" data-page="wholesaler.html">👤 <span>Profile</span></button>
+</nav>
+</aside>
+
+<main class="content pay-content">
+  <div class="pay-page-head">
+    <div>
+      <h1>Payments</h1>
+      <p>Track collections, advances and payment details for your orders.</p>
+    </div>
+    <div class="pay-actions">
+      <button id="backBtn" class="pay-btn">← Dashboard</button>
+      <button id="refreshBtn" class="pay-btn primary">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="pay-stats">
+    <div class="pay-stat"><div class="icon">💰</div><span>Total Paid</span><strong id="totalPaid">₹0</strong><small>Confirmed payment amount</small></div>
+    <div class="pay-stat"><div class="icon">⏳</div><span>Pending</span><strong id="totalPending">₹0</strong><small>Awaiting payment</small></div>
+    <div class="pay-stat"><div class="icon">📦</div><span>Transactions</span><strong id="transactionCount">0</strong><small>Payment records</small></div>
+    <div class="pay-stat"><div class="icon">⚡</div><span>Advance Collected</span><strong id="advanceTotal">₹0</strong><small>UPI / Bank advances</small></div>
+  </div>
+
+  <div class="pay-card">
+    <div class="pay-card-head">
+      <div><h3>Payment Status</h3><p>Paid and pending collection overview</p></div>
+    </div>
+    <div class="chart-box"><canvas id="paymentStatusChart"></canvas></div>
+  </div>
+
+  <div class="pay-card">
+    <div class="pay-card-head">
+      <div><h3>Payment Transactions</h3><p>Order, transaction, product and customer information</p></div>
+      <div class="pay-search">
+        <input id="searchInput" placeholder="Search order, transaction, user, product…">
+        <select id="statusFilter"><option value="">All status</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option></select>
+        <select id="modeFilter"><option value="">All modes</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank</option><option value="COD">COD</option><option value="Pay Later">Pay Later</option></select>
+      </div>
+    </div>
+    <div class="pay-table-wrap">
+      <table class="pay-table">
+        <thead>
+          <tr>
+            <th>Order No.</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Product Name</th>
+            <th>User Name</th>
+            <th>Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="paymentsBody"><tr><td colspan="7"><div class="loading">Loading payments…</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+</div>
+</div>
+
+<div id="detailModal" class="modal-bg">
+  <div class="pay-modal">
+    <div class="pay-modal-head"><h2>Payment Details</h2><button id="closeModal" class="close-btn">✕</button></div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+</body>
+</html>
