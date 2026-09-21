@@ -104,6 +104,545 @@ canvas{width:100%;height:100%}
   .pay-stat .icon{width:34px;height:34px}
   .detail-list{grid-template-columns:1fr}
 }
+
+
+
+/* =========================================================
+   PREMIUM PAYMENT TABLE + MOBILE RESPONSIVE FIX
+   ========================================================= */
+
+/* Payment page */
+.pay-content {
+    padding: 20px;
+    width: 100%;
+    min-width: 0;
+}
+
+/* Header */
+.pay-page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.pay-page-head h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* Statistics cards */
+.pay-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.pay-stat {
+    min-width: 0;
+    padding: 18px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e7eaf0;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+}
+
+/* =========================================================
+   FILTER BAR
+   ========================================================= */
+
+.pay-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.pay-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    /* KEEP EVERYTHING ON ONE LINE */
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    white-space: nowrap;
+
+    scrollbar-width: thin;
+    padding-bottom: 2px;
+}
+
+.pay-search input,
+.pay-search select {
+    flex: 0 0 auto;
+    height: 42px;
+    border: 1px solid #d9deea;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 13px;
+    outline: none;
+}
+
+.pay-search input {
+    width: 245px;
+    min-width: 245px;
+}
+
+.pay-search select {
+    width: 125px;
+    min-width: 125px;
+    padding: 0 10px;
+}
+
+.pay-search input:focus,
+.pay-search select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.pay-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    border-radius: 0 0 16px 16px;
+}
+
+.pay-table {
+    width: 100%;
+    min-width: 850px;
+
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background: #ffffff;
+}
+
+/* Header */
+.pay-table th {
+    height: 46px;
+    padding: 10px 12px;
+
+    background: #f7f8fc;
+
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    white-space: nowrap;
+}
+
+/* Cells */
+.pay-table td {
+    height: 68px;
+
+    padding: 10px 12px;
+
+    font-size: 12px;
+    color: #334155;
+
+    border-bottom: 1px solid #edf0f4;
+
+    vertical-align: middle;
+
+    background: #ffffff;
+}
+
+/* Row hover */
+.pay-table tbody tr:hover td {
+    background: #f8faff;
+}
+
+/* =========================================================
+   COLUMN WIDTHS
+   ========================================================= */
+
+.pay-table th:nth-child(1),
+.pay-table td:nth-child(1) {
+    width: 105px;
+}
+
+.pay-table th:nth-child(2),
+.pay-table td:nth-child(2) {
+    width: 125px;
+}
+
+.pay-table th:nth-child(3),
+.pay-table td:nth-child(3) {
+    width: 95px;
+}
+
+.pay-table th:nth-child(4),
+.pay-table td:nth-child(4) {
+    width: 175px;
+}
+
+.pay-table th:nth-child(5),
+.pay-table td:nth-child(5) {
+    width: 135px;
+}
+
+.pay-table th:nth-child(6),
+.pay-table td:nth-child(6) {
+    width: 95px;
+}
+
+.pay-table th:nth-child(7),
+.pay-table td:nth-child(7) {
+    width: 125px;
+}
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.order-main {
+    font-weight: 800;
+    color: #172033;
+    white-space: nowrap;
+}
+
+.order-sub {
+    margin-top: 3px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.product-name {
+    max-width: 165px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.customer-name {
+    font-weight: 700;
+    color: #1e293b;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.amount {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.type-badge,
+.mode-badge,
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.type-badge {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.mode-badge {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.status-paid {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-failed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+   ========================================================= */
+
+.pay-table th:last-child,
+.pay-table td:last-child {
+    position: sticky;
+    right: 0;
+
+    z-index: 5;
+
+    background: #ffffff;
+
+    box-shadow: -7px 0 12px rgba(15, 23, 42, 0.07);
+}
+
+/* Header of sticky Action column */
+.pay-table th:last-child {
+    background: #f7f8fc;
+}
+
+/* Button */
+.view-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 105px;
+    height: 38px;
+
+    padding: 0 12px;
+
+    border: 1px solid #c7d2fe;
+
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #eef2ff,
+        #e0e7ff
+    );
+
+    color: #4338ca;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    box-shadow: 0 2px 5px rgba(79, 70, 229, 0.08);
+
+    transition: 0.2s ease;
+}
+
+.view-btn:hover {
+    background: #4f46e5;
+    color: #ffffff;
+
+    border-color: #4f46e5;
+
+    transform: translateY(-1px);
+}
+
+.view-btn:active {
+    transform: scale(0.97);
+}
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.pay-card:has(.pay-table) {
+    overflow: hidden;
+}
+
+.pay-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .pay-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pay-page-head {
+        align-items: flex-start;
+    }
+
+    .pay-card-head {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pay-search {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   PHONE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .pay-content {
+        padding: 10px;
+    }
+
+    .pay-page-head h1 {
+        font-size: 22px;
+    }
+
+    .pay-page-head p {
+        font-size: 12px;
+    }
+
+    .pay-actions {
+        width: 100%;
+        display: flex;
+        gap: 7px;
+    }
+
+    .pay-actions .pay-btn {
+        flex: 1;
+    }
+
+    .pay-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .pay-stat {
+        padding: 12px;
+        border-radius: 13px;
+    }
+
+    .pay-stat strong {
+        font-size: 18px;
+    }
+
+    .pay-stat span {
+        font-size: 11px;
+    }
+
+    .pay-stat small {
+        font-size: 9px;
+    }
+
+    /* Filters stay on ONE horizontal line */
+    .pay-search {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+
+        width: 100%;
+
+        padding-bottom: 5px;
+    }
+
+    .pay-search input {
+        width: 210px;
+        min-width: 210px;
+    }
+
+    .pay-search select {
+        width: 120px;
+        min-width: 120px;
+    }
+
+    /* Table remains a real table */
+    .pay-table {
+        min-width: 850px;
+    }
+
+    .pay-table th {
+        font-size: 9px;
+        padding: 9px 8px;
+    }
+
+    .pay-table td {
+        font-size: 11px;
+        padding: 9px 8px;
+    }
+
+    /* Action remains visible while horizontally scrolling */
+    .pay-table th:last-child,
+    .pay-table td:last-child {
+        position: sticky;
+        right: 0;
+
+        min-width: 118px;
+        width: 118px;
+    }
+
+    .view-btn {
+        min-width: 102px;
+        height: 36px;
+        font-size: 10px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .pay-content {
+        padding: 8px;
+    }
+
+    .pay-stats {
+        gap: 6px;
+    }
+
+    .pay-stat {
+        padding: 10px;
+    }
+
+    .pay-stat strong {
+        font-size: 17px;
+    }
+
+    .pay-search input {
+        min-width: 190px;
+        width: 190px;
+    }
+
+    .pay-search select {
+        min-width: 110px;
+        width: 110px;
+    }
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="supabase.js"></script>
