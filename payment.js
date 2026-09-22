@@ -685,111 +685,147 @@
        FILTER
        ===================================================== */
 
-    function getFilteredRows() {
+    
+function getFilteredRows() {
 
-        const search =
-            (
-                $("searchInput")
-                    ?.value ||
-                ""
+    const search =
+        (
+            $("searchInput")?.value ||
+            ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const status =
+        (
+            $("statusFilter")?.value ||
+            "all"
+        )
+        .toLowerCase();
+
+
+    const mode =
+        (
+            $("modeFilter")?.value ||
+            "all"
+        )
+        .toLowerCase();
+
+
+    const userType =
+        (
+            $("userTypeFilter")?.value ||
+            "all"
+        )
+        .toLowerCase();
+
+
+    return paymentRows.filter(payment => {
+
+        const searchable = [
+
+            payment.order_no,
+
+            payment.transaction,
+
+            payment.transaction_id,
+
+            payment.product_name,
+
+            payment.user_name,
+
+            payment.user_type,
+
+            payment.mobile,
+
+            payment.mode,
+
+            payment.upi_id,
+
+            payment.upi_utr,
+
+            payment.bank_account_name,
+
+            payment.bank_account_number,
+
+            payment.bank_ifsc,
+
+            payment.bank_utr,
+
+            payment.utr_no
+
+        ]
+        .join(" ")
+        .toLowerCase();
+
+
+        /* SEARCH */
+
+        const searchOK =
+            !search ||
+            searchable.includes(search);
+
+
+        /* STATUS */
+
+        const paymentStatus =
+            statusText(
+                payment.status
+            );
+
+
+        const statusOK =
+            status === "all" ||
+            paymentStatus === status;
+
+
+        /* PAYMENT MODE */
+
+        const paymentMode =
+            String(
+                payment.mode || ""
             )
-                .trim()
-                .toLowerCase();
+            .trim()
+            .toLowerCase();
 
 
-        const status =
+        const modeOK =
+            mode === "all" ||
+            paymentMode === mode ||
             (
-                $("statusFilter")
-                    ?.value ||
-                ""
+                mode === "cash" &&
+                (
+                    paymentMode.includes("cash") ||
+                    paymentMode.includes("cod")
+                )
+            );
+
+
+        /* USER TYPE */
+
+        const paymentUserType =
+            String(
+                payment.user_type || ""
             )
-                .toLowerCase();
+            .trim()
+            .toLowerCase();
 
 
-        const mode =
-            (
-                $("modeFilter")
-                    ?.value ||
-                ""
-            )
-                .toLowerCase();
+        const userTypeOK =
+            userType === "all" ||
+            paymentUserType === userType;
 
 
-        return paymentRows.filter(
-            payment => {
-
-                const searchable = [
-
-                    payment.order_no,
-
-                    payment.transaction,
-
-                    payment.transaction_id,
-
-                    payment.product_name,
-
-                    payment.user_name,
-
-                    payment.user_type,
-
-                    payment.mobile,
-
-                    payment.mode,
-
-                    payment.upi_id,
-
-                    payment.upi_utr,
-
-                    payment.bank_account_name,
-
-                    payment.bank_account_number,
-
-                    payment.bank_ifsc,
-
-                    payment.bank_utr,
-
-                    payment.utr_no
-
-                ]
-                    .join(" ")
-                    .toLowerCase();
-
-
-                const searchOK =
-                    !search ||
-                    searchable.includes(
-                        search
-                    );
-
-
-                const statusOK =
-                    !status ||
-                    statusText(
-                        payment.status
-                    ) === status;
-
-
-                const paymentMode =
-                    String(
-                        payment.mode ||
-                        ""
-                    ).toLowerCase();
-
-
-                const modeOK =
-                    !mode ||
-                    paymentMode === mode;
-
-
-                return (
-                    searchOK &&
-                    statusOK &&
-                    modeOK
-                );
-            }
+        return (
+            searchOK &&
+            statusOK &&
+            modeOK &&
+            userTypeOK
         );
-    }
 
+    });
+}
 
     /* =====================================================
        PAYMENT TABLE
@@ -1804,7 +1840,18 @@
             "click",
             closePaymentDetails
         );
-
+$("userTypeFilter")?.addEventListener(
+    "change",
+    () => {
+        renderTable();
+    }
+);
+$("dateFilter")?.addEventListener(
+    "change",
+    () => {
+        renderTable();
+    }
+);
 
         /*
          * Click outside modal
