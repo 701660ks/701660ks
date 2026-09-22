@@ -1464,9 +1464,14 @@ body {
 }
 </style>
 
+<!-- Supabase library MUST load first -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="supabase.js" > </script>
-<script src="payment.js" > </script>
+<!-- Your Supabase configuration -->
+<script src="supabase.js"></script>
+
+<!-- Payment page JavaScript -->
+<script src="payment.js"></script>
 </head>
 
 <body>
