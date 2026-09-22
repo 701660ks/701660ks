@@ -1178,3 +1178,25 @@ body {
     }
 }
 
+
+/* =========================================================
+   LOGOUT DIRECTLY AFTER PROFILE
+========================================================= */
+
+.sidebar {
+    display: block !important;
+}
+
+.sidebar-menu {
+    flex: none !important;
+}
+
+.sidebar-bottom {
+    margin-top: 0 !important;
+    padding: 0 7px 12px !important;
+    border-top: 0 !important;
+}
+
+.logout-sidebar-btn {
+    margin-top: 0 !important;
+}
