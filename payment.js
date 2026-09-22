@@ -1079,6 +1079,24 @@ function getFilteredRows() {
         `;
     }
 
+
+function openPaymentDetailsByIndex(index) {
+
+    const paymentIndex = Number(index);
+
+    if (
+        Number.isNaN(paymentIndex) ||
+        !paymentRows[paymentIndex]
+    ) {
+        toast("Payment record not found.");
+        return;
+    }
+
+    openPaymentDetails(
+        paymentRows[paymentIndex]
+    );
+}
+
     function openPaymentDetails(payment) {
         const modal = $("detailModal");
         const content = $("detailContent");
