@@ -1049,14 +1049,15 @@ function getFilteredRows() {
 
                     <!-- ACTION -->
                     <td>
-                        <button
-                            type="button"
-                            class="view-btn"
-                            data-payment-index="${originalIndex}"
-                        >
-                            <span class="view-icon">↗</span>
-                            View Details
-                        </button>
+                    <button
+    type="button"
+    class="view-btn"
+    data-payment-index="${originalIndex}"
+    onclick="openPaymentDetailsByIndex(this.dataset.paymentIndex)"
+>
+    <span class="view-icon">↗</span>
+    View Payment 
+</button>
                     </td>
 
                 </tr>
