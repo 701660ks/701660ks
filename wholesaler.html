@@ -285,35 +285,229 @@ body {
   <div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Loading dashboard…</p></div>
 
   <div id="app" class="app hidden">
-    <header class="topbar">
-      <div class="brand">
-        <button id="menuButton" class="icon-btn mobile-only" aria-label="Menu">☰</button>
-        <div class="brand-mark">JS</div>
-        <div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
-      </div>
-      <div class="top-actions">
-        <button class="icon-btn" data-section="notifications" title="Notifications">🔔 <span id="notificationBadge" class="badge hidden">0</span></button>
-        <span id="headerUserName" class="user-name">Wholesaler</span>
-        <button id="logoutBtn" class="logout-btn">Logout</button>
-      </div>
-    </header>
+    
+<header class="topbar">
 
+    <div class="topbar-left">
+
+        <button
+            id="menuButton"
+            class="icon-btn mobile-only"
+            aria-label="Menu"
+        >
+            ☰
+        </button>
+
+        <span class="topbar-title">
+            Wholesaler Panel
+        </span>
+
+    </div>
+
+
+    <div class="top-actions">
+
+        <button
+            class="icon-btn"
+            data-section="notifications"
+            title="Notifications"
+        >
+            🔔
+
+            <span
+                id="notificationBadge"
+                class="badge hidden"
+            >
+                0
+            </span>
+        </button>
+
+
+        <div class="top-profile">
+
+            <div class="top-profile-icon">
+                👤
+            </div>
+
+            <div>
+
+                <span
+                    id="headerUserName"
+                    class="user-name"
+                >
+                    Wholesaler
+                </span>
+
+                <small>
+                    Wholesaler
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
     <div class="layout">
-      <aside id="sidebar" class="sidebar">
-        <nav>
-          <button class="nav-item active" data-section="dashboard">📊 <span>Dashboard</span></button>
-          <button class="nav-item" data-section="products">📦 <span>My Products</span></button>
-          <button class="nav-item" data-section="buy">🛒 <span>Buy Products</span></button>
-          <button class="nav-item" data-section="cart">🧺 <span>Cart <b id="cartCount" class="nav-count">0</b></span></button>
-          <button class="nav-item" data-section="orders">🚚 <span>Orders</span></button>
-          <button class="nav-item" data-section="payments">💳 <span>Payments</span></button>
-          <button class="nav-item" data-section="customers">👥 <span>Customers</span></button>
-          <button class="nav-item" data-section="inventory">🏷️ <span>Inventory</span></button>
-          <button class="nav-item" data-section="reports">📈 <span>Reports</span></button>
-          <button class="nav-item" data-section="notifications">🔔 <span>Notifications</span></button>
-          <button class="nav-item" data-section="profile">👤 <span>Profile</span></button>
-        </nav>
-      </aside>
+   <aside id="sidebar" class="sidebar">
+
+    <!-- SIDEBAR BRAND -->
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-brand-mark">
+            JS
+        </div>
+
+        <div>
+            <strong>JS UNDEFINED</strong>
+            <small>Wholesaler Panel</small>
+        </div>
+
+    </div>
+
+
+    <!-- SIDEBAR MENU -->
+
+    <nav class="sidebar-menu">
+
+        <button
+            class="nav-item active"
+            data-section="dashboard"
+        >
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="products"
+        >
+            <span class="nav-icon">📦</span>
+            <span>My Products</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="buy"
+        >
+            <span class="nav-icon">🛍️</span>
+            <span>Buy Products</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="cart"
+        >
+            <span class="nav-icon">🛒</span>
+
+            <span>
+                Cart
+            </span>
+
+            <b
+                id="cartCount"
+                class="nav-count"
+            >
+                0
+            </b>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="orders"
+        >
+            <span class="nav-icon">📋</span>
+            <span>Orders</span>
+        </button>
+
+
+        <!-- PAYMENT PAGE -->
+
+        <button
+            class="nav-item"
+            id="paymentNavBtn"
+            type="button"
+        >
+            <span class="nav-icon">💳</span>
+            <span>Payments</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="customers"
+        >
+            <span class="nav-icon">👥</span>
+            <span>Customers</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="inventory"
+        >
+            <span class="nav-icon">📦</span>
+            <span>Inventory</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="reports"
+        >
+            <span class="nav-icon">📈</span>
+            <span>Reports</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="notifications"
+        >
+            <span class="nav-icon">🔔</span>
+            <span>Notifications</span>
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-section="profile"
+        >
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </button>
+
+    </nav>
+
+
+    <!-- LOGOUT AFTER PROFILE -->
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutBtn"
+            class="logout-sidebar-btn"
+            type="button"
+        >
+
+            <span class="nav-icon">🚪</span>
+
+            <span>
+                Logout
+            </span>
+
+        </button>
+
+    </div>
+
+</aside>
 
       <main class="content">
         <section id="dashboard" class="page-section active">
