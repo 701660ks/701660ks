@@ -1200,3 +1200,80 @@ body {
 .logout-sidebar-btn {
     margin-top: 0 !important;
 }
+
+/* =========================================================
+   WHOLESALER SIDEBAR — WHITE PREMIUM STYLE
+========================================================= */
+
+.sidebar {
+    background: #ffffff !important;
+    border-right: 1px solid #e5e7eb !important;
+}
+
+/* Sidebar menu text */
+.sidebar .nav-item {
+    color: #111827 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+
+    background: transparent !important;
+
+    padding: 12px 12px !important;
+    border-radius: 10px !important;
+
+    margin-bottom: 4px !important;
+}
+
+/* Icons */
+.sidebar .nav-icon {
+    font-size: 20px !important;
+    width: 28px !important;
+    min-width: 28px !important;
+}
+
+/* Hover */
+.sidebar .nav-item:hover {
+    background: #f1f5f9 !important;
+    color: #111827 !important;
+}
+
+/* Active menu */
+.sidebar .nav-item.active {
+    background: #eef2ff !important;
+    color: #4338ca !important;
+    font-weight: 700 !important;
+}
+
+/* Active icon */
+.sidebar .nav-item.active .nav-icon {
+    color: #4338ca !important;
+}
+
+/* Cart number */
+.sidebar .nav-count {
+    background: #111827 !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+}
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.sidebar-bottom {
+    margin-top: 0 !important;
+    padding: 5px 10px 15px !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+.logout-sidebar-btn {
+    color: #dc2626 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+}
+
+.logout-sidebar-btn:hover {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+}
