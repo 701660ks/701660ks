@@ -1767,22 +1767,26 @@ function openPaymentDetailsByIndex(index) {
 /* ==========================================
    SIDEBAR NAVIGATION
    ========================================== */
+/* ==========================================
+   PAYMENT PAGE SIDEBAR NAVIGATION
+========================================== */
 
 document
     .querySelectorAll(".nav-item[data-page]")
-    .forEach(item => {
+    .forEach(button => {
 
-        item.addEventListener(
+        button.addEventListener(
             "click",
             () => {
 
                 const page =
-                    item.dataset.page;
+                    button.dataset.page;
 
-                if (page) {
-                    window.location.href = page;
+                if (!page) {
+                    return;
                 }
 
+                window.location.href = page;
             }
         );
 
