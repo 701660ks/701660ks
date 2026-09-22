@@ -338,6 +338,13 @@ body {
 
   <div id="app" class="app hidden">
     
+
+    <div class="layout">
+
+
+   <!-- =========================================
+     TOP NAVBAR
+     ========================================= -->
 <header class="topbar">
 
     <div class="topbar-left">
@@ -345,221 +352,251 @@ body {
         <button
             id="menuButton"
             class="icon-btn mobile-only"
-            aria-label="Menu"
-        >
+            type="button"
+            aria-label="Menu">
             ☰
         </button>
 
-        <span class="topbar-title">
+        <div class="topbar-title">
             Wholesaler Panel
-        </span>
+        </div>
 
     </div>
 
 
-    <div class="top-actions">
+    <div class="top-profile">
 
-        <button
-            class="icon-btn"
-            data-section="notifications"
-            title="Notifications"
-        >
-            🔔
+        <div class="top-profile-icon">
+            👤
+        </div>
 
-            <span
-                id="notificationBadge"
-                class="badge hidden"
-            >
-                0
+        <div>
+            <span class="user-name">
+                Wholesaler
             </span>
-        </button>
 
-
-        <div class="top-profile">
-
-            <div class="top-profile-icon">
-                👤
-            </div>
-
-            <div>
-
-                <span
-                    id="headerUserName"
-                    class="user-name"
-                >
-                    Wholesaler
-                </span>
-
-                <small>
-                    Wholesaler
-                </small>
-
-            </div>
-
+            <small>
+                Wholesaler
+            </small>
         </div>
 
     </div>
 
 </header>
-    <div class="layout">
-   <aside id="sidebar" class="sidebar">
+
+
+<!-- =========================================
+     SIDEBAR
+     ========================================= -->
+<aside id="sidebar" class="sidebar">
 
     <!-- SIDEBAR BRAND -->
-
     <div class="sidebar-brand">
 
         <div class="sidebar-brand-mark">
             JS
         </div>
 
-        <div>
-            <strong>JS UNDEFINED</strong>
-            <small>Wholesaler Panel</small>
+        <div class="sidebar-brand-text">
+
+            <strong>
+                JS UNDEFINED
+            </strong>
+
+            <small>
+                Wholesaler Panel
+            </small>
+
         </div>
 
     </div>
 
 
     <!-- SIDEBAR MENU -->
-
     <nav class="sidebar-menu">
 
+        <!-- Dashboard -->
         <button
-            class="nav-item active"
-            data-section="dashboard"
-        >
+            class="nav-item"
+            type="button"
+            onclick="window.location.href='wholesaler.html'">
+
             <span class="nav-icon">📊</span>
+
             <span>Dashboard</span>
+
         </button>
 
 
+        <!-- My Products -->
         <button
             class="nav-item"
-            data-section="products"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#products'">
+
             <span class="nav-icon">📦</span>
+
             <span>My Products</span>
+
         </button>
 
 
+        <!-- Buy Products -->
         <button
             class="nav-item"
-            data-section="buy"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#buy'">
+
             <span class="nav-icon">🛍️</span>
+
             <span>Buy Products</span>
+
         </button>
 
 
+        <!-- Cart -->
         <button
             class="nav-item"
-            data-section="cart"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#cart'">
+
             <span class="nav-icon">🛒</span>
 
-            <span>
-                Cart
-            </span>
+            <span>Cart</span>
 
             <b
                 id="cartCount"
-                class="nav-count"
-            >
+                class="nav-count">
                 0
             </b>
 
         </button>
 
 
+        <!-- Orders -->
         <button
             class="nav-item"
-            data-section="orders"
-        >
-            <span class="nav-icon">📋</span>
-            <span>Orders</span>
-        </button>
-
-
-        <!-- PAYMENT PAGE -->
-
-        <button
-            class="nav-item"
-            id="paymentNavBtn"
             type="button"
-        >
+            onclick="window.location.href='wholesaler.html#orders'">
+
+            <span class="nav-icon">🚚</span>
+
+            <span>Orders</span>
+
+        </button>
+
+
+        <!-- Payments - ACTIVE -->
+        <button
+            class="nav-item active"
+            id="paymentNavBtn"
+            type="button">
+
             <span class="nav-icon">💳</span>
+
             <span>Payments</span>
+
         </button>
 
 
+        <!-- Customers -->
         <button
             class="nav-item"
-            data-section="customers"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#customers'">
+
             <span class="nav-icon">👥</span>
+
             <span>Customers</span>
+
         </button>
 
 
+        <!-- Inventory -->
         <button
             class="nav-item"
-            data-section="inventory"
-        >
-            <span class="nav-icon">📦</span>
+            type="button"
+            onclick="window.location.href='wholesaler.html#inventory'">
+
+            <span class="nav-icon">🏷️</span>
+
             <span>Inventory</span>
+
         </button>
 
 
+        <!-- Reports -->
         <button
             class="nav-item"
-            data-section="reports"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#reports'">
+
             <span class="nav-icon">📈</span>
+
             <span>Reports</span>
+
         </button>
 
 
+        <!-- Notifications -->
         <button
             class="nav-item"
-            data-section="notifications"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#notifications'">
+
             <span class="nav-icon">🔔</span>
+
             <span>Notifications</span>
+
         </button>
 
 
+        <!-- Profile -->
         <button
             class="nav-item"
-            data-section="profile"
-        >
+            type="button"
+            onclick="window.location.href='wholesaler.html#profile'">
+
             <span class="nav-icon">👤</span>
+
             <span>Profile</span>
+
         </button>
 
     </nav>
 
 
-    <!-- LOGOUT AFTER PROFILE -->
-
+    <!-- LOGOUT -->
     <div class="sidebar-bottom">
 
         <button
             id="logoutBtn"
             class="logout-sidebar-btn"
-            type="button"
-        >
+            type="button">
 
             <span class="nav-icon">🚪</span>
 
-            <span>
-                Logout
-            </span>
+            <span>Logout</span>
 
         </button>
 
     </div>
 
 </aside>
+
+
+<!-- =========================================
+     PAYMENT SIDEBAR NAVIGATION
+     ========================================= -->
+<script>
+document
+    .getElementById("paymentNavBtn")
+    ?.addEventListener("click", function () {
+
+        window.location.href = "payment.html";
+
+    });
+</script>
 
       <main class="content">
         <section id="dashboard" class="page-section active">
