@@ -1277,3 +1277,21 @@ body {
     background: #fef2f2 !important;
     color: #b91c1c !important;
 }
+
+/* =========================================================
+   SIDEBAR BRAND TEXT SIZE
+========================================================= */
+
+.sidebar-brand strong {
+    font-size: 18px !important;   /* JS UNDEFINED */
+    font-weight: 800 !important;
+    color: #111827 !important;
+    line-height: 1.2 !important;
+}
+
+.sidebar-brand small {
+    font-size: 12px !important;   /* Wholesaler Panel */
+    font-weight: 600 !important;
+    color: #64748b !important;
+    line-height: 1.2 !important;
+}
