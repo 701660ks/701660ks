@@ -310,16 +310,16 @@ body {
     font-weight: 800 !important;
 }
 
-/* Logout */
-.sidebar .logout-sidebar-btn span:not(.nav-icon) {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-}
+@media (max-width: 800px) {
+    .sidebar {
+        width: 240px !important;
+        min-width: 240px !important;
+        left: -250px !important;
+    }
 
-/* SIDEBAR WIDTH */
-.sidebar {
-    width: 240px !important;
-    min-width: 240px !important;
+    .sidebar.open {
+        left: 0 !important;
+    }
 }
 </style>
 
