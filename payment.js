@@ -831,193 +831,241 @@ function getFilteredRows() {
        PAYMENT TABLE
        ===================================================== */
 
+    
     function renderTable() {
 
-        const body =
-            $("paymentsBody");
+    const body = $("paymentsBody");
+
+    if (!body) {
+        return;
+    }
+
+    const list = getFilteredRows();
+
+    /*
+     * RESULT COUNT
+     */
+    const resultCount = $("resultCount");
+
+    if (resultCount) {
+        resultCount.textContent =
+            `Showing ${list.length} result${list.length === 1 ? "" : "s"}`;
+    }
 
 
-        if (!body) {
-            return;
-        }
+    /*
+     * EMPTY
+     */
+    if (!list.length) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="11">
+                    <div class="empty">
+
+                        <div style="
+                            font-size:35px;
+                            margin-bottom:8px;
+                        ">
+                            💳
+                        </div>
+
+                        <strong>
+                            No payment records found
+                        </strong>
+
+                        <div style="
+                            margin-top:5px;
+                            font-size:12px;
+                        ">
+                            Try another search or filter.
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
 
 
-        const list =
-            getFilteredRows();
+    /*
+     * PAYMENT ROWS
+     */
+    body.innerHTML =
+        list.map((payment, index) => {
 
+            const originalIndex =
+                paymentRows.indexOf(payment);
 
-        if (!list.length) {
-
-            body.innerHTML = `
+            return `
                 <tr>
-                    <td colspan="7">
-                        <div class="empty">
-                            <div style="
-                                font-size:35px;
-                                margin-bottom:8px;
-                            ">
-                                💳
-                            </div>
+
+                    <!-- # -->
+                    <td>
+                        <span class="row-number">
+                            ${index + 1}
+                        </span>
+                    </td>
+
+
+                    <!-- ORDER NO -->
+                    <td>
+                        <div class="order-cell">
 
                             <strong>
-                                No payment records found
+                                ${esc(
+                                    payment.order_no || "—"
+                                )}
                             </strong>
 
-                            <div style="
-                                margin-top:5px;
-                                font-size:12px;
-                            ">
-                                Try another search or filter.
-                            </div>
+                            <small>
+                                ${esc(
+                                    payment.quantity
+                                        ? `Qty: ${payment.quantity}`
+                                        : ""
+                                )}
+                            </small>
+
                         </div>
                     </td>
+
+
+                    <!-- TRANSACTION ID -->
+                    <td>
+                        <div class="transaction-cell">
+
+                            <strong>
+                                ${esc(
+                                    payment.transaction ||
+                                    payment.transaction_id ||
+                                    payment.utr_no ||
+                                    "—"
+                                )}
+                            </strong>
+
+                        </div>
+                    </td>
+
+
+                    <!-- PRODUCT -->
+                    <td>
+                        <div class="product-cell">
+
+                            <strong
+                                title="${esc(
+                                    payment.product_name || "—"
+                                )}"
+                            >
+                                ${esc(
+                                    payment.product_name || "—"
+                                )}
+                            </strong>
+
+                            <small>
+                                Qty:
+                                ${Number(
+                                    payment.quantity || 0
+                                )}
+                            </small>
+
+                        </div>
+                    </td>
+
+
+                    <!-- USER -->
+                    <td>
+                        <div class="user-cell">
+
+                            <strong>
+                                ${esc(
+                                    payment.user_name ||
+                                    "Customer"
+                                )}
+                            </strong>
+
+                            <small>
+                                ${esc(
+                                    payment.mobile || "—"
+                                )}
+                            </small>
+
+                        </div>
+                    </td>
+
+
+                    <!-- TYPE -->
+                    <td>
+                        <span class="type-badge">
+                            ${esc(
+                                payment.user_type ||
+                                "User"
+                            )}
+                        </span>
+                    </td>
+
+
+                    <!-- AMOUNT -->
+                    <td>
+                        <strong class="amount">
+                            ${money(
+                                payment.amount
+                            )}
+                        </strong>
+                    </td>
+
+
+                    <!-- MODE -->
+                    <td>
+                        <span class="mode-badge">
+                            ${esc(
+                                payment.mode ||
+                                "—"
+                            )}
+                        </span>
+                    </td>
+
+
+                    <!-- STATUS -->
+                    <td>
+                        ${statusBadge(
+                            payment.status
+                        )}
+                    </td>
+
+
+                    <!-- DATE -->
+                    <td>
+                        <span class="date-cell">
+                            ${esc(
+                                formatDate(
+                                    payment.created_at
+                                )
+                            )}
+                        </span>
+                    </td>
+
+
+                    <!-- ACTION -->
+                    <td>
+                        <button
+                            type="button"
+                            class="view-btn"
+                            data-payment-index="${originalIndex}"
+                        >
+                            <span class="view-icon">↗</span>
+                            View Details
+                        </button>
+                    </td>
+
                 </tr>
             `;
 
-            return;
-        }
-
-
-        body.innerHTML =
-            list.map(
-                payment => {
-
-                    const originalIndex =
-                        paymentRows.indexOf(
-                            payment
-                        );
-
-
-                    return `
-                        <tr>
-
-                            <td>
-                                <span class="order-main">
-                                    ${esc(
-                                        payment.order_no
-                                    )}
-                                </span>
-
-                                <span class="order-sub">
-                                    ${esc(
-                                        formatDate(
-                                            payment.created_at
-                                        )
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <span class="order-main">
-                                    ${esc(
-                                        payment.transaction
-                                    )}
-                                </span>
-
-                               <span class="order-sub">
-                                    ${esc(
-                                        payment.mode
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <span class="amount">
-                                    ${money(
-                                        payment.amount
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <span
-                                    class="product-name"
-                                    title="${esc(
-                                        payment.product_name
-                                    )}"
-                                >
-                                    ${esc(
-                                        payment.product_name
-                                    )}
-                                </span>
-
-                                <span class="order-sub">
-                                    Qty:
-                                    ${Number(
-                                        payment.quantity ||
-                                        0
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <span class="customer-name">
-                                    ${esc(
-                                        payment.user_name
-                                    )}
-                                </span>
-
-                                <span class="order-sub">
-                                    ${esc(
-                                        payment.mobile
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <span class="type-badge">
-                                    ${esc(
-                                        payment.user_type
-                                    )}
-                                </span>
-
-                                <span class="order-sub">
-                                    ${statusBadge(
-                                        payment.status
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <button
-                                    class="view-btn"
-                                    data-payment-index="${originalIndex}"
-                                >
-                                    View Details
-                                </button>
-                            </td>
-
-                        </tr>
-                    `;
-                }
-            )
-            .join("");
-    }
-    function detailItem(label, value) {
-        return `
-            <div class="detail-item">
-                <div class="detail-label">
-                    ${esc(label)}
-                </div>
-                <div class="detail-value">
-                    ${esc(
-                        value === null ||
-                        value === undefined ||
-                        value === ""
-                            ? "—"
-                            : value
-                    )}
-                </div>
-            </div>
-        `;
-    }
-
+        })
+        .join("");
+}
+    
     function detailMoney(label, value) {
         return `
             <div class="detail-item">
