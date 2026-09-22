@@ -2,204 +2,2386 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JS UNDEFINED — Payments</title>
-<link rel="stylesheet" href="style.css">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>Payment Collection - JS UNDEFINED</title>
+
 <style>
-:root{
-  --pay-primary:#4f46e5;
-  --pay-bg:#f5f7fb;
-  --pay-card:#fff;
-  --pay-text:#0f172a;
-  --pay-muted:#64748b;
-  --pay-border:#e5e7eb;
-  --pay-green:#16a34a;
-  --pay-orange:#f59e0b;
-  --pay-red:#dc2626;
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-html,body{margin:0;min-height:100%;background:var(--pay-bg);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--pay-text);overflow-x:hidden}
-*{box-sizing:border-box}
-.pay-app{min-height:100vh}
-.pay-content{padding:22px;min-width:0}
-.pay-page-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px}
-.pay-page-head h1{margin:0;font-size:28px}
-.pay-page-head p{margin:5px 0 0;color:var(--pay-muted)}
-.pay-actions{display:flex;gap:10px;flex-wrap:wrap}
-.pay-btn{border:0;border-radius:10px;padding:10px 15px;font-weight:700;cursor:pointer;background:#eef2ff;color:#3730a3}
-.pay-btn.primary{background:var(--pay-primary);color:#fff}
-.pay-btn:hover{filter:brightness(.98);transform:translateY(-1px)}
-.pay-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
-.pay-stat{background:#fff;border:1px solid var(--pay-border);border-radius:16px;padding:17px;box-shadow:0 6px 22px rgba(15,23,42,.05)}
-.pay-stat .icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#eef2ff;margin-bottom:10px;font-size:19px}
-.pay-stat span{display:block;color:var(--pay-muted);font-size:13px}
-.pay-stat strong{display:block;font-size:24px;margin-top:3px}
-.pay-stat small{color:var(--pay-muted);display:block;margin-top:3px}
-.pay-card{background:#fff;border:1px solid var(--pay-border);border-radius:18px;box-shadow:0 8px 28px rgba(15,23,42,.06);margin-bottom:16px;overflow:hidden}
-.pay-card-head{padding:17px 19px;border-bottom:1px solid var(--pay-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.pay-card-head h3{margin:0;font-size:17px}
-.pay-card-head p{margin:4px 0 0;color:var(--pay-muted);font-size:13px}
-.pay-search{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.pay-search input,.pay-search select{height:40px;border:1px solid #dbe1ea;border-radius:10px;padding:0 12px;background:#fff;outline:none}
-.pay-search input{min-width:230px}
-.pay-search input:focus,.pay-search select:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.1)}
-.pay-table-wrap{width:100%;overflow:auto}
-.pay-table{width:100%;border-collapse:collapse;min-width:1000px}
-.pay-table th{background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:13px 14px;white-space:nowrap}
-.pay-table td{padding:14px;border-top:1px solid #edf0f4;vertical-align:middle;font-size:13px}
-.pay-table tr:hover td{background:#fafbff}
-.order-main{font-weight:800}
-.order-sub,.muted{display:block;color:#64748b;font-size:11px;margin-top:3px}
-.amount{font-weight:800;white-space:nowrap}
-.customer-name{font-weight:700}
-.product-name{max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.type-badge,.mode-badge,.status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
-.type-badge{background:#f1f5f9;color:#334155}
-.mode-badge{background:#eef2ff;color:#3730a3}
-.status-paid{background:#dcfce7;color:#166534}
-.status-pending{background:#fef3c7;color:#92400e}
-.status-failed{background:#fee2e2;color:#991b1b}
-.status-other{background:#e2e8f0;color:#334155}
-.view-btn{border:1px solid #c7d2fe;background:#eef2ff;color:#3730a3;border-radius:9px;padding:8px 11px;font-weight:800;cursor:pointer;white-space:nowrap}
-.empty{padding:42px;text-align:center;color:#64748b}
-.chart-box{height:280px;padding:14px 18px}
-canvas{width:100%;height:100%}
-.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:18px}
-.detail-section{border:1px solid #e5e7eb;border-radius:14px;padding:14px;background:#fbfcff}
-.detail-section h4{margin:0 0 12px;font-size:14px}
-.detail-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.detail-item{min-width:0}
-.detail-item label{display:block;color:#64748b;font-size:11px;margin-bottom:3px}
-.detail-item div{font-weight:700;word-break:break-word}
-.detail-full{grid-column:1/-1}
-.advance-banner{margin:0 18px 18px;padding:13px 14px;border-radius:12px;background:#eef2ff;color:#3730a3;font-size:13px}
-.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:15px;z-index:9999}
-.modal-bg.show{display:flex}
-.pay-modal{background:#fff;width:min(820px,100%);max-height:90vh;overflow:auto;border-radius:20px;box-shadow:0 25px 80px rgba(15,23,42,.25)}
-.pay-modal-head{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;z-index:2}
-.pay-modal-head h2{margin:0;font-size:19px}
-.close-btn{border:0;background:#f1f5f9;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:17px}
-.toast{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:12px 15px;border-radius:10px;display:none;z-index:10000}
-.toast.show{display:block}
-.loading{padding:55px;text-align:center;color:#64748b}
-@media(max-width:1050px){.pay-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:800px){
-  .pay-content{padding:12px}
-  .pay-page-head{align-items:stretch;flex-direction:column}
-  .pay-page-head h1{font-size:23px}
-  .pay-actions{justify-content:space-between}
-  .pay-search{width:100%}
-  .pay-search input{min-width:0;flex:1;width:100%}
-  .detail-grid{grid-template-columns:1fr}
-  .detail-full{grid-column:auto}
-  .detail-list{grid-template-columns:1fr 1fr}
+
+html,
+body {
+  min-height: 100%;
 }
-@media(max-width:520px){
-  .pay-stats{grid-template-columns:1fr 1fr;gap:8px}
-  .pay-stat{padding:12px}
-  .pay-stat strong{font-size:19px}
-  .pay-stat .icon{width:34px;height:34px}
-  .detail-list{grid-template-columns:1fr}
+
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  background: #f4f7fb;
+  color: #172033;
+}
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+  --sidebar: #101d33;
+  --sidebar-2: #172742;
+
+  --primary: #4f46e5;
+  --primary-2: #6366f1;
+
+  --green: #16a34a;
+  --green-bg: #eaf8ef;
+
+  --orange: #f59e0b;
+  --orange-bg: #fff6df;
+
+  --red: #ef4444;
+  --red-bg: #fff0f0;
+
+  --blue: #2563eb;
+  --blue-bg: #edf4ff;
+
+  --border: #e4e9f2;
+
+  --text: #172033;
+  --muted: #7a879b;
+
+  --white: #ffffff;
+
+  --shadow:
+    0 8px 28px rgba(25, 42, 70, .07);
+
+  --radius: 14px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.hidden {
+  display: none !important;
+}
+
+#loadingScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f7fb;
+}
+
+.loading-box {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 15px;
+
+  border: 4px solid #e8eaf5;
+  border-top-color: var(--primary);
+
+  border-radius: 50%;
+
+  animation:
+    paymentSpin .8s linear infinite;
+}
+
+@keyframes paymentSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#payApp {
+  min-height: 100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 198px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #10203a 0%,
+      #101b30 100%
+    );
+
+  color: #fff;
+
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  height: 68px;
+
+  padding: 11px 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.08);
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+
+  border-radius: 10px;
+
+  background: #fff;
+  color: #172033;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.brand-text strong {
+  display: block;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.brand-text small {
+  display: block;
+  font-size: 8px;
+  opacity: .72;
+}
+
+.sidebar-menu {
+  padding: 18px 10px;
+}
+
+.nav-item {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  padding: 11px 12px;
+  margin-bottom: 4px;
+
+  border: 0;
+  border-radius: 9px;
+
+  color: #aebbd0;
+  background: transparent;
+
+  text-align: left;
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,.07);
+  color: #fff;
+}
+
+.nav-item.active {
+  background:
+    linear-gradient(
+      90deg,
+      #5148ed,
+      #5d70ff
+    );
+
+  color: #fff;
+
+  box-shadow:
+    0 5px 15px rgba(79,70,229,.28);
+}
+
+.nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 12px 10px 15px;
+}
+
+.logout-btn {
+  width: 100%;
+  border: 0;
+
+  padding: 11px;
+
+  border-radius: 9px;
+
+  color: #fff;
+  background: rgba(255,255,255,.07);
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.topbar {
+  position: fixed;
+
+  left: 198px;
+  right: 0;
+  top: 0;
+
+  height: 68px;
+
+  background: rgba(255,255,255,.96);
+
+  border-bottom:
+    1px solid var(--border);
+
+  z-index: 900;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 0 22px;
+
+  gap: 18px;
+}
+
+.profile-area {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.profile-avatar {
+  width: 35px;
+  height: 35px;
+
+  border-radius: 50%;
+
+  background: #edf0f7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 17px;
+}
+
+.profile-name {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.profile-role {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+  margin-left: 198px;
+  padding: 92px 22px 35px;
+
+  max-width: 1500px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 25px;
+}
+
+.page-title-area {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.page-icon {
+  width: 45px;
+  height: 45px;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #4f46e5,
+      #635bff
+    );
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+
+  box-shadow:
+    0 8px 20px rgba(79,70,229,.2);
+}
+
+.page-title h1 {
+  font-size: 27px;
+  line-height: 32px;
+  font-weight: 800;
+}
+
+.page-title p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.refresh-btn {
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #4f46e5,
+      #5d56ed
+    );
+
+  color: #fff;
+
+  padding: 12px 19px;
+
+  border-radius: 10px;
+
+  font-weight: 700;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 14px rgba(79,70,229,.2);
+}
+
+.refresh-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: #fff;
+
+  border:
+    1px solid rgba(226,232,240,.8);
+
+  border-radius: 13px;
+
+  padding: 18px;
+
+  box-shadow: var(--shadow);
+
+  min-height: 128px;
+
+  position: relative;
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-icon {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+}
+
+.stat-card.green .stat-icon {
+  color: var(--green);
+  background: var(--green-bg);
+}
+
+.stat-card.orange .stat-icon {
+  color: var(--orange);
+  background: var(--orange-bg);
+}
+
+.stat-card.red .stat-icon {
+  color: var(--red);
+  background: var(--red-bg);
+}
+
+.stat-card.blue .stat-icon {
+  color: var(--blue);
+  background: var(--blue-bg);
+}
+
+.stat-title {
+  margin-top: 12px;
+
+  font-size: 12px;
+  color: #5d6a7f;
+  font-weight: 600;
+}
+
+.stat-value {
+  margin-top: 3px;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  color: #172033;
+}
+
+.stat-footer {
+  margin-top: 7px;
+
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 10px;
+  color: #8994a7;
+}
+
+.stat-up {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+/* =========================================================
+   OVERVIEW GRID
+========================================================= */
+
+.overview-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 2.2fr)
+    minmax(250px, 1fr);
+
+  gap: 16px;
+
+  margin-bottom: 16px;
+}
+
+.panel {
+  background: #fff;
+
+  border: 1px solid var(--border);
+
+  border-radius: 14px;
+
+  box-shadow: var(--shadow);
+
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 15px 17px;
+
+  border-bottom:
+    1px solid #eef1f6;
+}
+
+.panel-header h2 {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.panel-header p {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.chart-wrap {
+  padding: 12px 18px 15px;
+  height: 190px;
+}
+
+#paymentStatusChart {
+  width: 100%;
+  height: 100%;
+}
+
+.transaction-card {
+  padding: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf5ff,
+      #f5f9ff
+    );
+}
+
+.transaction-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #dbeafe;
+
+  color: #2563eb;
+}
+
+.transaction-card h3 {
+  font-size: 13px;
+}
+
+.transaction-number {
+  font-size: 25px;
+  font-weight: 800;
+
+  margin-top: 14px;
+}
+
+.transaction-sub {
+  color: var(--muted);
+  font-size: 11px;
+
+  margin-top: 3px;
+}
+
+/* =========================================================
+   FILTER BAR
+========================================================= */
+
+.filter-bar {
+  background: #fff;
+
+  border: 1px solid var(--border);
+
+  border-radius: 13px;
+
+  box-shadow: var(--shadow);
+
+  padding: 10px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(200px, 2fr)
+    minmax(125px, 1fr)
+    minmax(145px, 1fr)
+    minmax(125px, 1fr)
+    minmax(160px, 1.2fr)
+    auto;
+
+  gap: 9px;
+
+  margin-bottom: 16px;
+}
+
+.filter-control {
+  height: 40px;
+
+  border: 1px solid #e1e6ef;
+
+  background: #fff;
+
+  border-radius: 8px;
+
+  padding: 0 11px;
+
+  font-size: 11px;
+
+  color: #435066;
+
+  outline: none;
+
+  min-width: 0;
+}
+
+.filter-control:focus {
+  border-color: #6366f1;
+
+  box-shadow:
+    0 0 0 3px rgba(99,102,241,.08);
+}
+
+.search-wrap {
+  position: relative;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding-left: 36px;
+}
+
+.search-icon {
+  position: absolute;
+
+  left: 12px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #8b96a8;
+}
+
+.clear-btn {
+  height: 40px;
+
+  padding: 0 18px;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  color: #fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #4f46e5,
+      #5b55ee
+    );
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   PAYMENTS TABLE
+========================================================= */
+
+.payments-panel {
+  background: #fff;
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 14px;
+
+  box-shadow: var(--shadow);
+
+  overflow: hidden;
+}
+
+.payments-header {
+  padding: 15px 17px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom:
+    1px solid #eef1f6;
+}
+
+.payments-header h2 {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.payments-header p {
+  margin-top: 3px;
+
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.result-count {
+  font-size: 10px;
+  color: #68758a;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.payments-table {
+  width: 100%;
+  min-width: 1040px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.payments-table thead th {
+  padding: 11px 10px;
+
+  background: #f6f8fc;
+
+  color: #718096;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  text-align: left;
+
+  white-space: nowrap;
+
+  border-bottom:
+    1px solid #e7ebf2;
+}
+
+.payments-table tbody td {
+  padding: 13px 10px;
+
+  border-bottom:
+    1px solid #eef1f5;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+
+  color: #3f4b5e;
+}
+
+.payments-table tbody tr:hover {
+  background: #fafbfe;
+}
+
+.payments-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.order-cell strong {
+  display: block;
+  color: #26334a;
+  font-size: 11px;
+}
+
+.order-cell small {
+  display: block;
+  margin-top: 2px;
+  color: #98a2b3;
+  font-size: 8px;
+}
+
+.transaction-cell {
+  max-width: 115px;
+  word-break: break-word;
+}
+
+.product-cell {
+  max-width: 155px;
+}
+
+.product-cell strong {
+  display: block;
+  color: #2d3a50;
+  font-size: 10px;
+  line-height: 15px;
+}
+
+.product-cell small {
+  color: #8c98aa;
+  font-size: 8px;
+}
+
+.user-cell strong {
+  display: block;
+  color: #334155;
+  font-size: 10px;
+}
+
+.user-cell small {
+  display: block;
+  color: #8b96a8;
+  margin-top: 2px;
+  font-size: 8px;
+}
+
+.type-badge,
+.mode-badge,
+.status-badge {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 22px;
+
+  padding: 3px 9px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.type-badge {
+  color: #2563eb;
+  background: #eaf2ff;
+  border: 1px solid #d6e5ff;
+}
+
+.mode-badge {
+  color: #6d28d9;
+  background: #f1eaff;
+  border: 1px solid #e4d8ff;
+}
+
+.status-badge.paid {
+  color: #16803d;
+  background: #e8f8ee;
+  border: 1px solid #ccefd9;
+}
+
+.status-badge.pending {
+  color: #b56b00;
+  background: #fff5dc;
+  border: 1px solid #fbe6b1;
+}
+
+.status-badge.failed {
+  color: #c62828;
+  background: #ffebeb;
+  border: 1px solid #ffd0d0;
+}
+
+.amount-cell {
+  font-size: 11px !important;
+  font-weight: 800;
+
+  color: #243149 !important;
+
+  white-space: nowrap;
+}
+
+.view-details-btn {
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #5146e5,
+      #665cf2
+    );
+
+  color: #fff;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  min-width: 100px;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 10px rgba(79,70,229,.18);
+
+  white-space: nowrap;
+}
+
+.view-details-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.detail-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 2000;
+
+  background:
+    rgba(15,23,42,.68);
+
+  backdrop-filter: blur(4px);
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.detail-modal.show {
+  display: flex;
+}
+
+.detail-dialog {
+  width: min(900px, 100%);
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #fff;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 30px 80px rgba(15,23,42,.3);
+
+  animation:
+    modalIn .18s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.detail-header {
+  padding: 17px 20px;
+
+  border-bottom:
+    1px solid #edf0f5;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.detail-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detail-icon {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #4f46e5;
+
+  background: #eef0ff;
+}
+
+.detail-header h2 {
+  font-size: 16px;
+}
+
+.detail-subtitle {
+  color: #8792a5;
+  font-size: 9px;
+  margin-top: 3px;
+}
+
+.detail-close {
+  width: 30px;
+  height: 30px;
+
+  border: 0;
+
+  border-radius: 50%;
+
+  background: #f2f4f8;
+
+  color: #5d687b;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+.detail-body {
+  padding: 18px;
+}
+
+.detail-section {
+  margin-bottom: 14px;
+
+  border: 1px solid #e8ecf3;
+
+  border-radius: 11px;
+
+  overflow: hidden;
+}
+
+.detail-section h3 {
+  padding: 10px 13px;
+
+  background: #f7f9fc;
+
+  color: #29364d;
+
+  font-size: 11px;
+
+  border-bottom:
+    1px solid #e8ecf3;
+}
+
+.detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0,1fr));
+
+  gap: 0;
+}
+
+.detail-item {
+  padding: 10px 13px;
+
+  border-bottom:
+    1px solid #eef1f5;
+}
+
+.detail-item:nth-child(odd) {
+  border-right:
+    1px solid #eef1f5;
+}
+
+.detail-item span {
+  display: block;
+
+  color: #8792a5;
+
+  font-size: 9px;
+
+  margin-bottom: 4px;
+}
+
+.detail-item strong {
+  display: block;
+
+  color: #29364d;
+
+  font-size: 10px;
+
+  word-break: break-word;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+  position: fixed;
+
+  right: 20px;
+  bottom: 20px;
+
+  z-index: 3000;
+
+  min-width: 220px;
+
+  padding: 12px 15px;
+
+  border-radius: 10px;
+
+  background: #172033;
+  color: #fff;
+
+  box-shadow:
+    0 10px 30px rgba(15,23,42,.2);
+
+  font-size: 11px;
+
+  transform:
+    translateY(20px);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: .2s ease;
+}
+
+.toast.show {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+.toast.success {
+  background: #16803d;
+}
+
+.toast.error {
+  background: #dc2626;
+}
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+.menu-button {
+  display: none;
+
+  border: 0;
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 9px;
+
+  background: #eef1f7;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1150px) {
+
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    grid-template-columns:
+      2fr
+      1fr
+      1fr;
+
+    grid-auto-rows: 40px;
+  }
+
+  .clear-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 850px) {
+
+  .sidebar {
+    width: 70px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .brand-text,
+  .nav-item span:not(.nav-icon),
+  .logout-text {
+    display: none;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 12px 5px;
+  }
+
+  .sidebar-bottom {
+    padding: 10px;
+  }
+
+  .topbar {
+    left: 70px;
+  }
+
+  .main {
+    margin-left: 70px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .filter-bar {
+    grid-template-columns:
+      repeat(2, minmax(0,1fr));
+  }
+
+  .search-wrap {
+    grid-column: 1 / -1;
+  }
+
+  .clear-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .sidebar {
+    transform:
+      translateX(-100%);
+
+    width: 210px;
+
+    transition:
+      transform .2s ease;
+  }
+
+  .sidebar.open {
+    transform:
+      translateX(0);
+  }
+
+  .brand {
+    justify-content: flex-start;
+    padding: 11px 14px;
+  }
+
+  .brand-text,
+  .nav-item span:not(.nav-icon),
+  .logout-text {
+    display: block;
+  }
+
+  .nav-item {
+    justify-content: flex-start;
+    padding: 11px 12px;
+  }
+
+  .topbar {
+    left: 0;
+
+    justify-content:
+      space-between;
+
+    padding: 0 12px;
+  }
+
+  .menu-button {
+    display: block;
+  }
+
+  .main {
+    margin-left: 0;
+
+    padding:
+      83px 10px 25px;
+  }
+
+  .page-header {
+    align-items: center;
+  }
+
+  .page-title-area {
+    gap: 9px;
+  }
+
+  .page-icon {
+    width: 39px;
+    height: 39px;
+    font-size: 18px;
+  }
+
+  .page-title h1 {
+    font-size: 20px;
+  }
+
+  .page-title p {
+    font-size: 9px;
+  }
+
+  .refresh-btn {
+    padding: 9px 11px;
+    font-size: 10px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .stat-card {
+    padding: 13px;
+    min-height: 112px;
+  }
+
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 17px;
+  }
+
+  .stat-title {
+    font-size: 9px;
+  }
+
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .search-wrap {
+    grid-column: auto;
+  }
+
+  .payments-header {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .result-count {
+    text-align: right;
+  }
+
+  .detail-modal {
+    padding: 8px;
+  }
+
+  .detail-dialog {
+    max-height: 94vh;
+    border-radius: 13px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-item:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .detail-body {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 390px) {
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-name,
+  .profile-role {
+    display: none;
+  }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="supabase.js"></script>
-<script defer src="payment.js"></script>
 </head>
+
 <body>
-<div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Loading payments…</p></div>
 
-<div id="payApp" class="app hidden pay-app">
-<header class="topbar">
-  <div class="brand">
-    <button id="menuButton" class="icon-btn mobile-only" aria-label="Menu">☰</button>
-    <div class="brand-mark">JS</div>
-    <div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
-  </div>
-  <div class="top-actions">
-    <span id="headerUserName" class="user-name">Wholesaler</span>
-    <button id="logoutBtn" class="logout-btn">Logout</button>
-  </div>
-</header>
+<!-- ========================================================
+     LOADING
+========================================================= -->
 
-<div class="layout">
-<aside id="sidebar" class="sidebar">
-<nav>
-  <button class="nav-item" data-page="wholesaler.html">📊 <span>Dashboard</span></button>
-  <button class="nav-item" data-page="wholesaler.html">📦 <span>My Products</span></button>
-  <button class="nav-item" data-page="wholesaler.html">🛒 <span>Buy Products</span></button>
-  <button class="nav-item" data-page="wholesaler.html">🧺 <span>Cart</span></button>
-  <button class="nav-item" data-page="wholesaler.html">🚚 <span>Orders</span></button>
-  <button class="nav-item active">💳 <span>Payments</span></button>
-  <button class="nav-item" data-page="wholesaler.html">👥 <span>Customers</span></button>
-  <button class="nav-item" data-page="wholesaler.html">🏷️ <span>Inventory</span></button>
-  <button class="nav-item" data-page="wholesaler.html">📈 <span>Reports</span></button>
-  <button class="nav-item" data-page="wholesaler.html">🔔 <span>Notifications</span></button>
-  <button class="nav-item" data-page="wholesaler.html">👤 <span>Profile</span></button>
-</nav>
-</aside>
+<div id="loadingScreen">
 
-<main class="content pay-content">
-  <div class="pay-page-head">
-    <div>
-      <h1>Payments</h1>
-      <p>Track collections, advances and payment details for your orders.</p>
-    </div>
-    <div class="pay-actions">
-      <button id="backBtn" class="pay-btn">← Dashboard</button>
-      <button id="refreshBtn" class="pay-btn primary">↻ Refresh</button>
-    </div>
+  <div class="loading-box">
+
+    <div class="loading-spinner"></div>
+
+    <strong>
+      Loading payments...
+    </strong>
+
   </div>
 
-  <div class="pay-stats">
-    <div class="pay-stat"><div class="icon">💰</div><span>Total Paid</span><strong id="totalPaid">₹0</strong><small>Confirmed payment amount</small></div>
-    <div class="pay-stat"><div class="icon">⏳</div><span>Pending</span><strong id="totalPending">₹0</strong><small>Awaiting payment</small></div>
-    <div class="pay-stat"><div class="icon">📦</div><span>Transactions</span><strong id="transactionCount">0</strong><small>Payment records</small></div>
-    <div class="pay-stat"><div class="icon">⚡</div><span>Advance Collected</span><strong id="advanceTotal">₹0</strong><small>UPI / Bank advances</small></div>
-  </div>
+</div>
 
-  <div class="pay-card">
-    <div class="pay-card-head">
-      <div><h3>Payment Status</h3><p>Paid and pending collection overview</p></div>
-    </div>
-    <div class="chart-box"><canvas id="paymentStatusChart"></canvas></div>
-  </div>
 
-  <div class="pay-card">
-    <div class="pay-card-head">
-      <div><h3>Payment Transactions</h3><p>Order, transaction, product and customer information</p></div>
-      <div class="pay-search">
-        <input id="searchInput" placeholder="Search order, transaction, user, product…">
-        <select id="statusFilter"><option value="">All status</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option></select>
-        <select id="modeFilter"><option value="">All modes</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank</option><option value="COD">COD</option><option value="Pay Later">Pay Later</option></select>
+<!-- ========================================================
+     APPLICATION
+========================================================= -->
+
+<div id="payApp" class="hidden">
+
+
+  <!-- ======================================================
+       SIDEBAR
+  ======================================================= -->
+
+  <aside
+    id="sidebar"
+    class="sidebar"
+  >
+
+    <div class="brand">
+
+      <div class="brand-logo">
+        JS
       </div>
+
+      <div class="brand-text">
+
+        <strong>
+          JS UNDEFINED
+        </strong>
+
+        <small>
+          Wholesaler Panel
+        </small>
+
+      </div>
+
     </div>
-    <div class="pay-table-wrap">
-      <table class="pay-table">
-        <thead>
-          <tr>
-            <th>Order No.</th>
-            <th>Transaction ID</th>
-            <th>Amount</th>
-            <th>Product Name</th>
-            <th>User Name</th>
-            <th>Type</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="paymentsBody"><tr><td colspan="7"><div class="loading">Loading payments…</div></td></tr></tbody>
-      </table>
+
+
+    <nav class="sidebar-menu">
+
+      <button
+        class="nav-item"
+        data-page="wholesaler.html"
+      >
+        <span class="nav-icon">◉</span>
+        <span>Dashboard</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="products.html"
+      >
+        <span class="nav-icon">▣</span>
+        <span>My Products</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="buy-products.html"
+      >
+        <span class="nav-icon">▤</span>
+        <span>Buy Products</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="cart.html"
+      >
+        <span class="nav-icon">🛒</span>
+        <span>Cart</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="orders.html"
+      >
+        <span class="nav-icon">▤</span>
+        <span>Orders</span>
+      </button>
+
+      <button
+        class="nav-item active"
+        data-page="payment.html"
+      >
+        <span class="nav-icon">▣</span>
+        <span>Payments</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="customers.html"
+      >
+        <span class="nav-icon">♟</span>
+        <span>Customers</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="inventory.html"
+      >
+        <span class="nav-icon">◈</span>
+        <span>Inventory</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="reports.html"
+      >
+        <span class="nav-icon">◩</span>
+        <span>Reports</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="notifications.html"
+      >
+        <span class="nav-icon">♢</span>
+        <span>Notifications</span>
+      </button>
+
+      <button
+        class="nav-item"
+        data-page="profile.html"
+      >
+        <span class="nav-icon">●</span>
+        <span>Profile</span>
+      </button>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+      <button
+        id="logoutBtn"
+        class="logout-btn"
+      >
+        <span>↪</span>
+        <span class="logout-text">
+          Logout
+        </span>
+      </button>
+
     </div>
-  </div>
-</main>
-</div>
+
+  </aside>
+
+
+  <!-- ======================================================
+       TOP BAR
+  ======================================================= -->
+
+  <header class="topbar">
+
+    <button
+      id="menuButton"
+      class="menu-button"
+    >
+      ☰
+    </button>
+
+    <div class="profile-area">
+
+      <div class="profile-avatar">
+        👤
+      </div>
+
+      <div>
+
+        <div
+          id="headerUserName"
+          class="profile-name"
+        >
+          Wholesaler
+        </div>
+
+        <div class="profile-role">
+          Wholesaler
+        </div>
+
+      </div>
+
+      <span>
+       ⌄
+      </span>
+
+    </div>
+
+    <div style="font-size:20px;">
+      🔔
+    </div>
+
+  </header>
+
+
+  <!-- ======================================================
+       MAIN
+  ======================================================= -->
+
+  <main class="main">
+
+
+    <!-- HEADER -->
+
+    <section class="page-header">
+
+      <div class="page-title-area">
+
+        <div class="page-icon">
+          ▣
+        </div>
+
+        <div class="page-title">
+
+          <h1>
+            Payment Collection
+          </h1>
+
+          <p>
+            View and manage all your payment details,
+            transactions and collection status.
+          </p>
+
+        </div>
+
+      </div>
+
+      <button
+        id="refreshBtn"
+        class="refresh-btn"
+      >
+        ↻ &nbsp; Refresh
+      </button>
+
+    </section>
+
+
+    <!-- ====================================================
+         STAT CARDS
+    ===================================================== -->
+
+    <section class="stats-grid">
+
+
+      <div class="stat-card green">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+            ₹
+          </div>
+
+        </div>
+
+        <div class="stat-title">
+          Total Paid
+        </div>
+
+        <div
+          id="totalPaid"
+          class="stat-value"
+        >
+          ₹0
+        </div>
+
+        <div class="stat-footer">
+
+          <span>
+            Confirmed payments
+          </span>
+
+          <span class="stat-up">
+            ↑ 100%
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card orange">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+            ⏳
+          </div>
+
+        </div>
+
+        <div class="stat-title">
+          Pending
+        </div>
+
+        <div
+          id="totalPending"
+          class="stat-value"
+        >
+          ₹0
+        </div>
+
+        <div class="stat-footer">
+
+          <span>
+            Awaiting payment
+          </span>
+
+          <span>
+            → 0%
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card red">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+            ×
+          </div>
+
+        </div>
+
+        <div class="stat-title">
+          Failed
+        </div>
+
+        <div
+          id="totalFailed"
+          class="stat-value"
+        >
+          ₹0
+        </div>
+
+        <div class="stat-footer">
+
+          <span>
+            Failed transactions
+          </span>
+
+          <span>
+            → 0%
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="stat-card blue">
+
+        <div class="stat-top">
+
+          <div class="stat-icon">
+            ✦
+          </div>
+
+        </div>
+
+        <div class="stat-title">
+          Advance Total
+        </div>
+
+        <div
+          id="advanceTotal"
+          class="stat-value"
+        >
+          ₹0
+        </div>
+
+        <div class="stat-footer">
+
+          <span>
+            UPI / Bank advances
+          </span>
+
+          <span>
+            → 0%
+          </span>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <!-- ====================================================
+         OVERVIEW
+    ===================================================== -->
+
+    <section class="overview-grid">
+
+
+      <div class="panel">
+
+        <div class="panel-header">
+
+          <h2>
+            Payment Status Overview
+          </h2>
+
+          <p>
+            Paid and pending collection overview
+          </p>
+
+        </div>
+
+        <div class="chart-wrap">
+
+          <canvas
+            id="paymentStatusChart"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="panel transaction-card">
+
+        <div class="transaction-heading">
+
+          <div class="transaction-icon">
+            ▣
+          </div>
+
+          <div>
+
+            <h3>
+              Total Transactions
+            </h3>
+
+          </div>
+
+        </div>
+
+        <div
+          id="transactionCount"
+          class="transaction-number"
+        >
+          0
+        </div>
+
+        <div class="transaction-sub">
+          Payment records
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <!-- ====================================================
+         FILTERS
+    ===================================================== -->
+
+    <section class="filter-bar">
+
+
+      <div class="search-wrap">
+
+        <span class="search-icon">
+          🔍
+        </span>
+
+        <input
+          id="searchInput"
+          class="filter-control"
+          type="search"
+          placeholder="Search order no, transaction ID, product, user..."
+        >
+
+      </div>
+
+
+      <select
+        id="statusFilter"
+        class="filter-control"
+      >
+
+        <option value="all">
+          All Status
+        </option>
+
+        <option value="paid">
+          Paid
+        </option>
+
+        <option value="pending">
+          Pending
+        </option>
+
+        <option value="failed">
+          Failed
+        </option>
+
+      </select>
+
+
+      <select
+        id="modeFilter"
+        class="filter-control"
+      >
+
+        <option value="all">
+          All Payment Mode
+        </option>
+
+        <option value="upi">
+          UPI
+        </option>
+
+        <option value="bank">
+          Bank
+        </option>
+
+        <option value="cash">
+          Cash / COD
+        </option>
+
+      </select>
+
+
+      <select
+        id="userTypeFilter"
+        class="filter-control"
+      >
+
+        <option value="all">
+          All User Type
+        </option>
+
+        <option value="user">
+          User
+        </option>
+
+        <option value="wholesaler">
+          Wholesaler
+        </option>
+
+        <option value="b2b">
+          B2B
+        </option>
+
+      </select>
+
+
+      <input
+        id="dateFilter"
+        class="filter-control"
+        type="text"
+        placeholder="📅  From → To"
+      >
+
+
+      <button
+        id="clearFilters"
+        class="clear-btn"
+        type="button"
+      >
+        Clear
+      </button>
+
+
+    </section>
+
+
+    <!-- ====================================================
+         PAYMENT TABLE
+    ===================================================== -->
+
+    <section class="payments-panel">
+
+
+      <div class="payments-header">
+
+        <div>
+
+          <h2>
+            Recent Payments
+          </h2>
+
+          <p>
+            Latest payment transactions and collection details
+          </p>
+
+        </div>
+
+        <div
+          id="resultCount"
+          class="result-count"
+        >
+          Showing 0 results
+        </div>
+
+      </div>
+
+
+      <div class="table-scroll">
+
+        <table class="payments-table">
+
+          <thead>
+
+            <tr>
+
+              <th>#</th>
+
+              <th>
+                Order No.
+              </th>
+
+              <th>
+                Transaction ID
+              </th>
+
+              <th>
+                Product Name
+              </th>
+
+              <th>
+                User Name
+              </th>
+
+              <th>
+                Type
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Mode
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="paymentsBody">
+
+            <tr>
+
+              <td
+                colspan="11"
+                style="
+                  text-align:center;
+                  padding:35px;
+                  color:#8994a7;
+                "
+              >
+                Loading payments...
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
 </div>
 
-<div id="detailModal" class="modal-bg">
-  <div class="pay-modal">
-    <div class="pay-modal-head"><h2>Payment Details</h2><button id="closeModal" class="close-btn">✕</button></div>
-    <div id="detailContent"></div>
+
+<!-- ========================================================
+     PAYMENT DETAILS MODAL
+========================================================= -->
+
+<div
+  id="detailModal"
+  class="detail-modal"
+  aria-hidden="true"
+>
+
+  <div class="detail-dialog">
+
+
+    <div class="detail-header">
+
+      <div class="detail-title-wrap">
+
+        <div class="detail-icon">
+          ▣
+        </div>
+
+        <div>
+
+          <h2>
+            Payment Details
+          </h2>
+
+          <div
+            id="detailSubtitle"
+            class="detail-subtitle"
+          >
+            Payment information
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <button
+        id="closeModal"
+        class="detail-close"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      id="detailContent"
+      class="detail-body"
+    >
+    </div>
+
+
   </div>
+
 </div>
-<div id="toast" class="toast"></div>
+
+
+<!-- ========================================================
+     TOAST
+========================================================= -->
+
+<div
+  id="toast"
+  class="toast"
+>
+</div>
+
+
+<!-- ========================================================
+     SCRIPTS
+========================================================= -->
+
+<!-- Your existing Supabase setup -->
+<script src="supabase.js"></script>
+
+<!-- Payment page JavaScript -->
+<script src="payment.js"></script>
+
+
+<script>
+/* =========================================================
+   EXTRA PAGE FILTER HANDLING
+========================================================= */
+
+(function () {
+
+  const clearButton =
+    document.getElementById("clearFilters");
+
+  const search =
+    document.getElementById("searchInput");
+
+  const status =
+    document.getElementById("statusFilter");
+
+  const mode =
+    document.getElementById("modeFilter");
+
+  const userType =
+    document.getElementById("userTypeFilter");
+
+  const date =
+    document.getElementById("dateFilter");
+
+  const resultCount =
+    document.getElementById("resultCount");
+
+
+  clearButton?.addEventListener(
+    "click",
+    function () {
+
+      if (search) {
+        search.value = "";
+      }
+
+      if (status) {
+        status.value = "all";
+      }
+
+      if (mode) {
+        mode.value = "all";
+      }
+
+      if (userType) {
+        userType.value = "all";
+      }
+
+      if (date) {
+        date.value = "";
+      }
+
+      if (
+        typeof window.loadPayments ===
+        "function"
+      ) {
+        window.loadPayments();
+      }
+
+    }
+  );
+
+
+  /*
+    Keep result count updated.
+  */
+
+  const observer =
+    new MutationObserver(function () {
+
+      const body =
+        document.getElementById(
+          "paymentsBody"
+        );
+
+      if (!body || !resultCount) {
+        return;
+      }
+
+      const rows =
+        body.querySelectorAll(
+          "tr"
+        );
+
+      let count = 0;
+
+      rows.forEach(row => {
+
+        if (
+          !row.querySelector(
+            "td[colspan]"
+          )
+        ) {
+          count++;
+        }
+
+      });
+
+      resultCount.textContent =
+        `Showing ${count} result${count === 1 ? "" : "s"}`;
+
+    });
+
+
+  const body =
+    document.getElementById(
+      "paymentsBody"
+    );
+
+  if (body) {
+
+    observer.observe(
+      body,
+      {
+        childList: true,
+        subtree: true
+      }
+    );
+
+  }
+
+
+})();
+</script>
 </body>
 </html>
