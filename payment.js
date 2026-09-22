@@ -1049,14 +1049,13 @@ function getFilteredRows() {
 
                     <!-- ACTION -->
                     <td>
-                    <button
+            <button
     type="button"
     class="view-btn"
     data-payment-index="${originalIndex}"
-    onclick="openPaymentDetailsByIndex(this.dataset.paymentIndex)"
 >
     <span class="view-icon">↗</span>
-    View Payment 
+    View Payment
 </button>
                     </td>
 
@@ -1065,6 +1064,30 @@ function getFilteredRows() {
 
         })
         .join("");
+}
+
+function detailItem(label, value) {
+
+    const displayValue =
+        value === undefined ||
+        value === null ||
+        value === ""
+            ? "—"
+            : value;
+
+    return `
+        <div class="detail-item">
+
+            <div class="detail-label">
+                ${esc(label)}
+            </div>
+
+            <div class="detail-value">
+                ${esc(displayValue)}
+            </div>
+
+        </div>
+    `;
 }
     
     function detailMoney(label, value) {
@@ -1741,6 +1764,29 @@ function openPaymentDetailsByIndex(index) {
 
 
     function bindEvents() {
+/* ==========================================
+   SIDEBAR NAVIGATION
+   ========================================== */
+
+document
+    .querySelectorAll(".nav-item[data-page]")
+    .forEach(item => {
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                const page =
+                    item.dataset.page;
+
+                if (page) {
+                    window.location.href = page;
+                }
+
+            }
+        );
+
+    });
 
         /*
          * Refresh
