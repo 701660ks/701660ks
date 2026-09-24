@@ -6,7 +6,8 @@
 <title>JS UNDEFINED — My Products</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+<script src="supabase.js"></script><script src="app.js"></script>
+
 
 <style>
 *{box-sizing:border-box}
@@ -321,7 +322,11 @@ button{cursor:pointer}
 (() => {
   "use strict";
 
-  const sb = window.supabaseClient || window.supabase?.createClient ? window.supabaseClient : null;
+  const sb =
+    typeof supabaseClient !== "undefined"
+        ? supabaseClient
+        : null;
+
   const $ = id => document.getElementById(id);
 
   let currentUser = null;
