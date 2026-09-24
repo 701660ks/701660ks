@@ -314,21 +314,96 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
 
 <div class="layout">
 <aside id="sidebar" class="sidebar">
- <div class="sidebar-brand"><div class="sidebar-brand-mark">JS</div><div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div></div>
- <nav class="sidebar-menu">
-  <button class="nav-item" onclick="location.href='wholesaler.html'"><span class="nav-icon">📊</span>Dashboard</button>
-  <button class="nav-item active"><span class="nav-icon">📦</span>My Products</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#buy'"><span class="nav-icon">🛍️</span>Buy Products</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#cart'"><span class="nav-icon">🛒</span>Cart <b id="cartCount" class="nav-count">0</b></button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#orders'"><span class="nav-icon">🚚</span>Orders</button>
-  <button class="nav-item" onclick="location.href='payment.html'"><span class="nav-icon">💳</span>Payments</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#customers'"><span class="nav-icon">👥</span>Customers</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#inventory'"><span class="nav-icon">🏷️</span>Inventory</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#reports'"><span class="nav-icon">📈</span>Reports</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#notifications'"><span class="nav-icon">🔔</span>Notifications</button>
-  <button class="nav-item" onclick="location.href='wholesaler.html#profile'"><span class="nav-icon">👤</span>Profile</button>
- </nav>
- <div class="sidebar-bottom"><button id="logoutBtn" class="logout-btn">🚪 Logout</button></div>
+
+    <!-- SIDEBAR BRAND -->
+    <div class="sidebar-brand">
+        <div class="sidebar-brand-mark">JS</div>
+
+        <div class="sidebar-brand-text">
+            <strong>JS UNDEFINED</strong>
+            <small>Wholesaler Panel</small>
+        </div>
+    </div>
+
+    <!-- SIDEBAR MENU -->
+    <nav class="sidebar-menu">
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html'">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item active">
+            <span class="nav-icon">📦</span>
+            <span>My Products</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#buy'">
+            <span class="nav-icon">🛍️</span>
+            <span>Buy Products</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#cart'">
+            <span class="nav-icon">🛒</span>
+            <span>Cart</span>
+            <b id="cartCount" class="nav-count">0</b>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#orders'">
+            <span class="nav-icon">🚚</span>
+            <span>Orders</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='payment.html'">
+            <span class="nav-icon">💳</span>
+            <span>Payments</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#customers'">
+            <span class="nav-icon">👥</span>
+            <span>Customers</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#inventory'">
+            <span class="nav-icon">🏷️</span>
+            <span>Inventory</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#reports'">
+            <span class="nav-icon">📈</span>
+            <span>Reports</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#notifications'">
+            <span class="nav-icon">🔔</span>
+            <span>Notifications</span>
+        </button>
+
+        <button class="nav-item"
+                onclick="location.href='wholesaler.html#profile'">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </button>
+
+    </nav>
+
+    <!-- LOGOUT -->
+    <div class="sidebar-bottom">
+        <button id="logoutBtn" class="logout-btn">
+            <span class="nav-icon">🚪</span>
+            <span>Logout</span>
+        </button>
+    </div>
+
 </aside>
 
 <main class="content">
