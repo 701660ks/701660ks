@@ -116,6 +116,56 @@ tbody tr:hover{background:#fafcff}
 .product-card small{display:block;color:#94a3b8;font-size:9px;margin-top:3px}
 .product-price{font-weight:900;font-size:13px;margin-top:5px}.product-sales{font-size:9px;color:#16a34a;margin-top:3px;font-weight:800}
 
+/* PRODUCT LINKS */
+.product-card-link{display:block;text-decoration:none;color:inherit;position:relative}
+.product-card-link:hover{border-color:#c7d2fe;box-shadow:0 5px 16px rgba(67,56,202,.08);transform:translateY(-1px)}
+.product-card-link[aria-disabled="true"]{pointer-events:none}
+.product-view-mini{display:block;color:#4338ca;font-size:9px;font-weight:850;margin-top:5px}
+.quick-item{align-items:stretch}
+.quick-product-link{min-width:0;flex:1;display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.quick-product-link img,.quick-product-icon{width:38px;height:38px;min-width:38px;border-radius:8px;background:#f1f5f9;object-fit:cover;display:grid;place-items:center}
+.quick-product-link span{min-width:0}
+.quick-product-link strong{max-width:180px}
+.quick-product-link em{display:block;color:#4338ca;font-size:9px;font-style:normal;font-weight:800;margin-top:3px}
+.manage-order-btn{white-space:nowrap}
+/* MANAGE ORDER */
+.wide-modal{width:min(900px,100%)}
+.manage-tabs{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid #eef1f5;overflow:auto}
+.manage-tab{border:1px solid #dbe1ea;background:#fff;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:850;white-space:nowrap}
+.manage-tab.active{background:#111827;color:#fff;border-color:#111827}
+.manage-section{padding:2px 0}
+.product-link-box{margin:0 18px 18px;padding:12px;border:1px solid #dbe1ea;border-radius:11px;background:#f8fafc}
+.product-view-link{display:inline-flex;align-items:center;gap:6px;color:#4338ca;font-size:12px;font-weight:850;text-decoration:none}
+.product-view-link:hover{text-decoration:underline}
+.process-title{padding:18px 18px 0;font-size:16px;font-weight:900}
+.process-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:18px}
+.process-step{border:1px solid #dbe1ea;background:#fff;border-radius:12px;padding:12px 7px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:10px;font-weight:850;color:#64748b}
+.process-step.done{background:#eef2ff;color:#4338ca;border-color:#c7d2fe}
+.process-step.current{box-shadow:0 0 0 2px #111827 inset;color:#111827}
+.step-number{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;font-size:11px}
+.process-step.done .step-number{background:#4338ca;color:#fff}
+.process-actions{padding:0 18px 18px;display:flex;justify-content:flex-end}
+.btn.danger{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
+.btn.danger:disabled{opacity:.45;cursor:not-allowed}
+.payment-box{padding:18px}
+.payment-record{border:1px solid #e5e7eb;border-radius:13px;margin-bottom:12px;overflow:hidden}
+.payment-record.paid{border-color:#bbf7d0}
+.payment-record-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8fafc}
+.payment-record-head strong{display:block;font-size:12px}.payment-record-head small{display:block;color:#64748b;font-size:10px;margin-top:2px}
+.payment-badge{padding:5px 9px;border-radius:999px;font-size:10px;font-weight:850;background:#fff7ed;color:#c2410c}
+.payment-badge.paid{background:#dcfce7;color:#15803d}
+.payment-grid{padding:14px}
+.paid-note{margin:0 14px 14px;padding:9px;border-radius:8px;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:800}
+.empty-payment{text-align:center;padding:35px 10px;color:#64748b}.empty-payment h3{margin:8px 0 4px;color:#172033;font-size:14px}.empty-payment p{margin:0;font-size:11px}.empty-icon{font-size:28px}
+@media(max-width:650px){
+ .process-steps{grid-template-columns:1fr 1fr}.process-step:last-child{grid-column:span 2}
+ .manage-tabs{padding:9px 10px}.payment-box{padding:10px}.detail-grid{padding:12px}.product-link-box{margin:0 12px 12px}
+ .page-head h1{font-size:22px}.panel-head{padding:13px}.toolbar{padding:12px}.filter-strip{padding:10px}
+ .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ table{min-width:900px}
+ .order-layout{display:block}.side-stack{margin-top:14px}
+ .quick-item{padding:8px}.quick-product-link strong{max-width:210px}
+}
 /* MODAL */
 .modal{position:fixed;inset:0;background:rgba(15,23,42,.48);z-index:300;display:grid;place-items:center;padding:15px}
 .modal-card{width:min(720px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px}
@@ -134,12 +184,12 @@ tbody tr:hover{background:#fafcff}
  .order-layout{grid-template-columns:1fr}
  .products-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-@media(max-width:800px){
+@media(max-width:950px){
  .mobile-menu{display:block}.sidebar{position:fixed;left:-250px;top:70px;height:calc(100vh - 70px);transition:left .22s;box-shadow:8px 0 25px rgba(15,23,42,.12)}
- .sidebar.open{left:0}.content{padding:14px}.page-head{flex-direction:column}.topbar{padding:0 12px}
+ .sidebar.open{left:0}.content{width:100%;padding:14px}.page-head{flex-direction:column}.topbar{padding:0 12px}
  .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media(max-width:520px){
+@media(max-width:600px){
  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat-card{padding:12px}.stat-card strong{font-size:21px}
  .content{padding:10px}.search-box{min-width:100%}.select{flex:1;min-width:0}.head-actions{width:100%}.head-actions .btn{flex:1}
  .detail-grid{grid-template-columns:1fr}.table-footer{align-items:flex-start;flex-direction:column}
@@ -162,7 +212,7 @@ tbody tr:hover{background:#fafcff}
 <div class="layout">
 <aside id="sidebar" class="sidebar">
   <div class="sidebar-brand">
-   <div class="sidebar-brand-mark">JS</div>
+    <div class="sidebar-brand-mark">JS</div>
     <div class="sidebar-brand-text"><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
   </div>
 
@@ -231,7 +281,7 @@ tbody tr:hover{background:#fafcff}
 
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Delivery / Tracking</th><th>Action</th></tr></thead>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Delivery / Tracking</th><th>Manage Order</th></tr></thead>
           <tbody id="ordersBody"><tr><td colspan="8" class="loading">Loading orders...</td></tr></tbody>
         </table>
       </div>
@@ -273,13 +323,30 @@ tbody tr:hover{background:#fafcff}
 </div>
 
 <div id="orderModal" class="modal hidden">
-  <div class="modal-card">
+  <div class="modal-card wide-modal">
     <div class="modal-head">
-      <div><h2>Order Details</h2><span id="modalOrderStatus" class="status pending">Pending</span></div>
+      <div><h2>Manage Order</h2><span id="modalOrderStatus" class="status pending">Pending</span></div>
       <button class="icon-btn" data-close>✕</button>
     </div>
-    <div id="orderDetails" class="detail-grid"></div>
-    <div class="modal-actions"><button id="advanceStatusBtn" class="btn primary">Advance Status</button><button class="btn secondary" data-close>Close</button></div>
+    <div class="manage-tabs">
+      <button class="manage-tab active" data-manage-tab="details">Order Details</button>
+      <button class="manage-tab" data-manage-tab="process">Process Order</button>
+      <button class="manage-tab" data-manage-tab="payment">Payment Details</button>
+    </div>
+    <section id="detailsTab" class="manage-section">
+      <div id="orderDetails" class="detail-grid"></div>
+      <div id="productLinkBox" class="product-link-box"></div>
+    </section>
+    <section id="processTab" class="manage-section hidden">
+      <div class="process-title">Process Order</div>
+      <p class="muted small">Processing is shown in the UI and is stored as <b>confirmed</b> in Supabase, matching your existing orders status constraint.</p>
+      <div id="processSteps" class="process-steps"></div>
+      <div class="process-actions"><button id="cancelOrderBtn" class="btn danger">✕ Cancel Order</button></div>
+    </section>
+    <section id="paymentTab" class="manage-section hidden">
+      <div id="paymentDetails" class="payment-box"><div class="loading">Loading payment details...</div></div>
+    </section>
+    <div class="modal-actions"><button class="btn secondary" data-close>Close</button></div>
   </div>
 </div>
 
@@ -297,7 +364,7 @@ tbody tr:hover{background:#fafcff}
 "use strict";
 
 let currentUser=null, allOrders=[], allProducts=[], currentStatus="all", currentPage=1, selectedOrder=null;
-const pageSize=10, $=id=>document.getElementById(id);
+const pageSize=15, $=id=>document.getElementById(id);
 
 function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -450,7 +517,7 @@ function renderOrders(){
    <td><b>${money(o.total_price||Number(o.price||0)*Number(o.buying_quantity||1))}</b></td>
    <td><span class="status ${esc(sk)}"><span class="status-dot"></span>${esc(statusLabel(o.status))}</span></td>
    <td>${esc(o.tracking_number||"Not assigned")}</td>
-   <td><div class="action-row"><button class="action" data-view="${esc(o.id)}">View</button><button class="action" data-next="${esc(o.id)}">Next</button></div></td>
+   <td><button class="action manage-order-btn" data-view="${esc(o.id)}">Manage Order</button></td>
   </tr>`
  }).join("");
  $("resultInfo").textContent=`Showing ${r.length?start+1:0}–${Math.min(start+pageSize,r.length)} of ${r.length} orders`;
@@ -459,53 +526,182 @@ function renderOrders(){
 
 function renderProducts(){
  const map=new Map();
- allOrders.forEach(o=>{const n=o.product_name||"Product",x=map.get(n)||{name:n,qty:0,amount:0};x.qty+=Number(o.buying_quantity||1);x.amount+=Number(o.total_price||0);map.set(n,x)});
+ allOrders.forEach(o=>{
+  const key=String(o.product_id||o.product_name||"");
+  const x=map.get(key)||{id:o.product_id||null,name:o.product_name||"Product",qty:0,amount:0};
+  x.qty+=Number(o.buying_quantity||1);
+  x.amount+=Number(o.total_price||0);
+  map.set(key,x);
+ });
  let r=[...map.values()].sort((a,b)=>b.qty-a.qty).slice(0,8);
  if(!r.length){
-   $("topProducts").innerHTML='<div class="loading">No real order/product records found in Supabase.</div>';
-   return;
+  $("topProducts").innerHTML='<div class="loading">No real order/product records found in Supabase.</div>';
+  return;
  }
  $("topProducts").innerHTML=r.map((p,i)=>{
-  const x=allProducts.find(a=>a.name===p.name),img=x?.image_urls?.[0]||"";
-  return `<div class="product-card"><div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div><strong title="${esc(p.name)}">${esc(p.name)}</strong><small>${p.qty} units sold</small><div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div><div class="product-sales">${i===0?"Top seller":"Popular product"}</div></div>`
+  const x=p.id?allProducts.find(a=>String(a.id)===String(p.id)):allProducts.find(a=>a.name===p.name);
+  const img=x?.image_urls?.[0]||"";
+  const pid=p.id||x?.id;
+  const link=pid?`product.html?id=${encodeURIComponent(pid)}&product_id=${encodeURIComponent(pid)}`:"#";
+  return `<a class="product-card product-card-link" href="${link}" ${pid?"":"aria-disabled=\"true\""} data-product-link="${esc(pid||"")}">
+    <div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div>
+    <strong title="${esc(p.name)}">${esc(p.name)}</strong>
+    <small>${p.qty} units sold</small>
+    <div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div>
+    <div class="product-sales">${i===0?"Top seller":"Popular product"}</div>
+    <span class="product-view-mini">View Product →</span>
+  </a>`;
  }).join("");
 }
 
 function renderQuick(){
- const q=($("quickSearch").value||"").toLowerCase().trim(),r=allProducts.filter(p=>p.is_active!==false&&(!q||String(p.name||"").toLowerCase().includes(q))).slice(0,6);
- $("quickResults").innerHTML=r.length?r.map(p=>`<div class="quick-item"><div><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small></div><button class="btn primary small" data-buy="${esc(p.id)}">Order</button></div>`).join(""):'<div class="loading">No matching products.</div>';
+ const q=($("quickSearch").value||"").toLowerCase().trim();
+ const r=allProducts.filter(p=>p.is_active!==false&&(!q||String(p.name||"").toLowerCase().includes(q))).slice(0,8);
+ $("quickResults").innerHTML=r.length?r.map(p=>{
+  const link=`product.html?id=${encodeURIComponent(p.id)}&product_id=${encodeURIComponent(p.id)}`;
+  return `<div class="quick-item">
+    <a class="quick-product-link" href="${link}">
+      ${p.image_urls?.[0]?`<img src="${esc(p.image_urls[0])}" alt="">`:'<span class="quick-product-icon">📦</span>'}
+      <span><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small><em>View Product</em></span>
+    </a>
+    <a class="btn primary small" href="${link}">View</a>
+  </div>`;
+ }).join(""):'<div class="loading">No matching Supabase products.</div>';
 }
+
 function render(){renderStats();renderOrders();renderProducts();renderQuick();updateCart()}
 function updateCart(){try{const c=JSON.parse(localStorage.getItem("jsu_wholesaler_cart")||"[]");$("cartCount").textContent=Array.isArray(c)?c.reduce((n,x)=>n+Number(x.quantity||x.qty||1),0):0}catch(e){$("cartCount").textContent="0"}}
 
-function openOrder(id){
- selectedOrder=allOrders.find(o=>String(o.id)===String(id));if(!selectedOrder)return;
- const sk=statusKey(selectedOrder.status),total=selectedOrder.total_price||Number(selectedOrder.price||0)*Number(selectedOrder.buying_quantity||1);
- $("modalOrderStatus").className="status "+sk;$("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(selectedOrder.status));
+async function loadPaymentForOrder(orderId){
+ const client=sb();
+ if(!client?.from||!orderId)return [];
+ const {data,error}=await client.from("payments").select("*").eq("order_id",orderId).order("created_at",{ascending:false});
+ if(error){console.warn("Payment lookup failed:",error.message);return []}
+ return data||[];
+}
+function paymentStatusPaid(p){
+ const s=String(p?.payment_status||p?.status||"").toLowerCase();
+ return ["paid","success","successful","completed"].includes(s);
+}
+function paymentModeLabel(v){
+ const s=String(v||"—").replace(/_/g," ");
+ return s.replace(/\b\w/g,c=>c.toUpperCase());
+}
+function paymentFields(p){
+ const known=[
+  ["Payment ID",p.id],["Order ID",p.order_id],["Payment Status",p.payment_status||p.status],
+  ["Payment Mode",p.payment_mode],["Amount",p.amount!=null?money(p.amount):null],["Transaction ID",p.transaction_id],
+  ["Paid At",p.paid_at?new Date(p.paid_at).toLocaleString("en-IN"):null],["UPI ID",p.upi_id],
+  ["UPI Amount",p.upi_amount!=null?money(p.upi_amount):null],["UTR Number",p.utr_no||p.utr_number||p.utr],
+  ["Account Name",p.account_name],["Account Number",p.account_number],["IFSC Code",p.ifsc_code],
+  ["Mobile Number",p.mobile_number||p.user_mobile],["User Name",p.user_name],["Notes",p.notes||p.remark]
+ ];
+ return known.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
+}
+function renderPaymentDetails(payments){
+ const box=$("paymentDetails");
+ if(!payments.length){
+  box.innerHTML='<div class="empty-payment"><div class="empty-icon">💳</div><h3>No payment record found</h3><p>There is no payment row linked to this order in Supabase.</p></div>';
+  return;
+ }
+ box.innerHTML=payments.map((p,i)=>{
+  const paid=paymentStatusPaid(p),fields=paymentFields(p);
+  return `<div class="payment-record ${paid?'paid':''}">
+    <div class="payment-record-head">
+      <div><strong>Payment ${i+1}</strong><small>${esc(paymentModeLabel(p.payment_mode))}</small></div>
+      <span class="payment-badge ${paid?'paid':'pending'}">${esc(paymentModeLabel(p.payment_status||p.status||'Pending'))}</span>
+    </div>
+    <div class="detail-grid payment-grid">${fields.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("")}</div>
+    ${paid?'<div class="paid-note">✓ Payment is marked as paid in Supabase.</div>':''}
+  </div>`
+ }).join("");
+}
+function renderProcessSteps(){
+ const current=statusKey(selectedOrder?.status);
+ const dbStatus=current==="processing"?"confirmed":current;
+ const steps=[
+  {key:"pending",label:"Pending"},
+  {key:"confirmed",label:"Processing"},
+  {key:"packed",label:"Packed"},
+  {key:"shipped",label:"Shipped"},
+  {key:"delivered",label:"Delivered"}
+ ];
+ const idx=steps.findIndex(x=>x.key===dbStatus);
+ $("processSteps").innerHTML=steps.map((st,i)=>{
+  const done=idx>=0&&i<=idx,active=i===idx;
+  return `<button class="process-step ${done?'done':''} ${active?'current':''}" data-process-status="${st.key}">
+    <span class="step-number">${done?'✓':i+1}</span><span>${st.label}</span>
+  </button>`
+ }).join("");
+ $("cancelOrderBtn").disabled=["delivered","cancelled"].includes(dbStatus);
+}
+function showManageTab(tab){
+ document.querySelectorAll(".manage-tab").forEach(x=>x.classList.toggle("active",x.dataset.manageTab===tab));
+ $("detailsTab").classList.toggle("hidden",tab!=="details");
+ $("processTab").classList.toggle("hidden",tab!=="process");
+ $("paymentTab").classList.toggle("hidden",tab!=="payment");
+}
+async function openOrder(id){
+ selectedOrder=allOrders.find(o=>String(o.id)===String(id));
+ if(!selectedOrder)return;
+ const sk=statusKey(selectedOrder.status);
+ const total=selectedOrder.total_price||Number(selectedOrder.price||0)*Number(selectedOrder.buying_quantity||1);
+ $("modalOrderStatus").className="status "+sk;
+ $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(selectedOrder.status));
  const d=[
- ["Order Number","#"+(selectedOrder.order_number||selectedOrder.id)],
- ["Customer",selectedOrder.user_name||selectedOrder.customer_name||"Customer"],
- ["Mobile",selectedOrder.user_mobile||"—"],["Product",selectedOrder.product_name||"—"],
- ["Quantity",selectedOrder.buying_quantity||1],["Price",money(selectedOrder.price||0)],["Total",money(total)],
- ["Payment Mode",selectedOrder.payment_mode||"—"],["Payment Status",selectedOrder.payment_status||"—"],
- ["Tracking Number",selectedOrder.tracking_number||"Not assigned"],["Order Status",statusLabel(selectedOrder.status)],
- ["Created",selectedOrder.created_at?new Date(selectedOrder.created_at).toLocaleString("en-IN"):"—"]
+  ["Order Number","#"+(selectedOrder.order_number||selectedOrder.id)],
+  ["Order ID",selectedOrder.id],
+  ["Customer",selectedOrder.user_name||selectedOrder.customer_name||"—"],
+  ["Mobile",selectedOrder.user_mobile||"—"],
+  ["Email",selectedOrder.user_email||"—"],
+  ["Customer Type",selectedOrder.customer_type||"—"],
+  ["Product",selectedOrder.product_name||"—"],
+  ["Product ID",selectedOrder.product_id||"—"],
+  ["Quantity",selectedOrder.buying_quantity||1],
+  ["Unit Price",money(selectedOrder.price||0)],
+  ["Total",money(total)],
+  ["Payment Mode",selectedOrder.payment_mode||"—"],
+  ["Payment Status",selectedOrder.payment_status||"—"],
+  ["Tracking Number",selectedOrder.tracking_number||"Not assigned"],
+  ["Order Status",statusLabel(selectedOrder.status)],
+  ["Created",selectedOrder.created_at?new Date(selectedOrder.created_at).toLocaleString("en-IN"):"—"],
+  ["Updated",selectedOrder.updated_at?new Date(selectedOrder.updated_at).toLocaleString("en-IN"):"—"]
  ];
  $("orderDetails").innerHTML=d.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("");
- $("advanceStatusBtn").disabled=["delivered","cancelled"].includes(sk);$("advanceStatusBtn").textContent="Advance Status";
+ const productId=selectedOrder.product_id||allProducts.find(p=>p.name===selectedOrder.product_name)?.id;
+ $("productLinkBox").innerHTML=productId
+  ? `<a class="product-view-link" href="product.html?id=${encodeURIComponent(productId)}&product_id=${encodeURIComponent(productId)}">🔗 View Product in product.html</a>`
+  : '<span class="muted small">No product_id is stored for this order, so a product link cannot be created.</span>';
+ renderProcessSteps();
+ showManageTab("details");
  $("orderModal").classList.remove("hidden");
+ $("paymentDetails").innerHTML='<div class="loading">Loading payment details from Supabase...</div>';
+ const payments=await loadPaymentForOrder(selectedOrder.id);
+ renderPaymentDetails(payments);
 }
-
-function nextStatus(s){s=statusKey(s);return s==="pending"?"confirmed":s==="confirmed"||s==="processing"?"packed":s==="packed"?"shipped":s==="shipped"?"out_for_delivery":s==="out_for_delivery"?"delivered":null}
-async function advance(){
- if(!selectedOrder)return;const next=nextStatus(selectedOrder.status);if(!next)return;
+async function updateOrderStatus(next){
+ if(!selectedOrder||!currentUser)return;
  const client=sb();
- if(client?.from&&currentUser&&!String(selectedOrder.id).startsWith("demo-")){
-  const {error}=await client.from("orders").update({status:next,updated_at:new Date().toISOString()}).eq("id",selectedOrder.id).eq("seller_id",currentUser.id);
-  if(error){toast(error.message);return}
- }
- selectedOrder.status=next;const i=allOrders.findIndex(o=>String(o.id)===String(selectedOrder.id));if(i>=0)allOrders[i].status=next;
- $("orderModal").classList.add("hidden");render();toast("Order moved to "+statusLabel(next));
+ const dbNext=next==="processing"?"confirmed":next;
+ const allowed=["pending","confirmed","packed","shipped","delivered","cancelled"];
+ if(!allowed.includes(dbNext)){toast("Invalid order status.");return}
+ const {error}=await client.from("orders")
+  .update({status:dbNext,updated_at:new Date().toISOString()})
+  .eq("id",selectedOrder.id)
+  .eq("seller_id",currentUser.id);
+ if(error){toast("Status update failed: "+error.message);return}
+ selectedOrder.status=dbNext;
+ const i=allOrders.findIndex(o=>String(o.id)===String(selectedOrder.id));
+ if(i>=0)allOrders[i].status=dbNext;
+ $("modalOrderStatus").className="status "+statusKey(dbNext);
+ $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(dbNext));
+ renderStats();renderOrders();renderProcessSteps();
+ toast("Order status updated to "+(dbNext==="confirmed"?"Processing":statusLabel(dbNext)));
+}
+async function cancelSelectedOrder(){
+ if(!selectedOrder)return;
+ if(!confirm("Cancel this order? This will update the real Supabase order status to cancelled."))return;
+ await updateOrderStatus("cancelled");
 }
 
 function exportCSV(){
@@ -525,15 +721,21 @@ $("nextPage").onclick=()=>{currentPage++;renderOrders()};
 $("viewProductsBtn").onclick=()=>location.href="my-product.html";
 $("openBuyBtn").onclick=()=>location.href="wholesaler.html#buy";
 $("quickOrderBtn").onclick=()=>location.href="wholesaler.html#buy";
-$("advanceStatusBtn").onclick=advance;
+$("cancelOrderBtn").onclick=cancelSelectedOrder;
 $("logoutBtn").onclick=async()=>{try{if(sb()?.auth)await sb().auth.signOut()}finally{location.href="login.html"}};
 
 document.addEventListener("click",e=>{
  const f=e.target.closest("[data-status]");
- if(f){document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));f.classList.add("active");currentStatus=f.dataset.status;currentPage=1;renderOrders()}
- const v=e.target.closest("[data-view]");if(v)openOrder(v.dataset.view);
- const n=e.target.closest("[data-next]");if(n)openOrder(n.dataset.next);
- const b=e.target.closest("[data-buy]");if(b)location.href="wholesaler.html#buy";
+ if(f){
+  document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
+  f.classList.add("active");currentStatus=f.dataset.status;currentPage=1;renderOrders();return;
+ }
+ const v=e.target.closest("[data-view]");if(v){openOrder(v.dataset.view);return}
+ const n=e.target.closest("[data-next]");if(n){openOrder(n.dataset.next);return}
+ const b=e.target.closest("[data-buy]");
+ if(b){location.href="product.html?id="+encodeURIComponent(b.dataset.buy)+"&product_id="+encodeURIComponent(b.dataset.buy);return}
+ const mt=e.target.closest("[data-manage-tab]");if(mt){showManageTab(mt.dataset.manageTab);return}
+ const ps=e.target.closest("[data-process-status]");if(ps){updateOrderStatus(ps.dataset.processStatus);return}
  if(e.target.closest("[data-close]"))e.target.closest(".modal")?.classList.add("hidden");
  if(e.target.classList.contains("modal"))e.target.classList.add("hidden");
 });
