@@ -1,2034 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>My Orders - JS UNDEFINED</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase.js"></script>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f6f8;
-            color: #111827;
-        }
-
-        /* ================= HEADER ================= */
-
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            height: 68px;
-            background: #111827;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-        }
-
-        .logo {
-            font-size: 21px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            white-space: nowrap;
-        }
-
-        .logo span {
-            color: #60a5fa;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-name {
-            font-size: 14px;
-            color: #d1d5db;
-            margin-right: 8px;
-            max-width: 180px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .header-btn {
-            border: 1px solid #374151;
-            background: #1f2937;
-            color: white;
-            border-radius: 8px;
-            height: 38px;
-            padding: 0 13px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .header-btn:hover {
-            background: #374151;
-        }
-
-        .logout-btn {
-            background: #dc2626;
-            border-color: #dc2626;
-        }
-
-        .logout-btn:hover {
-            background: #b91c1c;
-        }
-
-        /* ================= PAGE ================= */
-
-        .container {
-            width: min(1400px, calc(100% - 40px));
-            margin: 0 auto;
-            padding: 30px 0 60px;
-        }
-
-        .page-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .page-title h1 {
-            font-size: 28px;
-            margin-bottom: 7px;
-        }
-
-        .page-title p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .back-btn {
-            border: 1px solid #d1d5db;
-            background: white;
-            color: #111827;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .back-btn:hover {
-            background: #f3f4f6;
-        }
-
-        /* ================= FILTER BAR ================= */
-
-        .filter-bar {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .search-box input,
-        .filter-select {
-            width: 100%;
-            height: 42px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 0 12px;
-            outline: none;
-            font-size: 14px;
-            background: white;
-        }
-
-        .search-box input:focus,
-        .filter-select:focus {
-            border-color: #2563eb;
-        }
-
-        .filter-select {
-            width: 190px;
-        }
-
-        /* ================= ORDERS ================= */
-
-        .orders-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .orders-card-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .orders-card-header h2 {
-            font-size: 17px;
-        }
-
-        .order-count {
-            color: #6b7280;
-            font-size: 13px;
-        }
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1050px;
-        }
-
-        th {
-            background: #f9fafb;
-            color: #374151;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .3px;
-            text-align: left;
-            padding: 13px 15px;
-            border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f0f1f3;
-            font-size: 13px;
-            vertical-align: middle;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background: #fafafa;
-        }
-
-        .order-number {
-            font-weight: 700;
-            color: #2563eb;
-            white-space: nowrap;
-        }
-
-        .product-name {
-            font-weight: 600;
-            color: #111827;
-            max-width: 190px;
-        }
-
-        .date-text {
-            color: #6b7280;
-            white-space: nowrap;
-            font-size: 12px;
-        }
-
-        .money {
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .quantity {
-            font-weight: 600;
-            text-align: center;
-        }
-
-        /* ================= STATUS ================= */
-
-        .status {
-            display: inline-flex;
-            align-items: center;
-            padding: 5px 9px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: capitalize;
-            white-space: nowrap;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-confirmed {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .status-packed {
-            background: #e0e7ff;
-            color: #4338ca;
-        }
-
-        .status-shipped {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-
-        .status-out_for_delivery {
-            background: #cffafe;
-            color: #0e7490;
-        }
-
-        .status-delivered {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-cancelled {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .tracking {
-            color: #374151;
-            font-size: 12px;
-            max-width: 140px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .no-tracking {
-            color: #9ca3af;
-        }
-
-        .track-btn {
-            border: none;
-            background: #111827;
-            color: white;
-            border-radius: 7px;
-            padding: 8px 11px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .track-btn:hover {
-            background: #2563eb;
-        }
-
-        /* ================= EMPTY / LOADING ================= */
-
-        .empty-state,
-        .loading-state {
-            padding: 60px 20px;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .empty-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .empty-state h3 {
-            color: #111827;
-            font-size: 18px;
-            margin-bottom: 7px;
-        }
-
-        .empty-state p {
-            font-size: 13px;
-            margin-bottom: 18px;
-        }
-
-        .shop-btn {
-            border: none;
-            background: #2563eb;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 17px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .shop-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid #e5e7eb;
-            border-top-color: #2563eb;
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-            margin: 0 auto 12px;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ================= MODAL ================= */
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.55);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal {
-            width: min(600px, 100%);
-            max-height: 90vh;
-            overflow-y: auto;
-            background: white;
-            border-radius: 14px;
-            box-shadow: 0 20px 60px rgba(0,0,0,.25);
-        }
-
-        .modal-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-header h2 {
-            font-size: 18px;
-        }
-
-        .close-btn {
-            width: 34px;
-            height: 34px;
-            border: none;
-            background: #f3f4f6;
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 20px;
-            color: #374151;
-        }
-
-        .close-btn:hover {
-            background: #e5e7eb;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .order-summary {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 22px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 7px 0;
-            font-size: 13px;
-        }
-
-        .summary-row span:first-child {
-            color: #6b7280;
-        }
-
-        .summary-row strong {
-            text-align: right;
-            word-break: break-word;
-        }
-
-        /* ================= TIMELINE ================= */
-
-        .timeline-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 18px;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 35px;
-        }
-
-        .timeline::before {
-            content: "";
-            position: absolute;
-            left: 9px;
-            top: 8px;
-            bottom: 8px;
-            width: 2px;
-            background: #e5e7eb;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 22px;
-        }
-
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -32px;
-            top: 2px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: white;
-            border: 3px solid #d1d5db;
-            z-index: 1;
-        }
-
-        .timeline-item.active .timeline-dot {
-            border-color: #2563eb;
-            background: #2563eb;
-        }
-
-        .timeline-item.completed .timeline-dot {
-            border-color: #16a34a;
-            background: #16a34a;
-        }
-
-        .timeline-item.cancelled .timeline-dot {
-            border-color: #dc2626;
-            background: #dc2626;
-        }
-
-        .timeline-item h4 {
-            font-size: 13px;
-            margin-bottom: 4px;
-        }
-
-        .timeline-item p {
-            color: #6b7280;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .timeline-item.active h4 {
-            color: #2563eb;
-        }
-
-        .timeline-item.completed h4 {
-            color: #166534;
-        }
-
-        .timeline-item.cancelled h4 {
-            color: #991b1b;
-        }
-
-        /* ================= MESSAGE ================= */
-
-        .message {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 5000;
-            min-width: 260px;
-            max-width: 400px;
-            padding: 13px 16px;
-            border-radius: 9px;
-            color: white;
-            font-size: 13px;
-            box-shadow: 0 8px 25px rgba(0,0,0,.18);
-            display: none;
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message.success {
-            background: #16a34a;
-        }
-
-        .message.error {
-            background: #dc2626;
-        }
-
-        /* ================= MOBILE ================= */
-
-        @media (max-width: 800px) {
-
-            header {
-                padding: 0 15px;
-            }
-
-            .user-name {
-                display: none;
-            }
-
-            .container {
-                width: min(100% - 24px, 1400px);
-                padding-top: 20px;
-            }
-
-            .page-top {
-                align-items: flex-start;
-            }
-
-            .page-title h1 {
-                font-size: 23px;
-            }
-
-            .filter-bar {
-                flex-direction: column;
-            }
-
-            .filter-select {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            header {
-                height: 60px;
-            }
-
-            .logo {
-                font-size: 17px;
-            }
-
-            .header-btn {
-                height: 34px;
-                padding: 0 9px;
-                font-size: 11px;
-            }
-
-            .page-top {
-                flex-direction: column;
-            }
-
-            .back-btn {
-                width: 100%;
-            }
-
-            .orders-card-header {
-                padding: 15px;
-            }
-
-            .orders-card-header h2 {
-                font-size: 15px;
-            }
-
-            .modal {
-                border-radius: 10px;
-            }
-
-            .modal-body {
-                padding: 15px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS UNDEFINED — Order Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="supabase.js"></script>
+
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;overflow-x:hidden}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#fff;color:#172033}
+button,input,select{font:inherit}button{cursor:pointer}
+.hidden{display:none!important}
+
+/* TOP BAR */
+.topbar{height:70px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:20px;font-weight:850}
+.mobile-menu{display:none;width:40px;height:40px;border:1px solid #374151;background:#1f2937;color:#fff;border-radius:9px}
+.top-profile{display:flex;align-items:center;gap:9px}
+.top-profile-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#111827}
+.user-name{display:block;font-size:14px;font-weight:800}
+.top-profile small{display:block;color:#aeb7c5;font-size:10px}
+
+/* SAME WHOLESALER SIDEBAR */
+.layout{display:flex;min-height:calc(100vh - 70px)}
+.sidebar{width:240px;min-width:240px;background:#fff;border-right:1px solid #e5e7eb;position:sticky;top:70px;height:calc(100vh - 70px);overflow:auto;z-index:80}
+.sidebar-brand{display:flex;align-items:center;gap:8px;padding:10px 8px}
+.sidebar-brand-mark{width:25px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;border-radius:5px;font-size:10px;font-weight:800}
+.sidebar-brand-text strong{display:block;color:#111827;font-size:22px;font-weight:900;line-height:1.2}
+.sidebar-brand-text small{display:block;color:#475569;font-size:14px;font-weight:700}
+.sidebar-menu{padding:6px 4px}
+.nav-item{width:100%;display:flex;align-items:center;gap:7px;padding:9px 7px;margin-bottom:6px;border:0;border-radius:8px;background:transparent;color:#111827;font-size:14px;font-weight:700;text-align:left}
+.nav-item:hover{background:#f1f5f9}
+.nav-item.active{background:#eef2ff;color:#4338ca;font-weight:800}
+.nav-item span:not(.nav-icon){font-size:20px;font-weight:700;margin-top:4px}
+.nav-icon{width:20px;min-width:20px;font-size:20px;text-align:center}
+.nav-count{margin-left:auto;background:#111827;color:#fff;border-radius:50px;padding:2px 6px;font-size:9px}
+.sidebar-bottom{padding:5px 4px 12px;border-top:1px solid #e5e7eb}
+.logout-sidebar-btn{width:100%;display:flex;align-items:center;gap:7px;padding:9px 7px;border:0;border-radius:8px;background:transparent;color:#b91c1c;font-size:14px;font-weight:700;text-align:left}
+.logout-sidebar-btn:hover{background:#fef2f2}
+
+/* MAIN */
+.content{flex:1;min-width:0;padding:22px;background:#fff}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px}
+.page-head h1{margin:0 0 5px;font-size:28px;letter-spacing:-.02em}
+.page-head p{margin:0;color:#64748b;font-size:13px}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800}
+.btn.primary{background:#111827;color:#fff}
+.btn.secondary{background:#fff;border:1px solid #dbe1ea;color:#172033}
+.btn.small{padding:7px 10px;font-size:12px}
+.panel{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 5px 20px rgba(15,23,42,.045);margin-bottom:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid #eef1f5}
+.panel-head h3{margin:0;font-size:15px}
+.muted{color:#64748b}.small{font-size:11px}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.stat-card{padding:16px;background:#fff;border:1px solid #e5e7eb;border-radius:15px;box-shadow:0 5px 18px rgba(15,23,42,.035)}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-label{color:#64748b;font-size:12px;font-weight:700}
+.stat-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#f1f5f9;font-size:18px}
+.stat-card strong{display:block;font-size:27px;line-height:1.1;margin:10px 0 5px}
+.stat-foot{font-size:10px;color:#94a3b8}
+
+/* ORDER AREA */
+.order-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,.85fr);gap:18px}
+.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid #eef1f5}
+.search-box{position:relative;flex:1;min-width:210px}
+.search-box span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94a3b8}
+.input,.select{border:1px solid #d7dee8;background:#fff;border-radius:9px;padding:10px 11px;outline:none;color:#172033}
+.search-box .input{width:100%;padding-left:35px}.select{min-width:135px}
+.filter-strip{padding:11px 16px;background:#f8fafc;border-bottom:1px solid #eef1f5}
+.filter-buttons{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{border:1px solid #dbe1ea;background:#fff;border-radius:8px;padding:7px 10px;font-size:10px;font-weight:800;color:#475569}
+.filter-btn.active{background:#111827;color:#fff;border-color:#111827}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:940px}
+th,td{padding:12px;border-bottom:1px solid #eef1f5;text-align:left;font-size:12px;vertical-align:middle}
+th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+tbody tr:hover{background:#fafcff}
+.order-id{font-weight:850}
+.customer{display:flex;align-items:center;gap:8px}
+.avatar{width:32px;height:32px;min-width:32px;border-radius:50%;display:grid;place-items:center;background:#eef2ff;color:#4338ca;font-weight:800;font-size:11px}
+.customer strong{display:block;font-size:12px}.customer small{display:block;color:#94a3b8;font-size:9px;margin-top:2px}
+.status{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:850;white-space:nowrap}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.status.pending{background:#fff7ed;color:#c2410c}.status.processing{background:#fff7ed;color:#b45309}
+.status.packed{background:#fef3c7;color:#92400e}.status.shipped{background:#dbeafe;color:#1d4ed8}
+.status.delivered{background:#dcfce7;color:#15803d}.status.cancelled{background:#fee2e2;color:#b91c1c}
+.action-row{display:flex;gap:5px}.action{border:1px solid #dbe1ea;background:#fff;border-radius:7px;padding:6px 8px;font-size:10px;font-weight:800}
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;color:#64748b;font-size:10px}
+.pagination{display:flex;gap:5px}.page-btn{border:1px solid #dbe1ea;background:#fff;border-radius:7px;padding:6px 9px;font-size:10px}.page-btn.active{background:#111827;color:#fff}
+
+/* RIGHT SIDE */
+.side-stack{display:grid;gap:18px;align-content:start}
+.quick-panel{padding:16px}.quick-panel h3{margin:0 0 4px;font-size:15px}.quick-panel p{margin:0 0 13px;color:#64748b;font-size:11px}
+.quick-search{display:flex;gap:7px;margin-bottom:12px}.quick-search .input{min-width:0;flex:1}
+.quick-results{display:grid;gap:7px;max-height:245px;overflow:auto}
+.quick-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px;border:1px solid #e9edf3;border-radius:10px}
+.quick-item strong{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.quick-item small{display:block;color:#94a3b8;font-size:9px;margin-top:2px}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:16px}
+.status-card{padding:13px;border:1px solid #e7ebf2;border-radius:12px}.status-card span{display:block;color:#64748b;font-size:10px;font-weight:700}
+.status-card strong{display:block;font-size:24px;margin-top:5px}.status-card.pending strong{color:#ea580c}.status-card.processing strong{color:#d97706}.status-card.shipped strong{color:#2563eb}.status-card.delivered strong{color:#16a34a}
+
+/* TOP PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px 16px}
+.product-card{border:1px solid #e5e7eb;border-radius:12px;padding:9px;background:#fff;min-width:0}
+.product-image{height:85px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;overflow:hidden;margin-bottom:8px}
+.product-image img{width:100%;height:100%;object-fit:cover}
+.product-card strong{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-card small{display:block;color:#94a3b8;font-size:9px;margin-top:3px}
+.product-price{font-weight:900;font-size:13px;margin-top:5px}.product-sales{font-size:9px;color:#16a34a;margin-top:3px;font-weight:800}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.48);z-index:300;display:grid;place-items:center;padding:15px}
+.modal-card{width:min(720px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:17px 18px;border-bottom:1px solid #eef1f5}
+.modal-head h2{margin:0;font-size:18px}.icon-btn{width:36px;height:36px;border:1px solid #dbe1ea;background:#fff;border-radius:9px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:18px}
+.detail-item{padding:12px;border:1px solid #e7ebf2;border-radius:11px;background:#fafbfc}
+.detail-item span{display:block;color:#94a3b8;font-size:9px;text-transform:uppercase;font-weight:800;margin-bottom:4px}.detail-item strong{font-size:12px;word-break:break-word}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:15px 18px;border-top:1px solid #eef1f5}
+.toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:11px 14px;border-radius:10px;z-index:500;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s;font-size:12px}.toast.show{opacity:1;transform:none}
+.loading{text-align:center;padding:28px;color:#64748b}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .order-layout{grid-template-columns:1fr}
+ .products-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:800px){
+ .mobile-menu{display:block}.sidebar{position:fixed;left:-250px;top:70px;height:calc(100vh - 70px);transition:left .22s;box-shadow:8px 0 25px rgba(15,23,42,.12)}
+ .sidebar.open{left:0}.content{padding:14px}.page-head{flex-direction:column}.topbar{padding:0 12px}
+ .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px){
+ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat-card{padding:12px}.stat-card strong{font-size:21px}
+ .content{padding:10px}.search-box{min-width:100%}.select{flex:1;min-width:0}.head-actions{width:100%}.head-actions .btn{flex:1}
+ .detail-grid{grid-template-columns:1fr}.table-footer{align-items:flex-start;flex-direction:column}
+}
+</style>
 </head>
 
 <body>
-
-<!-- ================= HEADER ================= -->
-
-<header>
-
-    <div class="logo">
-        JS <span>UNDEFINED</span>
-    </div>
-
-    <div class="header-right">
-
-        <div class="user-name" id="userName">
-            Loading...
-        </div>
-
-        <button class="header-btn" onclick="searchOrders()">
-            🔍 Search
-        </button>
-
-        <button class="header-btn" onclick="openMenu()">
-            ☰ Menu
-        </button>
-
-        <button class="header-btn logout-btn" onclick="logout()">
-            Logout
-        </button>
-
-    </div>
-
+<header class="topbar">
+  <div class="topbar-left">
+    <button id="menuButton" class="mobile-menu">☰</button>
+    <div class="topbar-title">Wholesaler Panel</div>
+  </div>
+  <div class="top-profile">
+    <div class="top-profile-icon">👤</div>
+    <div><span id="topUserName" class="user-name">Wholesaler</span><small>Wholesaler</small></div>
+  </div>
 </header>
 
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-brand">
 
-<!-- ================= MAIN ================= -->
+    <div class="sidebar-brand-mark">JS</div>
+    <div class="sidebar-brand-text"><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
+  </div>
 
-<main class="container">
+  <nav class="sidebar-menu">
+    <button class="nav-item" onclick="location.href='wholesaler.html'"><span class="nav-icon">📊</span><span>Dashboard</span></button>
+    <button class="nav-item" onclick="location.href='my-product.html'"><span class="nav-icon">📦</span><span>My Products</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#buy'"><span class="nav-icon">🛍️</span><span>Buy Products</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#cart'"><span class="nav-icon">🛒</span><span>Cart</span><b id="cartCount" class="nav-count">0</b></button>
+    <button class="nav-item active"><span class="nav-icon">🚚</span><span>Orders</span></button>
+    <button class="nav-item" onclick="location.href='payment.html'"><span class="nav-icon">💳</span><span>Payments</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#customers'"><span class="nav-icon">👥</span><span>Customers</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#inventory'"><span class="nav-icon">🏷️</span><span>Inventory</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#reports'"><span class="nav-icon">📈</span><span>Reports</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#notifications'"><span class="nav-icon">🔔</span><span>Notifications</span></button>
+    <button class="nav-item" onclick="location.href='wholesaler.html#profile'"><span class="nav-icon">👤</span><span>Profile</span></button>
+  </nav>
 
-    <div class="page-top">
+  <div class="sidebar-bottom">
+    <button id="logoutBtn" class="logout-sidebar-btn"><span class="nav-icon">🚪</span><span>Logout</span></button>
+  </div>
+</aside>
 
-        <div class="page-title">
-            <h1>My Orders</h1>
-            <p>View your orders and track your deliveries.</p>
-        </div>
-
-        <button class="back-btn" onclick="goBack()">
-            ← Continue Shopping
-        </button>
-
+<main class="content">
+  <div class="page-head">
+    <div>
+      <h1>Live Orders</h1>
+      <p>Order management &amp; fulfilment — manage received orders in one place.</p>
     </div>
-
-
-    <!-- ================= FILTER ================= -->
-
-    <div class="filter-bar">
-
-        <div class="search-box">
-            <input
-                type="text"
-                id="orderSearch"
-                placeholder="Search order ID, product name or tracking number..."
-                oninput="filterOrders()"
-            >
-        </div>
-
-        <select
-            id="statusFilter"
-            class="filter-select"
-            onchange="filterOrders()"
-        >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="packed">Packed</option>
-            <option value="shipped">Shipped</option>
-            <option value="out_for_delivery">Out for Delivery</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-        </select>
-
+    <div class="head-actions">
+      <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+      <button id="quickOrderBtn" class="btn primary">＋ Create / Quick Order</button>
     </div>
+  </div>
 
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-top"><span class="stat-label">Active Orders</span><span class="stat-icon">🛒</span></div><strong id="activeCount">0</strong><span class="stat-foot">Pending + processing + packed</span></div>
+    <div class="stat-card"><div class="stat-top"><span class="stat-label">Processing</span><span class="stat-icon">⚙️</span></div><strong id="processingCount">0</strong><span class="stat-foot">Orders being prepared</span></div>
+    <div class="stat-card"><div class="stat-top"><span class="stat-label">Pending</span><span class="stat-icon">⏳</span></div><strong id="pendingCount">0</strong><span class="stat-foot">Need confirmation</span></div>
+    <div class="stat-card"><div class="stat-top"><span class="stat-label">Shipped</span><span class="stat-icon">🚚</span></div><strong id="shippedCount">0</strong><span class="stat-foot">On the way to customer</span></div>
+  </div>
 
-    <!-- ================= ORDERS CARD ================= -->
+  <div class="order-layout">
+    <section class="panel">
+      <div class="panel-head">
+        <div><h3>Live Orders</h3><span class="small muted">Orders connected to your wholesaler account</span></div>
+        <button id="exportBtn" class="btn secondary small">⇩ Export CSV</button>
+      </div>
 
-    <section class="orders-card">
+      <div class="toolbar">
+        <div class="search-box"><span>⌕</span><input id="orderSearch" class="input" placeholder="Search order, customer, product or tracking..."></div>
+        <select id="dateFilter" class="select"><option value="all">All dates</option><option value="today">Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+        <select id="sortOrder" class="select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="high">Highest amount</option><option value="low">Lowest amount</option></select>
+      </div>
 
-        <div class="orders-card-header">
-
-            <h2>Your Orders</h2>
-
-            <div class="order-count" id="orderCount">
-                0 orders
-            </div>
-
+      <div class="filter-strip">
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-status="all">All</button>
+          <button class="filter-btn" data-status="pending">Pending</button>
+          <button class="filter-btn" data-status="processing">Processing</button>
+          <button class="filter-btn" data-status="packed">Packed</button>
+          <button class="filter-btn" data-status="shipped">Shipped</button>
+          <button class="filter-btn" data-status="delivered">Delivered</button>
+          <button class="filter-btn" data-status="cancelled">Cancelled</button>
         </div>
+      </div>
 
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Delivery / Tracking</th><th>Action</th></tr></thead>
+          <tbody id="ordersBody"><tr><td colspan="8" class="loading">Loading orders...</td></tr></tbody>
+        </table>
+      </div>
 
-        <div id="ordersContent">
-
-            <div class="loading-state">
-                <div class="spinner"></div>
-                Loading your orders...
-            </div>
-
-        </div>
-
+      <div class="table-footer">
+        <span id="resultInfo">Showing 0 orders</span>
+        <div class="pagination"><button class="page-btn" id="prevPage">‹</button><button class="page-btn active" id="pageNumber">1</button><button class="page-btn" id="nextPage">›</button></div>
+      </div>
     </section>
 
-</main>
+    <aside class="side-stack">
+      <section class="panel quick-panel">
+        <h3>Order Placement &amp; Facility</h3>
+        <p>Quickly find a product and continue to order placement.</p>
+        <div class="quick-search"><input id="quickSearch" class="input" placeholder="Search product..."><button id="openBuyBtn" class="btn primary small">Buy</button></div>
+        <div id="quickResults" class="quick-results"><div class="loading">Loading products...</div></div>
+      </section>
 
-
-<!-- ================= TRACKING MODAL ================= -->
-
-<div
-    class="modal-overlay"
-    id="trackingModal"
-    onclick="closeTrackingOnOverlay(event)"
->
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h2>Track Order</h2>
-
-            <button
-                class="close-btn"
-                onclick="closeTrackingModal()"
-            >
-                ×
-            </button>
-
+      <section class="panel">
+        <div class="panel-head"><h3>Order Status</h3><span class="small muted">Live</span></div>
+        <div class="status-grid">
+          <div class="status-card pending"><span>Pending</span><strong id="sidePending">0</strong></div>
+          <div class="status-card processing"><span>Processing</span><strong id="sideProcessing">0</strong></div>
+          <div class="status-card shipped"><span>Shipped</span><strong id="sideShipped">0</strong></div>
+          <div class="status-card delivered"><span>Delivered</span><strong id="sideDelivered">0</strong></div>
         </div>
+      </section>
+    </aside>
+  </div>
 
-
-        <div class="modal-body">
-
-            <div
-                class="order-summary"
-                id="trackingSummary"
-            >
-            </div>
-
-
-            <div class="timeline-title">
-                Order Status
-            </div>
-
-
-            <div
-                class="timeline"
-                id="trackingTimeline"
-            >
-            </div>
-
-        </div>
-
+  <section class="panel">
+    <div class="panel-head">
+      <div><h3>Top-Selling Products</h3><span class="small muted">Based on quantities in your received orders</span></div>
+      <button id="viewProductsBtn" class="btn secondary small">Manage Products</button>
     </div>
-
+    <div id="topProducts" class="products-grid"><div class="loading">Loading products...</div></div>
+  </section>
+</main>
 </div>
 
+<div id="orderModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h2>Order Details</h2><span id="modalOrderStatus" class="status pending">Pending</span></div>
+      <button class="icon-btn" data-close>✕</button>
+    </div>
+    <div id="orderDetails" class="detail-grid"></div>
+    <div class="modal-actions"><button id="advanceStatusBtn" class="btn primary">Advance Status</button><button class="btn secondary" data-close>Close</button></div>
+  </div>
+</div>
 
-<!-- ================= MESSAGE ================= -->
+<div id="quickModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><h2>Quick Order</h2><button class="icon-btn" data-close>✕</button></div>
+    <div style="padding:18px"><p class="muted" style="font-size:12px">Use the existing Buy Products/cart/checkout flow for the complete order placement process.</p><button id="continueBuy" class="btn primary">Open Buy Products</button></div>
+  </div>
+</div>
 
-<div
-    id="message"
-    class="message"
-></div>
-
+<div id="toast" class="toast"></div>
 
 <script>
-
-    /* =========================================================
-       GLOBAL VARIABLES
-    ========================================================= */
-
-    let currentUser = null;
-    let allOrders = [];
-    let filteredOrders = [];
-    let trackingOrder = null;
-
-
-    /* =========================================================
-       LOAD USER
-    ========================================================= */
-
-    async function loadUser() {
-
-        try {
-
-            const {
-                data: {
-                    user
-                },
-                error
-            } = await supabaseClient.auth.getUser();
-
-            if (error) {
-                throw error;
-            }
-
-            if (!user) {
-
-                window.location.href = "login.html";
-                return;
-
-            }
-
-            currentUser = user;
-
-
-            /* ================= PROFILE ================= */
-
-            const {
-                data: profile,
-                error: profileError
-            } = await supabaseClient
-                .from("profiles")
-                .select("*")
-                .eq("id", user.id)
-                .maybeSingle();
-
-
-            if (profileError) {
-                console.error(
-                    "PROFILE ERROR:",
-                    profileError
-                );
-            }
-
-
-            let displayName =
-                profile?.full_name ||
-                profile?.name ||
-                profile?.username ||
-                user.user_metadata?.full_name ||
-                user.user_metadata?.name ||
-                user.email ||
-                "User";
-
-
-            document.getElementById("userName").textContent =
-                displayName;
-
-
-            await loadOrders();
-
-        } catch (error) {
-
-            console.error(
-                "LOAD USER ERROR:",
-                error
-            );
-
-            showMessage(
-                error.message ||
-                "Could not load user.",
-                "error"
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       LOAD ORDERS
-    ========================================================= */
-
-    async function loadOrders() {
-
-        const content =
-            document.getElementById("ordersContent");
-
-
-        content.innerHTML = `
-            <div class="loading-state">
-                <div class="spinner"></div>
-                Loading your orders...
-            </div>
-        `;
-
-
-        try {
-
-            const {
-                data,
-                error
-            } = await supabaseClient
-                .from("orders")
-                .select("*")
-                .eq("user_id", currentUser.id)
-                .order("created_at", {
-                    ascending: false
-                });
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            allOrders = data || [];
-
-            filteredOrders = [...allOrders];
-
-
-            renderOrders();
-
-
-        } catch (error) {
-
-            console.error(
-                "LOAD ORDERS ERROR:",
-                error
-            );
-
-
-            content.innerHTML = `
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        ⚠️
-                    </div>
-
-                    <h3>
-                        Could not load orders
-                    </h3>
-
-                    <p>
-                        ${escapeHtml(
-                            error.message ||
-                            "Something went wrong."
-                        )}
-                    </p>
-
-                </div>
-            `;
-
-
-            showMessage(
-                error.message ||
-                "Could not load orders.",
-                "error"
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       RENDER ORDERS
-    ========================================================= */
-
-    function renderOrders() {
-
-        const content =
-            document.getElementById("ordersContent");
-
-        const count =
-            document.getElementById("orderCount");
-
-
-        count.textContent =
-            `${filteredOrders.length} ${
-                filteredOrders.length === 1
-                    ? "order"
-                    : "orders"
-            }`;
-
-
-        if (!filteredOrders.length) {
-
-            content.innerHTML = `
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        📦
-                    </div>
-
-                    <h3>
-                        No orders found
-                    </h3>
-
-                    <p>
-                        You don't have any orders matching your search.
-                    </p>
-
-                    <button
-                        class="shop-btn"
-                        onclick="goBack()"
-                    >
-                        Continue Shopping
-                    </button>
-
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        let html = `
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Order ID</th>
-
-                            <th>Date</th>
-
-                            <th>Product</th>
-
-                            <th>Price</th>
-
-                            <th>Qty</th>
-
-                            <th>Total</th>
-
-                            <th>Payment</th>
-
-                            <th>Status</th>
-
-                            <th>Tracking</th>
-
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-        `;
-
-
-        filteredOrders.forEach(order => {
-
-            const status =
-                order.status || "pending";
-
-
-            const orderNumber =
-                order.order_number ||
-                order.id;
-
-
-            const date =
-                formatDate(order.created_at);
-
-
-            const price =
-                formatMoney(order.price);
-
-
-            const total =
-                formatMoney(
-                    order.total_price
-                );
-
-
-            const quantity =
-                order.buying_quantity || 1;
-
-
-            const tracking =
-                order.tracking_number;
-
-
-            html += `
-
-                <tr>
-
-                    <td>
-
-                        <div class="order-number">
-                            ${escapeHtml(orderNumber)}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="date-text">
-                            ${date}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="product-name">
-                            ${escapeHtml(
-                                order.product_name ||
-                                "Product"
-                            )}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="money">
-                            ${price}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="quantity">
-                            ${quantity}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="money">
-                            ${total}
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        ${escapeHtml(
-                            formatPaymentMode(
-                                order.payment_mode
-                            )
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        <span class="status status-${escapeHtml(status)}">
-
-                            ${escapeHtml(
-                                formatStatus(status)
-                            )}
-
-                        </span>
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            tracking
-                            ? `
-                                <div
-                                    class="tracking"
-                                    title="${escapeHtml(tracking)}"
-                                >
-                                    ${escapeHtml(tracking)}
-                                </div>
-                            `
-                            : `
-                                <span class="no-tracking">
-                                    Not available
-                                </span>
-                            `
-                        }
-
-                    </td>
-
-
-                    <td>
-
-                        <button
-                            class="track-btn"
-                            onclick="openTracking('${escapeHtml(order.id)}')"
-                        >
-                            Track Order
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        });
-
-
-        html += `
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        `;
-
-
-        content.innerHTML = html;
-
-    }
-
-
-    /* =========================================================
-       FILTER ORDERS
-    ========================================================= */
-
-    function filterOrders() {
-
-        const search =
-            document
-                .getElementById("orderSearch")
-                .value
-                .trim()
-                .toLowerCase();
-
-
-        const status =
-            document
-                .getElementById("statusFilter")
-                .value;
-
-
-        filteredOrders =
-            allOrders.filter(order => {
-
-                const orderNumber =
-                    String(
-                        order.order_number ||
-                        order.id ||
-                        ""
-                    ).toLowerCase();
-
-
-                const productName =
-                    String(
-                        order.product_name ||
-                        ""
-                    ).toLowerCase();
-
-
-                const tracking =
-                    String(
-                        order.tracking_number ||
-                        ""
-                    ).toLowerCase();
-
-
-                const statusValue =
-                    String(
-                        order.status ||
-                        "pending"
-                    ).toLowerCase();
-
-
-                const matchesSearch =
-                    !search ||
-                    orderNumber.includes(search) ||
-                    productName.includes(search) ||
-                    tracking.includes(search);
-
-
-                const matchesStatus =
-                    status === "all" ||
-                    statusValue === status;
-
-
-                return (
-                    matchesSearch &&
-                    matchesStatus
-                );
-
-            });
-
-
-        renderOrders();
-
-    }
-
-
-    /* =========================================================
-       OPEN TRACKING
-    ========================================================= */
-
-    function openTracking(orderId) {
-
-        trackingOrder =
-            allOrders.find(
-                order => order.id === orderId
-            );
-
-
-        if (!trackingOrder) {
-
-            showMessage(
-                "Order not found.",
-                "error"
-            );
-
-            return;
-
-        }
-
-
-        renderTrackingModal();
-
-
-        document
-            .getElementById("trackingModal")
-            .classList.add("show");
-
-    }
-
-
-    /* =========================================================
-       RENDER TRACKING MODAL
-    ========================================================= */
-
-    function renderTrackingModal() {
-
-        const order =
-            trackingOrder;
-
-
-        const summary =
-            document.getElementById(
-                "trackingSummary"
-            );
-
-
-        const orderNumber =
-            order.order_number ||
-            order.id;
-
-
-        summary.innerHTML = `
-
-            <div class="summary-row">
-
-                <span>
-                    Order ID
-                </span>
-
-                <strong>
-                    ${escapeHtml(orderNumber)}
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Product
-                </span>
-
-                <strong>
-                    ${escapeHtml(
-                        order.product_name ||
-                        "Product"
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Quantity
-                </span>
-
-                <strong>
-                    ${escapeHtml(
-                        String(
-                            order.buying_quantity || 1
-                        )
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Total
-                </span>
-
-                <strong>
-                    ${formatMoney(
-                        order.total_price
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Payment
-                </span>
-
-                <strong>
-                    ${escapeHtml(
-                        formatPaymentMode(
-                            order.payment_mode
-                        )
-                    )}
-                </strong>
-
-            </div>
-
-
-            <div class="summary-row">
-
-                <span>
-                    Tracking Number
-                </span>
-
-                <strong>
-                    ${
-                        order.tracking_number
-                        ? escapeHtml(
-                            order.tracking_number
-                        )
-                        : "Not assigned"
-                    }
-                </strong>
-
-            </div>
-
-        `;
-
-
-        renderTimeline(order);
-
-    }
-
-
-    /* =========================================================
-       ORDER TIMELINE
-    ========================================================= */
-
-    function renderTimeline(order) {
-
-        const timeline =
-            document.getElementById(
-                "trackingTimeline"
-            );
-
-
-        const currentStatus =
-            order.status || "pending";
-
-
-        const steps = [
-
-            {
-                key: "pending",
-                title: "Order Placed",
-                description:
-                    "Your order has been placed and is waiting for confirmation."
-            },
-
-            {
-                key: "confirmed",
-                title: "Order Confirmed",
-                description:
-                    "The seller has confirmed your order."
-            },
-
-            {
-                key: "packed",
-                title: "Order Packed",
-                description:
-                    "Your product has been packed and is ready for shipment."
-            },
-
-            {
-                key: "shipped",
-                title: "Order Shipped",
-                description:
-                    "Your order has been handed over for delivery."
-            },
-
-            {
-                key: "out_for_delivery",
-                title: "Out for Delivery",
-                description:
-                    "Your order is currently out for delivery."
-            },
-
-            {
-                key: "delivered",
-                title: "Delivered",
-                description:
-                    "Your order has been delivered successfully."
-            }
-
-        ];
-
-
-        /* ================= CANCELLED ================= */
-
-        if (currentStatus === "cancelled") {
-
-            timeline.innerHTML = `
-
-                <div class="timeline-item completed">
-
-                    <div class="timeline-dot"></div>
-
-                    <h4>
-                        Order Placed
-                    </h4>
-
-                    <p>
-                        Your order was created.
-                    </p>
-
-                </div>
-
-
-                <div class="timeline-item cancelled">
-
-                    <div class="timeline-dot"></div>
-
-                    <h4>
-                        Order Cancelled
-                    </h4>
-
-                    <p>
-                        This order has been cancelled.
-                    </p>
-
-                </div>
-
-            `;
-
-            return;
-
-        }
-
-
-        const currentIndex =
-            steps.findIndex(
-                step =>
-                    step.key === currentStatus
-            );
-
-
-        timeline.innerHTML =
-            steps.map(
-                (step, index) => {
-
-                    let className =
-                        "timeline-item";
-
-
-                    if (
-                        index < currentIndex
-                    ) {
-
-                        className +=
-                            " completed";
-
-                    } else if (
-                        index === currentIndex
-                    ) {
-
-                        className +=
-                            " active";
-
-                    }
-
-
-                    return `
-
-                        <div
-                            class="${className}"
-                        >
-
-                            <div class="timeline-dot"></div>
-
-                            <h4>
-                                ${escapeHtml(
-                                    step.title
-                                )}
-                            </h4>
-
-                            <p>
-                                ${escapeHtml(
-                                    step.description
-                                )}
-                            </p>
-
-                        </div>
-
-                    `;
-
-                }
-            )
-            .join("");
-
-    }
-
-
-    /* =========================================================
-       CLOSE TRACKING MODAL
-    ========================================================= */
-
-    function closeTrackingModal() {
-
-        document
-            .getElementById("trackingModal")
-            .classList.remove("show");
-
-        trackingOrder = null;
-
-    }
-
-
-    function closeTrackingOnOverlay(event) {
-
-        if (
-            event.target.id ===
-            "trackingModal"
-        ) {
-
-            closeTrackingModal();
-
-        }
-
-    }
-
-
-    /* =========================================================
-       SEARCH
-    ========================================================= */
-
-    function searchOrders() {
-
-        const input =
-            document.getElementById(
-                "orderSearch"
-            );
-
-
-        input.focus();
-
-
-        input.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }
-
-
-    /* =========================================================
-       MENU
-    ========================================================= */
-
-    function openMenu() {
-
-        const choice =
-            prompt(
-                "Enter page:\n\n" +
-                "1 - Home\n" +
-                "2 - My Orders\n" +
-                "3 - Business Dashboard\n" +
-                "4 - Products"
-            );
-
-
-        if (choice === "1") {
-
-            window.location.href =
-                "index.html";
-
-        } else if (choice === "2") {
-
-            window.location.href =
-                "my-orders.html";
-
-        } else if (choice === "3") {
-
-            window.location.href =
-                "business-user.html";
-
-        } else if (choice === "4") {
-
-            window.location.href =
-                "product.html";
-
-        }
-
-    }
-
-
-    /* =========================================================
-       BACK / SHOPPING
-    ========================================================= */
-
-    function goBack() {
-
-        window.location.href =
-            "index.html";
-
-    }
-
-
-    /* =========================================================
-       LOGOUT
-    ========================================================= */
-
-    async function logout() {
-
-        try {
-
-            const {
-                error
-            } = await supabaseClient.auth.signOut();
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            window.location.href =
-                "login.html";
-
-        } catch (error) {
-
-            console.error(
-                "LOGOUT ERROR:",
-                error
-            );
-
-
-            showMessage(
-                error.message ||
-                "Could not logout.",
-                "error"
-            );
-
-        }
-
-    }
-
-
-    /* =========================================================
-       FORMAT STATUS
-    ========================================================= */
-
-    function formatStatus(status) {
-
-        if (!status) {
-            return "Pending";
-        }
-
-
-        return status
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, char =>
-                char.toUpperCase()
-            );
-
-    }
-
-
-    /* =========================================================
-       FORMAT PAYMENT
-    ========================================================= */
-
-    function formatPaymentMode(payment) {
-
-        if (!payment) {
-            return "Pending";
-        }
-
-
-        return String(payment)
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, char =>
-                char.toUpperCase()
-            );
-
-    }
-
-
-    /* =========================================================
-       FORMAT MONEY
-    ========================================================= */
-
-    function formatMoney(value) {
-
-        const number =
-            Number(value || 0);
-
-
-        return "₹" +
-            number.toLocaleString(
-                "en-IN",
-                {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                }
-            );
-
-    }
-
-
-    /* =========================================================
-       FORMAT DATE
-    ========================================================= */
-
-    function formatDate(value) {
-
-        if (!value) {
-            return "-";
-        }
-
-
-        const date =
-            new Date(value);
-
-
-        if (Number.isNaN(date.getTime())) {
-            return "-";
-        }
-
-
-        return date.toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
-            }
-        );
-
-    }
-
-
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================= */
-
-    function escapeHtml(value) {
-
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-
-        }
-
-
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-
-    }
-
-
-    /* =========================================================
-       MESSAGE
-    ========================================================= */
-
-    let messageTimer = null;
-
-
-    function showMessage(
-        text,
-        type = "success"
-    ) {
-
-        const message =
-            document.getElementById(
-                "message"
-            );
-
-
-        message.textContent =
-            text;
-
-
-        message.className =
-            `message show ${type}`;
-
-
-        clearTimeout(
-            messageTimer
-        );
-
-
-        messageTimer =
-            setTimeout(() => {
-
-                message.className =
-                    "message";
-
-            }, 3500);
-
-    }
-
-
-    /* =========================================================
-       ESC KEY
-    ========================================================= */
-
-    document.addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                closeTrackingModal();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       INITIAL LOAD
-       LOAD USER FUNCTION TO END CODE
-    ========================================================= */
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        function() {
-
-            loadUser();
-
-        }
-    );
-
+(function(){
+"use strict";
+
+let currentUser=null, allOrders=[], allProducts=[], currentStatus="all", currentPage=1, selectedOrder=null;
+const pageSize=10, $=id=>document.getElementById(id);
+
+function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function initials(n){return String(n||"U").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"U"}
+function statusKey(s){s=String(s||"pending").toLowerCase().replace(/\s+/g,"_");return s==="confirmed"?"processing":s}
+function statusLabel(s){return statusKey(s).replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())}
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2200)}
+function sb(){return window.supabaseClient||window.supabase||null}
+
+function demo(){
+ const n=Date.now();
+ allOrders=[
+  {id:"demo-10051",order_number:"JSU10051",user_name:"Rahul Patel",user_mobile:"98XXXXXX12",product_name:"Women Premium Kurti",buying_quantity:24,price:350,total_price:8400,status:"shipped",tracking_number:"TRK842991",created_at:new Date(n-86400000).toISOString()},
+  {id:"demo-10050",order_number:"JSU10050",user_name:"Amit Shah",user_mobile:"97XXXXXX21",product_name:"Ladies Footwear",buying_quantity:18,price:420,total_price:7560,status:"confirmed",created_at:new Date(n-2*86400000).toISOString()},
+  {id:"demo-10049",order_number:"JSU10049",user_name:"Kiran Patel",user_mobile:"96XXXXXX32",product_name:"Georgette Dress",buying_quantity:12,price:590,total_price:7080,status:"pending",created_at:new Date(n-3*86400000).toISOString()},
+  {id:"demo-10048",order_number:"JSU10048",user_name:"Neha Shah",user_mobile:"95XXXXXX43",product_name:"Cotton Kurti Set",buying_quantity:30,price:310,total_price:9300,status:"packed",created_at:new Date(n-4*86400000).toISOString()},
+  {id:"demo-10047",order_number:"JSU10047",user_name:"Meera",user_mobile:"94XXXXXX54",product_name:"Women Sandal",buying_quantity:15,price:380,total_price:5700,status:"delivered",tracking_number:"TRK842810",created_at:new Date(n-6*86400000).toISOString()}
+ ];
+ allProducts=[
+  {id:"p1",name:"Women Premium Kurti",price:350,bulk_price:320,stock_quantity:180,image_urls:[]},
+  {id:"p2",name:"Ladies Footwear",price:420,bulk_price:390,stock_quantity:90,image_urls:[]},
+  {id:"p3",name:"Georgette Dress",price:590,bulk_price:550,stock_quantity:65,image_urls:[]},
+  {id:"p4",name:"Cotton Kurti Set",price:310,bulk_price:285,stock_quantity:210,image_urls:[]}
+ ];
+}
+
+async function load(){
+ const client=sb();
+ try{
+  if(!client?.auth){demo();render();return}
+  const {data,error}=await client.auth.getSession();
+  if(error)throw error;
+  currentUser=data?.session?.user||null;
+  if(!currentUser){demo();render();toast("Login session not found — preview data shown.");return}
+  $("topUserName").textContent=currentUser.user_metadata?.full_name||currentUser.email?.split("@")[0]||"Wholesaler";
+
+  const o=await client.from("orders").select("*").eq("seller_id",currentUser.id).order("created_at",{ascending:false});
+  if(o.error)throw o.error;
+  allOrders=o.data||[];
+
+  const p=await client.from("products").select("id,name,price,bulk_price,stock_quantity,image_urls,is_active,seller_id").eq("seller_id",currentUser.id);
+  allProducts=p.error?[]:(p.data||[]);
+  render();
+ }catch(e){console.error(e);demo();render();toast("Could not load live data. Preview data shown.")}
+}
+
+function rows(){
+ const q=($("orderSearch").value||"").toLowerCase().trim(), date=$("dateFilter").value, sort=$("sortOrder").value;
+ let r=allOrders.filter(o=>{
+  const hay=[o.order_number,o.id,o.product_name,o.tracking_number,o.user_name,o.customer_name,o.user_mobile].join(" ").toLowerCase();
+  if(q&&!hay.includes(q))return false;
+  if(currentStatus!=="all"&&statusKey(o.status)!==currentStatus)return false;
+  if(date!=="all"){const age=(Date.now()-new Date(o.created_at||0).getTime())/86400000;if(date==="today"?age>1:age>Number(date))return false}
+  return true;
+ });
+ r.sort((a,b)=>sort==="high"?Number(b.total_price||0)-Number(a.total_price||0):sort==="low"?Number(a.total_price||0)-Number(b.total_price||0):(sort==="oldest"?1:-1)*(new Date(a.created_at||0)-new Date(b.created_at||0)));
+ return r;
+}
+
+function renderStats(){
+ const r=allOrders, c=s=>r.filter(o=>statusKey(o.status)===s).length;
+ const processing=r.filter(o=>["processing","packed"].includes(statusKey(o.status))).length;
+ const active=r.filter(o=>["pending","processing","packed"].includes(statusKey(o.status))).length;
+ $("activeCount").textContent=active;$("processingCount").textContent=processing;$("pendingCount").textContent=c("pending");$("shippedCount").textContent=c("shipped");
+ $("sidePending").textContent=c("pending");$("sideProcessing").textContent=processing;$("sideShipped").textContent=c("shipped");$("sideDelivered").textContent=c("delivered");
+}
+
+function renderOrders(){
+ const r=rows(), pages=Math.max(1,Math.ceil(r.length/pageSize));currentPage=Math.min(currentPage,pages);
+ const start=(currentPage-1)*pageSize, page=r.slice(start,start+pageSize), body=$("ordersBody");
+ if(!page.length)body.innerHTML='<tr><td colspan="8" class="loading">No orders found.</td></tr>';
+ else body.innerHTML=page.map(o=>{
+  const name=o.user_name||o.customer_name||"Customer", sk=statusKey(o.status), date=o.created_at?new Date(o.created_at).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}):"—";
+  return `<tr>
+   <td><span class="order-id">#${esc(o.order_number||String(o.id||"").slice(0,8))}</span></td>
+   <td><div class="customer"><span class="avatar">${esc(initials(name))}</span><div><strong>${esc(name)}</strong><small>${esc(o.user_mobile||"Customer")}</small></div></div></td>
+   <td>${esc(date)}</td><td>${esc(o.buying_quantity||1)}</td>
+   <td><b>${money(o.total_price||Number(o.price||0)*Number(o.buying_quantity||1))}</b></td>
+   <td><span class="status ${esc(sk)}"><span class="status-dot"></span>${esc(statusLabel(o.status))}</span></td>
+   <td>${esc(o.tracking_number||"Not assigned")}</td>
+   <td><div class="action-row"><button class="action" data-view="${esc(o.id)}">View</button><button class="action" data-next="${esc(o.id)}">Next</button></div></td>
+  </tr>`
+ }).join("");
+ $("resultInfo").textContent=`Showing ${r.length?start+1:0}–${Math.min(start+pageSize,r.length)} of ${r.length} orders`;
+ $("pageNumber").textContent=currentPage;$("prevPage").disabled=currentPage<=1;$("nextPage").disabled=currentPage>=pages;
+}
+
+function renderProducts(){
+ const map=new Map();
+ allOrders.forEach(o=>{const n=o.product_name||"Product",x=map.get(n)||{name:n,qty:0,amount:0};x.qty+=Number(o.buying_quantity||1);x.amount+=Number(o.total_price||0);map.set(n,x)});
+ let r=[...map.values()].sort((a,b)=>b.qty-a.qty).slice(0,8);
+ if(!r.length)r=allProducts.slice(0,8).map(p=>({name:p.name,qty:0,amount:0}));
+ $("topProducts").innerHTML=r.map((p,i)=>{
+  const x=allProducts.find(a=>a.name===p.name),img=x?.image_urls?.[0]||"";
+  return `<div class="product-card"><div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div><strong title="${esc(p.name)}">${esc(p.name)}</strong><small>${p.qty} units sold</small><div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div><div class="product-sales">${i===0?"Top seller":"Popular product"}</div></div>`
+ }).join("");
+}
+
+function renderQuick(){
+ const q=($("quickSearch").value||"").toLowerCase().trim(),r=allProducts.filter(p=>!q||String(p.name||"").toLowerCase().includes(q)).slice(0,6);
+ $("quickResults").innerHTML=r.length?r.map(p=>`<div class="quick-item"><div><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small></div><button class="btn primary small" data-buy="${esc(p.id)}">Order</button></div>`).join(""):'<div class="loading">No matching products.</div>';
+}
+function render(){renderStats();renderOrders();renderProducts();renderQuick();updateCart()}
+function updateCart(){try{const c=JSON.parse(localStorage.getItem("jsu_wholesaler_cart")||"[]");$("cartCount").textContent=Array.isArray(c)?c.reduce((n,x)=>n+Number(x.quantity||x.qty||1),0):0}catch(e){$("cartCount").textContent="0"}}
+
+function openOrder(id){
+ selectedOrder=allOrders.find(o=>String(o.id)===String(id));if(!selectedOrder)return;
+ const sk=statusKey(selectedOrder.status),total=selectedOrder.total_price||Number(selectedOrder.price||0)*Number(selectedOrder.buying_quantity||1);
+ $("modalOrderStatus").className="status "+sk;$("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(selectedOrder.status));
+ const d=[
+ ["Order Number","#"+(selectedOrder.order_number||selectedOrder.id)],
+ ["Customer",selectedOrder.user_name||selectedOrder.customer_name||"Customer"],
+ ["Mobile",selectedOrder.user_mobile||"—"],["Product",selectedOrder.product_name||"—"],
+ ["Quantity",selectedOrder.buying_quantity||1],["Price",money(selectedOrder.price||0)],["Total",money(total)],
+ ["Payment Mode",selectedOrder.payment_mode||"—"],["Payment Status",selectedOrder.payment_status||"—"],
+ ["Tracking Number",selectedOrder.tracking_number||"Not assigned"],["Order Status",statusLabel(selectedOrder.status)],
+ ["Created",selectedOrder.created_at?new Date(selectedOrder.created_at).toLocaleString("en-IN"):"—"]
+ ];
+ $("orderDetails").innerHTML=d.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("");
+ $("advanceStatusBtn").disabled=["delivered","cancelled"].includes(sk);$("advanceStatusBtn").textContent="Advance Status";
+ $("orderModal").classList.remove("hidden");
+}
+
+function nextStatus(s){s=statusKey(s);return s==="pending"?"confirmed":s==="confirmed"||s==="processing"?"packed":s==="packed"?"shipped":s==="shipped"?"out_for_delivery":s==="out_for_delivery"?"delivered":null}
+async function advance(){
+ if(!selectedOrder)return;const next=nextStatus(selectedOrder.status);if(!next)return;
+ const client=sb();
+ if(client?.from&&currentUser&&!String(selectedOrder.id).startsWith("demo-")){
+  const {error}=await client.from("orders").update({status:next,updated_at:new Date().toISOString()}).eq("id",selectedOrder.id).eq("seller_id",currentUser.id);
+  if(error){toast(error.message);return}
+ }
+ selectedOrder.status=next;const i=allOrders.findIndex(o=>String(o.id)===String(selectedOrder.id));if(i>=0)allOrders[i].status=next;
+ $("orderModal").classList.add("hidden");render();toast("Order moved to "+statusLabel(next));
+}
+
+function exportCSV(){
+ const lines=[["Order ID","Customer","Date","Product","Quantity","Amount","Status","Tracking"],...rows().map(o=>[o.order_number||o.id,o.user_name||o.customer_name||"Customer",o.created_at,o.product_name,o.buying_quantity||1,o.total_price||0,statusLabel(o.status),o.tracking_number||""])].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(","));
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/csv"}));a.download="js-undefined-orders.csv";a.click();
+}
+
+$("menuButton").onclick=()=>$("sidebar").classList.toggle("open");
+$("refreshBtn").onclick=()=>{toast("Refreshing orders...");load()};
+$("orderSearch").oninput=()=>{currentPage=1;renderOrders()};
+$("dateFilter").onchange=()=>{currentPage=1;renderOrders()};
+$("sortOrder").onchange=()=>{currentPage=1;renderOrders()};
+$("quickSearch").oninput=renderQuick;
+$("exportBtn").onclick=exportCSV;
+$("prevPage").onclick=()=>{if(currentPage>1){currentPage--;renderOrders()}};
+$("nextPage").onclick=()=>{currentPage++;renderOrders()};
+$("viewProductsBtn").onclick=()=>location.href="my-product.html";
+$("openBuyBtn").onclick=()=>location.href="wholesaler.html#buy";
+$("quickOrderBtn").onclick=()=>location.href="wholesaler.html#buy";
+$("advanceStatusBtn").onclick=advance;
+$("logoutBtn").onclick=async()=>{try{if(sb()?.auth)await sb().auth.signOut()}finally{location.href="login.html"}};
+
+document.addEventListener("click",e=>{
+ const f=e.target.closest("[data-status]");
+ if(f){document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));f.classList.add("active");currentStatus=f.dataset.status;currentPage=1;renderOrders()}
+ const v=e.target.closest("[data-view]");if(v)openOrder(v.dataset.view);
+ const n=e.target.closest("[data-next]");if(n)openOrder(n.dataset.next);
+ const b=e.target.closest("[data-buy]");if(b)location.href="wholesaler.html#buy";
+ if(e.target.closest("[data-close]"))e.target.closest(".modal")?.classList.add("hidden");
+ if(e.target.classList.contains("modal"))e.target.classList.add("hidden");
+});
+
+window.addEventListener("DOMContentLoaded",load);
+})();
 </script>
-
 </body>
 </html>
-   
+
