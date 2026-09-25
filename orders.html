@@ -162,8 +162,7 @@ tbody tr:hover{background:#fafcff}
 <div class="layout">
 <aside id="sidebar" class="sidebar">
   <div class="sidebar-brand">
-
-    <div class="sidebar-brand-mark">JS</div>
+   <div class="sidebar-brand-mark">JS</div>
     <div class="sidebar-brand-text"><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div>
   </div>
 
@@ -308,41 +307,113 @@ function statusLabel(s){return statusKey(s).replace(/_/g," ").replace(/\b\w/g,c=
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2200)}
 function sb(){return window.supabaseClient||window.supabase||null}
 
-function demo(){
- const n=Date.now();
- allOrders=[
-  {id:"demo-10051",order_number:"JSU10051",user_name:"Rahul Patel",user_mobile:"98XXXXXX12",product_name:"Women Premium Kurti",buying_quantity:24,price:350,total_price:8400,status:"shipped",tracking_number:"TRK842991",created_at:new Date(n-86400000).toISOString()},
-  {id:"demo-10050",order_number:"JSU10050",user_name:"Amit Shah",user_mobile:"97XXXXXX21",product_name:"Ladies Footwear",buying_quantity:18,price:420,total_price:7560,status:"confirmed",created_at:new Date(n-2*86400000).toISOString()},
-  {id:"demo-10049",order_number:"JSU10049",user_name:"Kiran Patel",user_mobile:"96XXXXXX32",product_name:"Georgette Dress",buying_quantity:12,price:590,total_price:7080,status:"pending",created_at:new Date(n-3*86400000).toISOString()},
-  {id:"demo-10048",order_number:"JSU10048",user_name:"Neha Shah",user_mobile:"95XXXXXX43",product_name:"Cotton Kurti Set",buying_quantity:30,price:310,total_price:9300,status:"packed",created_at:new Date(n-4*86400000).toISOString()},
-  {id:"demo-10047",order_number:"JSU10047",user_name:"Meera",user_mobile:"94XXXXXX54",product_name:"Women Sandal",buying_quantity:15,price:380,total_price:5700,status:"delivered",tracking_number:"TRK842810",created_at:new Date(n-6*86400000).toISOString()}
- ];
- allProducts=[
-  {id:"p1",name:"Women Premium Kurti",price:350,bulk_price:320,stock_quantity:180,image_urls:[]},
-  {id:"p2",name:"Ladies Footwear",price:420,bulk_price:390,stock_quantity:90,image_urls:[]},
-  {id:"p3",name:"Georgette Dress",price:590,bulk_price:550,stock_quantity:65,image_urls:[]},
-  {id:"p4",name:"Cotton Kurti Set",price:310,bulk_price:285,stock_quantity:210,image_urls:[]}
- ];
+async function load(){
+ const client =
+   (typeof supabaseClient !== "undefined" ? supabaseClient : null) ||
+   window.supabaseClient ||
+   null;
+
+ if(!client || !client.auth){
+   showDataError("Supabase client is not available. Check that supabase.js loads before order.html.");
+   return;
+ }
+
+ try{
+   const {data:sessionData,error:sessionError}=await client.auth.getSession();
+   if(sessionError) throw sessionError;
+
+   currentUser=sessionData?.session?.user||null;
+
+   if(!currentUser){
+     showDataError("No logged-in user session. Please login as a wholesaler.");
+     return;
+   }
+
+   const displayName =
+     currentUser.user_metadata?.full_name ||
+     currentUser.user_metadata?.name ||
+     currentUser.email?.split("@")[0] ||
+     "Wholesaler";
+   $("topUserName").textContent=displayName;
+
+   /*
+    * IMPORTANT:
+    * Orders are loaded only from the authenticated wholesaler's seller_id.
+    * There is NO demo/fallback data in this page.
+    */
+   const ordersResult=await client
+     .from("orders")
+     .select("*")
+     .eq("seller_id",currentUser.id)
+     .order("created_at",{ascending:false});
+
+   if(ordersResult.error) throw ordersResult.error;
+   allOrders=ordersResult.data||[];
+
+   /*
+    * Load this wholesaler's real products only.
+    */
+   const productsResult=await client
+     .from("products")
+     .select("id,name,price,bulk_price,stock_quantity,image_urls,is_active,seller_id")
+     .eq("seller_id",currentUser.id);
+
+   if(productsResult.error) throw productsResult.error;
+   allProducts=productsResult.data||[];
+
+   /*
+    * Customer names/mobile numbers are not necessarily stored directly
+    * in orders. If user_id exists, fetch matching real profiles.
+    * If RLS prevents this query, the order itself is still shown and
+    * customer fields fall back to values that actually exist in orders.
+    */
+   const userIds=[...new Set(allOrders.map(o=>o.user_id).filter(Boolean))];
+
+   if(userIds.length){
+     const profilesResult=await client
+       .from("profiles")
+       .select("id,full_name,mobile,email,user_type")
+       .in("id",userIds);
+
+     if(!profilesResult.error){
+       const profileMap=new Map((profilesResult.data||[]).map(x=>[String(x.id),x]));
+       allOrders=allOrders.map(o=>{
+         const profile=profileMap.get(String(o.user_id));
+         return {
+           ...o,
+           user_name:o.user_name||o.customer_name||profile?.full_name||null,
+           user_mobile:o.user_mobile||profile?.mobile||null,
+           user_email:o.user_email||profile?.email||null,
+           customer_type:o.customer_type||profile?.user_type||null
+         };
+       });
+     }else{
+       console.warn("profiles lookup was not available:",profilesResult.error);
+     }
+   }
+
+   render();
+   if(!allOrders.length) toast("No orders found for this wholesaler.");
+ }catch(e){
+   console.error("Order dashboard Supabase error:",e);
+   showDataError("Unable to load real Supabase data: "+(e.message||"Unknown error"));
+ }
 }
 
-async function load(){
- const client=sb();
- try{
-  if(!client?.auth){demo();render();return}
-  const {data,error}=await client.auth.getSession();
-  if(error)throw error;
-  currentUser=data?.session?.user||null;
-  if(!currentUser){demo();render();toast("Login session not found — preview data shown.");return}
-  $("topUserName").textContent=currentUser.user_metadata?.full_name||currentUser.email?.split("@")[0]||"Wholesaler";
-
-  const o=await client.from("orders").select("*").eq("seller_id",currentUser.id).order("created_at",{ascending:false});
-  if(o.error)throw o.error;
-  allOrders=o.data||[];
-
-  const p=await client.from("products").select("id,name,price,bulk_price,stock_quantity,image_urls,is_active,seller_id").eq("seller_id",currentUser.id);
-  allProducts=p.error?[]:(p.data||[]);
-  render();
- }catch(e){console.error(e);demo();render();toast("Could not load live data. Preview data shown.")}
+function showDataError(message){
+ allOrders=[];
+ allProducts=[];
+ $("ordersBody").innerHTML=
+   `<tr><td colspan="8" class="loading" style="color:#b91c1c">
+      ${esc(message)}
+    </td></tr>`;
+ $("topProducts").innerHTML=
+   `<div class="loading" style="color:#b91c1c">${esc(message)}</div>`;
+ $("quickResults").innerHTML=
+   `<div class="loading" style="color:#b91c1c">${esc(message)}</div>`;
+ renderStats();
+ $("resultInfo").textContent="No live data loaded";
+ $("topUserName").textContent="Wholesaler";
 }
 
 function rows(){
@@ -390,7 +461,10 @@ function renderProducts(){
  const map=new Map();
  allOrders.forEach(o=>{const n=o.product_name||"Product",x=map.get(n)||{name:n,qty:0,amount:0};x.qty+=Number(o.buying_quantity||1);x.amount+=Number(o.total_price||0);map.set(n,x)});
  let r=[...map.values()].sort((a,b)=>b.qty-a.qty).slice(0,8);
- if(!r.length)r=allProducts.slice(0,8).map(p=>({name:p.name,qty:0,amount:0}));
+ if(!r.length){
+   $("topProducts").innerHTML='<div class="loading">No real order/product records found in Supabase.</div>';
+   return;
+ }
  $("topProducts").innerHTML=r.map((p,i)=>{
   const x=allProducts.find(a=>a.name===p.name),img=x?.image_urls?.[0]||"";
   return `<div class="product-card"><div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div><strong title="${esc(p.name)}">${esc(p.name)}</strong><small>${p.qty} units sold</small><div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div><div class="product-sales">${i===0?"Top seller":"Popular product"}</div></div>`
@@ -398,7 +472,7 @@ function renderProducts(){
 }
 
 function renderQuick(){
- const q=($("quickSearch").value||"").toLowerCase().trim(),r=allProducts.filter(p=>!q||String(p.name||"").toLowerCase().includes(q)).slice(0,6);
+ const q=($("quickSearch").value||"").toLowerCase().trim(),r=allProducts.filter(p=>p.is_active!==false&&(!q||String(p.name||"").toLowerCase().includes(q))).slice(0,6);
  $("quickResults").innerHTML=r.length?r.map(p=>`<div class="quick-item"><div><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small></div><button class="btn primary small" data-buy="${esc(p.id)}">Order</button></div>`).join(""):'<div class="loading">No matching products.</div>';
 }
 function render(){renderStats();renderOrders();renderProducts();renderQuick();updateCart()}
@@ -440,7 +514,7 @@ function exportCSV(){
 }
 
 $("menuButton").onclick=()=>$("sidebar").classList.toggle("open");
-$("refreshBtn").onclick=()=>{toast("Refreshing orders...");load()};
+$("refreshBtn").onclick=()=>{toast("Refreshing Supabase data...");load()};
 $("orderSearch").oninput=()=>{currentPage=1;renderOrders()};
 $("dateFilter").onchange=()=>{currentPage=1;renderOrders()};
 $("sortOrder").onchange=()=>{currentPage=1;renderOrders()};
