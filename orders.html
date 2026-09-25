@@ -126,10 +126,10 @@ tbody tr:hover{background:#fafcff}
 .quick-product-link img,.quick-product-icon{width:38px;height:38px;min-width:38px;border-radius:8px;background:#f1f5f9;object-fit:cover;display:grid;place-items:center}
 .quick-product-link span{min-width:0}
 .quick-product-link strong{max-width:180px}
-.quick-product-link em{display:block;color:#4338ca;font-size:9px;font-style:normal;font-weight:800;margin-top:3px}
+.quick-product-link em{display:block;color:#4338ca;font-size:9px;font-style:normal;font-weight:800;margin-top:3px}.quick-actions{display:flex;flex-direction:column;gap:5px;justify-content:center}.product-manage-mini{display:inline-flex;margin-top:7px;text-decoration:none;color:#4338ca;border:1px solid #dbe1ea;border-radius:8px;padding:6px 8px;font-size:9px;font-weight:850;justify-content:center}.product-manage-mini:hover{background:#eef2ff}
 .manage-order-btn{white-space:nowrap}
 /* MANAGE ORDER */
-.wide-modal{width:min(900px,100%)}
+.wide-modal{width:min(980px,calc(100vw - 30px));max-height:calc(100vh - 30px);overflow:hidden;display:flex;flex-direction:column}.wide-modal .modal-head,.wide-modal .manage-tabs,.wide-modal .modal-actions{flex:0 0 auto}.wide-modal .manage-section{overflow:auto;min-height:0}.wide-modal .manage-tabs{background:#fff;position:sticky;top:0;z-index:2}.manage-tab{min-height:44px;flex:1}.manage-tab.active{box-shadow:0 5px 14px rgba(15,23,42,.12)}
 .manage-tabs{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid #eef1f5;overflow:auto}
 .manage-tab{border:1px solid #dbe1ea;background:#fff;border-radius:9px;padding:9px 12px;font-size:11px;font-weight:850;white-space:nowrap}
 .manage-tab.active{background:#111827;color:#fff;border-color:#111827}
@@ -138,16 +138,16 @@ tbody tr:hover{background:#fafcff}
 .product-view-link{display:inline-flex;align-items:center;gap:6px;color:#4338ca;font-size:12px;font-weight:850;text-decoration:none}
 .product-view-link:hover{text-decoration:underline}
 .process-title{padding:18px 18px 0;font-size:16px;font-weight:900}
-.process-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:18px}
-.process-step{border:1px solid #dbe1ea;background:#fff;border-radius:12px;padding:12px 7px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:10px;font-weight:850;color:#64748b}
+.process-steps{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:10px;padding:18px}
+.process-step{border:1px solid #dbe1ea;background:#fff;border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:11px;font-weight:850;color:#64748b;min-height:92px;transition:.18s}.process-step:hover{border-color:#a5b4fc;transform:translateY(-1px)}
 .process-step.done{background:#eef2ff;color:#4338ca;border-color:#c7d2fe}
 .process-step.current{box-shadow:0 0 0 2px #111827 inset;color:#111827}
-.step-number{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;font-size:11px}
+.step-number{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;font-size:12px;font-weight:900}
 .process-step.done .step-number{background:#4338ca;color:#fff}
 .process-actions{padding:0 18px 18px;display:flex;justify-content:flex-end}
-.btn.danger{background:#fee2e2;color:#b91c1c;border:1px solid #fecaca}
+.btn.danger{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;border-radius:12px;padding:11px 15px;font-weight:900;box-shadow:0 4px 10px rgba(190,24,93,.08)}
 .btn.danger:disabled{opacity:.45;cursor:not-allowed}
-.payment-box{padding:18px}
+.payment-box{padding:18px}.payment-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}.payment-summary-card{border:1px solid #e5e7eb;border-radius:13px;padding:14px;background:#fff}.payment-summary-card span{display:block;color:#64748b;font-size:10px;font-weight:800;margin-bottom:6px}.payment-summary-card strong{font-size:20px}.payment-summary-card.paid strong{color:#15803d}.payment-summary-card.remaining strong{color:#b45309}.payment-summary-card.cod strong{color:#1d4ed8}.payment-note{padding:11px 13px;border-radius:10px;background:#f8fafc;border:1px solid #e5e7eb;margin-bottom:12px;font-size:11px;color:#475569}.payment-note b{color:#172033}
 .payment-record{border:1px solid #e5e7eb;border-radius:13px;margin-bottom:12px;overflow:hidden}
 .payment-record.paid{border-color:#bbf7d0}
 .payment-record-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:#f8fafc}
@@ -157,6 +157,7 @@ tbody tr:hover{background:#fafcff}
 .payment-grid{padding:14px}
 .paid-note{margin:0 14px 14px;padding:9px;border-radius:8px;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:800}
 .empty-payment{text-align:center;padding:35px 10px;color:#64748b}.empty-payment h3{margin:8px 0 4px;color:#172033;font-size:14px}.empty-payment p{margin:0;font-size:11px}.empty-icon{font-size:28px}
+@media(max-width:800px){.wide-modal{width:min(100%,calc(100vw - 20px));max-height:calc(100vh - 20px)}.process-steps{grid-template-columns:1fr 1fr}.process-step:last-child{grid-column:span 2}.payment-summary{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){
  .process-steps{grid-template-columns:1fr 1fr}.process-step:last-child{grid-column:span 2}
  .manage-tabs{padding:9px 10px}.payment-box{padding:10px}.detail-grid{padding:12px}.product-link-box{margin:0 12px 12px}
@@ -543,14 +544,17 @@ function renderProducts(){
   const img=x?.image_urls?.[0]||"";
   const pid=p.id||x?.id;
   const link=pid?`product.html?id=${encodeURIComponent(pid)}&product_id=${encodeURIComponent(pid)}`:"#";
-  return `<a class="product-card product-card-link" href="${link}" ${pid?"":"aria-disabled=\"true\""} data-product-link="${esc(pid||"")}">
-    <div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div>
-    <strong title="${esc(p.name)}">${esc(p.name)}</strong>
-    <small>${p.qty} units sold</small>
-    <div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div>
-    <div class="product-sales">${i===0?"Top seller":"Popular product"}</div>
-    <span class="product-view-mini">View Product →</span>
-  </a>`;
+  return `<div class="product-card">
+    <a class="product-card-link" href="${link}" ${pid?"":"aria-disabled=\"true\""}>
+      <div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div>
+      <strong title="${esc(p.name)}">${esc(p.name)}</strong>
+      <small>${p.qty} units sold</small>
+      <div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div>
+      <div class="product-sales">${i===0?"Top seller":"Popular product"}</div>
+      <span class="product-view-mini">View Product →</span>
+    </a>
+    ${pid?`<a class="product-manage-mini" href="my-product.html?manage=${encodeURIComponent(pid)}">⚙ Manage Product</a>`:""}
+  </div>`;
  }).join("");
 }
 
@@ -564,7 +568,7 @@ function renderQuick(){
       ${p.image_urls?.[0]?`<img src="${esc(p.image_urls[0])}" alt="">`:'<span class="quick-product-icon">📦</span>'}
       <span><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small><em>View Product</em></span>
     </a>
-    <a class="btn primary small" href="${link}">View</a>
+    <div class="quick-actions"><a class="btn primary small" href="${link}">View</a><a class="btn secondary small" href="my-product.html?manage=${encodeURIComponent(p.id)}">Manage</a></div>
   </div>`;
  }).join(""):'<div class="loading">No matching Supabase products.</div>';
 }
@@ -575,13 +579,13 @@ function updateCart(){try{const c=JSON.parse(localStorage.getItem("jsu_wholesale
 async function loadPaymentForOrder(orderId){
  const client=sb();
  if(!client?.from||!orderId)return [];
- const {data,error}=await client.from("payments").select("*").eq("order_id",orderId).order("created_at",{ascending:false});
+ const {data,error}=await client.from("payments").select("*").eq("order_id",orderId).eq("seller_id",currentUser.id).order("created_at",{ascending:false});
  if(error){console.warn("Payment lookup failed:",error.message);return []}
  return data||[];
 }
 function paymentStatusPaid(p){
- const s=String(p?.payment_status||p?.status||"").toLowerCase();
- return ["paid","success","successful","completed"].includes(s);
+ const s=String(p?.payment_status||p?.status||"").toLowerCase().replace(/\s+/g,"_");
+ return ["paid","success","successful","completed","captured","confirmed"].includes(s);
 }
 function paymentModeLabel(v){
  const s=String(v||"—").replace(/_/g," ");
@@ -598,13 +602,46 @@ function paymentFields(p){
  ];
  return known.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
 }
-function renderPaymentDetails(payments){
+function orderTotal(o){return Number(o?.total_price??(Number(o?.price||0)*Number(o?.buying_quantity||1)))||0}
+function calculatePaymentSummary(order,payments){
+ const total=orderTotal(order);
+ const paidFromPayments=payments.filter(paymentStatusPaid).reduce((sum,p)=>sum+Number(p.amount||0),0);
+ const fallbackPaid=Number(order.advance_amount??order.paid_amount??order.advance_paid??0)||0;
+ const paid=Math.min(total, paidFromPayments>0?paidFromPayments:fallbackPaid);
+ const remaining=Math.max(0,total-paid);
+ const mode=String(order.payment_mode||"").toLowerCase();
+ const hasCOD=mode.includes("cod")||mode.includes("cash");
+ const hasAdvance=paid>0 && remaining>0;
+ return {total,paid,remaining,hasCOD,hasAdvance,mode};
+}
+function renderPaymentSummary(order,payments){
+ const s=calculatePaymentSummary(order,payments);
+ let note="";
+ if(s.hasCOD&&s.paid>0&&s.remaining>0){
+   note=`<div class="payment-note"><b>COD + Advance Payment:</b> ${money(s.paid)} has already been paid by the recorded payment method. <b>Remaining COD: ${money(s.remaining)}</b>.</div>`;
+ }else if(s.hasCOD){
+   note=`<div class="payment-note"><b>Cash on Delivery:</b> ${money(s.paid)} paid in advance, <b>${money(s.remaining)} remaining to collect on delivery</b>.</div>`;
+ }else if(s.paid>0&&s.remaining>0){
+   note=`<div class="payment-note"><b>Partial payment:</b> ${money(s.paid)} paid, <b>${money(s.remaining)} remaining</b>.</div>`;
+ }else if(s.paid>=s.total&&s.total>0){
+   note=`<div class="payment-note"><b>Payment complete:</b> ${money(s.paid)} paid for this order.</div>`;
+ }else{
+   note=`<div class="payment-note"><b>Payment status:</b> No paid amount is recorded for this order yet.</div>`;
+ }
+ return `<div class="payment-summary">
+   <div class="payment-summary-card"><span>Order Total</span><strong>${money(s.total)}</strong></div>
+   <div class="payment-summary-card paid"><span>Paid Amount</span><strong>${money(s.paid)}</strong></div>
+   <div class="payment-summary-card remaining"><span>Remaining Amount</span><strong>${money(s.remaining)}</strong></div>
+ </div>${note}`;
+}
+function renderPaymentDetails(order,payments){
  const box=$("paymentDetails");
+ const summary=renderPaymentSummary(order,payments);
  if(!payments.length){
-  box.innerHTML='<div class="empty-payment"><div class="empty-icon">💳</div><h3>No payment record found</h3><p>There is no payment row linked to this order in Supabase.</p></div>';
+  box.innerHTML=summary+'<div class="empty-payment"><div class="empty-icon">💳</div><h3>No separate payment record found</h3><p>The amount summary above is calculated from this order and any paid amount fields stored on it.</p></div>';
   return;
  }
- box.innerHTML=payments.map((p,i)=>{
+ box.innerHTML=summary+payments.map((p,i)=>{
   const paid=paymentStatusPaid(p),fields=paymentFields(p);
   return `<div class="payment-record ${paid?'paid':''}">
     <div class="payment-record-head">
@@ -612,7 +649,7 @@ function renderPaymentDetails(payments){
       <span class="payment-badge ${paid?'paid':'pending'}">${esc(paymentModeLabel(p.payment_status||p.status||'Pending'))}</span>
     </div>
     <div class="detail-grid payment-grid">${fields.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("")}</div>
-    ${paid?'<div class="paid-note">✓ Payment is marked as paid in Supabase.</div>':''}
+    ${paid?'<div class="paid-note">✓ This payment is marked as paid in Supabase and is included in the paid amount above.</div>':''}
   </div>`
  }).join("");
 }
@@ -620,16 +657,13 @@ function renderProcessSteps(){
  const current=statusKey(selectedOrder?.status);
  const dbStatus=current==="processing"?"confirmed":current;
  const steps=[
-  {key:"pending",label:"Pending"},
-  {key:"confirmed",label:"Processing"},
-  {key:"packed",label:"Packed"},
-  {key:"shipped",label:"Shipped"},
-  {key:"delivered",label:"Delivered"}
+  {key:"pending",label:"Pending"},{key:"confirmed",label:"Processing"},{key:"packed",label:"Packed"},
+  {key:"shipped",label:"Shipped"},{key:"delivered",label:"Delivered"}
  ];
  const idx=steps.findIndex(x=>x.key===dbStatus);
  $("processSteps").innerHTML=steps.map((st,i)=>{
   const done=idx>=0&&i<=idx,active=i===idx;
-  return `<button class="process-step ${done?'done':''} ${active?'current':''}" data-process-status="${st.key}">
+  return `<button type="button" class="process-step ${done?'done':''} ${active?'current':''}" data-process-status="${st.key}">
     <span class="step-number">${done?'✓':i+1}</span><span>${st.label}</span>
   </button>`
  }).join("");
@@ -644,14 +678,14 @@ function showManageTab(tab){
 async function openOrder(id){
  selectedOrder=allOrders.find(o=>String(o.id)===String(id));
  if(!selectedOrder)return;
- const sk=statusKey(selectedOrder.status);
- const total=selectedOrder.total_price||Number(selectedOrder.price||0)*Number(selectedOrder.buying_quantity||1);
+ const sk=statusKey(selectedOrder.status), total=orderTotal(selectedOrder);
  $("modalOrderStatus").className="status "+sk;
  $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(selectedOrder.status));
  const d=[
   ["Order Number","#"+(selectedOrder.order_number||selectedOrder.id)],
   ["Order ID",selectedOrder.id],
   ["Customer",selectedOrder.user_name||selectedOrder.customer_name||"—"],
+  ["User ID",selectedOrder.user_id||"—"],
   ["Mobile",selectedOrder.user_mobile||"—"],
   ["Email",selectedOrder.user_email||"—"],
   ["Customer Type",selectedOrder.customer_type||"—"],
@@ -659,7 +693,7 @@ async function openOrder(id){
   ["Product ID",selectedOrder.product_id||"—"],
   ["Quantity",selectedOrder.buying_quantity||1],
   ["Unit Price",money(selectedOrder.price||0)],
-  ["Total",money(total)],
+  ["Order Total",money(total)],
   ["Payment Mode",selectedOrder.payment_mode||"—"],
   ["Payment Status",selectedOrder.payment_status||"—"],
   ["Tracking Number",selectedOrder.tracking_number||"Not assigned"],
@@ -670,14 +704,14 @@ async function openOrder(id){
  $("orderDetails").innerHTML=d.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("");
  const productId=selectedOrder.product_id||allProducts.find(p=>p.name===selectedOrder.product_name)?.id;
  $("productLinkBox").innerHTML=productId
-  ? `<a class="product-view-link" href="product.html?id=${encodeURIComponent(productId)}&product_id=${encodeURIComponent(productId)}">🔗 View Product in product.html</a>`
-  : '<span class="muted small">No product_id is stored for this order, so a product link cannot be created.</span>';
+  ? `<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="product-view-link" href="product.html?id=${encodeURIComponent(productId)}&product_id=${encodeURIComponent(productId)}">🔗 View Product</a><a class="product-view-link" href="my-product.html?manage=${encodeURIComponent(productId)}">⚙ Manage Product</a></div>`
+  : '<span class="muted small">No product_id is stored for this order, so the exact product cannot be opened safely.</span>';
  renderProcessSteps();
  showManageTab("details");
  $("orderModal").classList.remove("hidden");
  $("paymentDetails").innerHTML='<div class="loading">Loading payment details from Supabase...</div>';
  const payments=await loadPaymentForOrder(selectedOrder.id);
- renderPaymentDetails(payments);
+ renderPaymentDetails(selectedOrder,payments);
 }
 async function updateOrderStatus(next){
  if(!selectedOrder||!currentUser)return;
@@ -685,16 +719,15 @@ async function updateOrderStatus(next){
  const dbNext=next==="processing"?"confirmed":next;
  const allowed=["pending","confirmed","packed","shipped","delivered","cancelled"];
  if(!allowed.includes(dbNext)){toast("Invalid order status.");return}
- const {error}=await client.from("orders")
-  .update({status:dbNext,updated_at:new Date().toISOString()})
-  .eq("id",selectedOrder.id)
-  .eq("seller_id",currentUser.id);
- if(error){toast("Status update failed: "+error.message);return}
- selectedOrder.status=dbNext;
+ const now=new Date().toISOString();
+ const result=await client.from("orders").update({status:dbNext,updated_at:now}).eq("id",selectedOrder.id).eq("seller_id",currentUser.id).select("id,status,updated_at").maybeSingle();
+ if(result.error){toast("Status update failed: "+result.error.message);return}
+ if(!result.data){toast("Status was not changed. Supabase RLS may be blocking UPDATE for this wholesaler.");return}
+ selectedOrder.status=result.data.status;selectedOrder.updated_at=result.data.updated_at;
  const i=allOrders.findIndex(o=>String(o.id)===String(selectedOrder.id));
- if(i>=0)allOrders[i].status=dbNext;
- $("modalOrderStatus").className="status "+statusKey(dbNext);
- $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(dbNext));
+ if(i>=0){allOrders[i].status=result.data.status;allOrders[i].updated_at=result.data.updated_at}
+ $("modalOrderStatus").className="status "+statusKey(result.data.status);
+ $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(result.data.status));
  renderStats();renderOrders();renderProcessSteps();
  toast("Order status updated to "+(dbNext==="confirmed"?"Processing":statusLabel(dbNext)));
 }
