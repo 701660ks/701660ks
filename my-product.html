@@ -16,294 +16,6 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
 .backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:200;align-items:center;justify-content:center;padding:15px}.backdrop.show{display:flex}.modal{width:min(720px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:15px}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;border-bottom:1px solid #e5e7eb;position:sticky;top:0;background:#fff;z-index:2}.modal-head h2{margin:0;font-size:15px}.close{border:0;background:#f1f5f9;width:30px;height:30px;border-radius:50%}.form{padding:16px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:9px;font-weight:850;margin-bottom:5px}.field.full{grid-column:1/-1}.field input,.field select,.field textarea{width:100%;border:1px solid #dbe2ea;border-radius:8px;padding:9px;font-size:10px;outline:0}.field textarea{min-height:70px;resize:vertical}.radio-row{display:flex;gap:12px;flex-wrap:wrap}.radio-row label{font-size:10px;font-weight:700}.image-box{border:1px dashed #cbd5e1;border-radius:8px;padding:10px}.preview-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.preview{position:relative}.preview img{width:65px;height:65px;object-fit:cover;border-radius:7px}.remove-img{position:absolute;right:-4px;top:-4px;width:18px;height:18px;border:0;border-radius:50%;background:#ef4444;color:#fff}.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #e5e7eb}.secondary-btn{border:1px solid #dbe2ea;background:#fff;padding:9px 13px;border-radius:8px;font-size:10px;font-weight:800}
 .detail{padding:17px}.manage-head{display:flex;gap:13px;align-items:center;margin-bottom:15px}.manage-image{width:88px;height:88px;object-fit:cover;border-radius:11px;background:#eef2f7}.manage-head h3{margin:0 0 4px;font-size:17px}.manage-head p{margin:3px 0;color:#64748b;font-size:9px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail-item{background:#f8fafc;border-radius:8px;padding:9px}.detail-item span{display:block;font-size:8px;color:#64748b}.detail-item strong{display:block;font-size:10px;margin-top:3px}.manage-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px;padding-top:13px;border-top:1px solid #e5e7eb}.action-btn{border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:10px 6px;font-size:9px;font-weight:900}.action-btn.edit{color:#4338ca}.action-btn.toggle{color:#b45309}.action-btn.delete{color:#b91c1c}.toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:10px 13px;border-radius:9px;font-size:10px;display:none;z-index:500}.toast.show{display:block}
 @media(max-width:800px){.sidebar{position:fixed;left:-205px;top:70px;transition:left .2s}.sidebar.open{left:0}.filters{grid-template-columns:1fr 1fr}.content{padding:14px}}@media(max-width:560px){.filters,.form-grid,.detail-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.manage-actions{grid-template-columns:1fr}.pagination{align-items:flex-start;gap:8px;flex-direction:column}}
-
-
-/* =========================================================
-   MY-PRODUCTS SIDEBAR
-   MATCHES WHOLESALER.HTML SIDEBAR
-   ========================================================= */
-
-.sidebar {
-    width: 140px !important;
-    min-width: 140px !important;
-    max-width: 140px !important;
-
-    flex-shrink: 0;
-
-    background: #ffffff !important;
-    border-right: 1px solid #e5e7eb !important;
-
-    position: sticky;
-    top: 70px;
-
-    height: calc(100vh - 70px);
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    display: flex;
-    flex-direction: column;
-}
-
-
-/* =========================================================
-   SIDEBAR BRAND
-   ========================================================= */
-
-.sidebar-brand {
-    width: 100% !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 8px !important;
-
-    padding: 10px 7px !important;
-
-    min-height: 58px !important;
-
-    background: #ffffff !important;
-
-    border-bottom: 1px solid #eef2f7 !important;
-}
-
-
-.sidebar-brand-mark {
-    width: 25px !important;
-    min-width: 25px !important;
-    height: 25px !important;
-
-    display: grid !important;
-    place-items: center !important;
-
-    background: #ffffff !important;
-
-    border: 1px solid #e5e7eb !important;
-
-    border-radius: 6px !important;
-
-    color: #374151 !important;
-
-    font-size: 9px !important;
-    font-weight: 900 !important;
-}
-
-
-.sidebar-brand-text {
-    min-width: 0 !important;
-}
-
-
-.sidebar-brand-text strong {
-    display: block !important;
-
-    color: #111827 !important;
-
-    font-size: 13px !important;
-
-    line-height: 1.15 !important;
-
-    font-weight: 900 !important;
-
-    white-space: nowrap !important;
-}
-
-
-.sidebar-brand-text small {
-    display: block !important;
-
-    color: #64748b !important;
-
-    font-size: 7px !important;
-
-    line-height: 1.2 !important;
-
-    font-weight: 700 !important;
-
-    margin-top: 3px !important;
-
-    white-space: nowrap !important;
-}
-
-
-/* =========================================================
-   MENU
-   ========================================================= */
-
-.sidebar-menu {
-    width: 100% !important;
-
-    padding: 8px 5px !important;
-
-    flex: 1 !important;
-}
-
-
-.sidebar .nav-item {
-    width: 100% !important;
-
-    min-height: 34px !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 7px !important;
-
-    padding: 7px 7px !important;
-
-    margin: 2px 0 !important;
-
-    border: 0 !important;
-
-    border-radius: 8px !important;
-
-    background: transparent !important;
-
-    color: #111827 !important;
-
-    text-align: left !important;
-
-    font-size: 12px !important;
-
-    font-weight: 800 !important;
-
-    line-height: 1.15 !important;
-
-    white-space: normal !important;
-}
-
-
-/* ICON */
-
-.sidebar .nav-icon {
-    width: 17px !important;
-
-    min-width: 17px !important;
-
-    display: inline-flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
-    font-size: 12px !important;
-
-    line-height: 1 !important;
-}
-
-
-/* HOVER */
-
-.sidebar .nav-item:hover {
-    background: #f1f5f9 !important;
-
-    color: #111827 !important;
-}
-
-
-/* ACTIVE */
-
-.sidebar .nav-item.active {
-    background: #eef2ff !important;
-
-    color: #4338ca !important;
-
-    font-weight: 900 !important;
-
-    box-shadow: 0 3px 8px rgba(79,70,229,.08) !important;
-}
-
-
-/* CART NUMBER */
-
-.sidebar .nav-count {
-    margin-left: auto !important;
-
-    background: #111827 !important;
-
-    color: #ffffff !important;
-
-    border-radius: 50px !important;
-
-    padding: 2px 5px !important;
-
-    font-size: 7px !important;
-
-    line-height: 1 !important;
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-.sidebar-bottom {
-    width: 100% !important;
-
-    padding: 5px 5px 10px !important;
-
-    border-top: 1px solid #e5e7eb !important;
-
-    margin-top: 0 !important;
-}
-
-
-.logout-btn {
-    width: 100% !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    gap: 7px !important;
-
-    padding: 8px 7px !important;
-
-    border: 0 !important;
-
-    border-radius: 8px !important;
-
-    background: transparent !important;
-
-    color: #b91c1c !important;
-
-    font-size: 11px !important;
-
-    font-weight: 800 !important;
-
-    text-align: left !important;
-}
-
-
-.logout-btn:hover {
-    background: #fef2f2 !important;
-
-    color: #991b1b !important;
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 800px) {
-
-    .sidebar {
-        position: fixed !important;
-
-        left: -150px !important;
-
-        top: 70px !important;
-
-        z-index: 1000 !important;
-
-        transition: left .2s ease !important;
-
-        height: calc(100vh - 70px) !important;
-    }
-
-    .sidebar.open {
-        left: 0 !important;
-    }
-}
 </style>
 </head>
 <body>
@@ -314,96 +26,21 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
 
 <div class="layout">
 <aside id="sidebar" class="sidebar">
-
-    <!-- SIDEBAR BRAND -->
-    <div class="sidebar-brand">
-        <div class="sidebar-brand-mark">JS</div>
-
-        <div class="sidebar-brand-text">
-            <strong>JS UNDEFINED</strong>
-            <small>Wholesaler Panel</small>
-        </div>
-    </div>
-
-    <!-- SIDEBAR MENU -->
-    <nav class="sidebar-menu">
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html'">
-            <span class="nav-icon">📊</span>
-            <span>Dashboard</span>
-        </button>
-
-        <button class="nav-item active">
-            <span class="nav-icon">📦</span>
-            <span>My Products</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#buy'">
-            <span class="nav-icon">🛍️</span>
-            <span>Buy Products</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#cart'">
-            <span class="nav-icon">🛒</span>
-            <span>Cart</span>
-            <b id="cartCount" class="nav-count">0</b>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='orders.html'">
-            <span class="nav-icon">🚚</span>
-            <span>Orders</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='payment.html'">
-            <span class="nav-icon">💳</span>
-            <span>Payments</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#customers'">
-            <span class="nav-icon">👥</span>
-            <span>Customers</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#inventory'">
-            <span class="nav-icon">🏷️</span>
-            <span>Inventory</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#reports'">
-            <span class="nav-icon">📈</span>
-            <span>Reports</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#notifications'">
-            <span class="nav-icon">🔔</span>
-            <span>Notifications</span>
-        </button>
-
-        <button class="nav-item"
-                onclick="location.href='wholesaler.html#profile'">
-            <span class="nav-icon">👤</span>
-            <span>Profile</span>
-        </button>
-
-    </nav>
-
-    <!-- LOGOUT -->
-    <div class="sidebar-bottom">
-        <button id="logoutBtn" class="logout-btn">
-            <span class="nav-icon">🚪</span>
-            <span>Logout</span>
-        </button>
-    </div>
-
+ <div class="sidebar-brand"><div class="sidebar-brand-mark">JS</div><div><strong>JS UNDEFINED</strong><small>Wholesaler Panel</small></div></div>
+ <nav class="sidebar-menu">
+  <button class="nav-item" onclick="location.href='wholesaler.html'"><span class="nav-icon">📊</span>Dashboard</button>
+  <button class="nav-item active"><span class="nav-icon">📦</span>My Products</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#buy'"><span class="nav-icon">🛍️</span>Buy Products</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#cart'"><span class="nav-icon">🛒</span>Cart <b id="cartCount" class="nav-count">0</b></button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#orders'"><span class="nav-icon">🚚</span>Orders</button>
+  <button class="nav-item" onclick="location.href='payment.html'"><span class="nav-icon">💳</span>Payments</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#customers'"><span class="nav-icon">👥</span>Customers</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#inventory'"><span class="nav-icon">🏷️</span>Inventory</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#reports'"><span class="nav-icon">📈</span>Reports</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#notifications'"><span class="nav-icon">🔔</span>Notifications</button>
+  <button class="nav-item" onclick="location.href='wholesaler.html#profile'"><span class="nav-icon">👤</span>Profile</button>
+ </nav>
+ <div class="sidebar-bottom"><button id="logoutBtn" class="logout-btn">🚪 Logout</button></div>
 </aside>
 
 <main class="content">
@@ -456,10 +93,7 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
 
 <script>
 (function(){
- const sb =
-    typeof supabaseClient !== "undefined"
-        ? supabaseClient
-        : null;
+ const sb=(typeof supabaseClient!=="undefined"?supabaseClient:(window.supabaseClient||window.supabase||null));
  const $=id=>document.getElementById(id);
  if(!sb){$("productsTableBody").innerHTML='<tr><td colspan="9" class="empty"><strong>Supabase client was not found.</strong><span>Check that supabase.js loads before this page.</span></td></tr>';return;}
  let currentUser=null,products=[],filtered=[],page=1,editing=null,existingImages=[];
@@ -476,6 +110,15 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
   const r=await sb.auth.getUser();if(!r.data?.user){location.href="login.html";return}currentUser=r.data.user;
   $("headerUserName").textContent=currentUser.user_metadata?.full_name||currentUser.email?.split("@")[0]||"Wholesaler";
   await load();
+  const manageId=new URLSearchParams(location.search).get("manage");
+  if(manageId){
+    const product=products.find(x=>String(x.id)===String(manageId));
+    if(product){
+      setTimeout(()=>openManage(product),120);
+    }else{
+      toast("That product was not found in your Supabase products.");
+    }
+  }
  }
  async function load(){
   const r=await sb.from("products").select("*").eq("seller_id",currentUser.id).order("created_at",{ascending:false});
@@ -492,7 +135,7 @@ kground:#5146e5;color:#fff;border-color:#5146e5}.page-btn:disabled{opacity:.4}.e
   pagination(pages);
  }
  function pagination(total){let h='<button class="page-btn" data-page="prev" '+(page===1?"disabled":"")+'>‹</button>',a=[];if(total<=7){for(let i=1;i<=total;i++)a.push(i)}else{a.push(1);if(page>4)a.push("...");for(let i=Math.max(2,page-1);i<=Math.min(total-1,page+1);i++)a.push(i);if(page<total-3)a.push("...");a.push(total)}a.forEach(x=>h+=x==="..."?'<span class="ellipsis">…</span>':'<button class="page-btn '+(x===page?"active":"")+'" data-page="'+x+'">'+x+"</button>");h+='<button class="page-btn" data-page="next" '+(page===total?"disabled":"")+'>›</button>';$("pageButtons").innerHTML=h;$("pageInfo").textContent="Page "+page+" of "+total}
- function openManage(p){let x=extra(p),img=Array.isArray(p.image_urls)&&p.image_urls[0]?p.image_urls[0]:placeholder();$("manageContent").innerHTML=`<div class="manage-head"><img class="manage-image" src="${esc(img)}"><div><h3>${esc(p.name||"Unnamed product")}</h3><p>${esc(p.product_type||"Product")} · ${esc(p.product_sub_type||"Other")}</p><p>Status: <strong>${p.is_active===true?"Active":"Inactive"}</strong></p></div></div><div class="detail-grid"><div class="detail-item"><span>Selling Price</span><strong>${money(p.price)}</strong></div><div class="detail-item"><span>Original Price</span><strong>${p.original_price?money(p.original_price):"—"}</strong></div><div class="detail-item"><span>Stock</span><strong>${Number(p.stock_quantity||0)}</strong></div><div class="detail-item"><span>For</span><strong>${esc(p.target_for||"Other")}</strong></div><div class="detail-item"><span>Color</span><strong>${esc(x.color||"—")}</strong></div><div class="detail-item"><span>Size</span><strong>${esc(x.size||"—")}</strong></div></div><div class="manage-actions"><button class="action-btn edit" data-action="edit" data-id="${esc(p.id)}">✏ Edit Product</button><button class="action-btn toggle" data-action="toggle" data-id="${esc(p.id)}">${p.is_active===true?"⏸ Deactivate Product":"▶ Activate Product"}</button><button class="action-btn delete" data-action="delete" data-id="${esc(p.id)}">🗑 Delete Product</button></div>`;$("manageModal").classList.add("show")}
+ function openManage(p){let x=extra(p),img=Array.isArray(p.image_urls)&&p.image_urls[0]?p.image_urls[0]:placeholder();$("manageContent").innerHTML=`<div class="manage-head"><img class="manage-image" src="${esc(img)}"><div><h3>${esc(p.name||"Unnamed product")}</h3><p>${esc(p.product_type||"Product")} · ${esc(p.product_sub_type||"Other")}</p><p>Status: <strong>${p.is_active===true?"Active"":"Inactive"}</strong></p></div></div><div class="detail-grid"><div class="detail-item"><span>Selling Price</span><strong>${money(p.price)}</strong></div><div class="detail-item"><span>Original Price</span><strong>${p.original_price?money(p.original_price):"—"}</strong></div><div class="detail-item"><span>Stock</span><strong>${Number(p.stock_quantity||0)}</strong></div><div class="detail-item"><span>For</span><strong>${esc(p.target_for||"Other")}</strong></div><div class="detail-item"><span>Color</span><strong>${esc(x.color||"—")}</strong></div><div class="detail-item"><span>Size</span><strong>${esc(x.size||"—")}</strong></div></div><div class="manage-actions"><button class="action-btn edit" data-action="edit" data-id="${esc(p.id)}">✏ Edit Product</button><button class="action-btn toggle" data-action="toggle" data-id="${esc(p.id)}">${p.is_active===true?"⏸ Deactivate Product":"▶ Activate Product"}</button><button class="action-btn delete" data-action="delete" data-id="${esc(p.id)}">🗑 Delete Product</button></div>`;$("manageModal").classList.add("show")}
  function closeManage(){$("manageModal").classList.remove("show")}
 
  function openForm(p=null){editing=p;$("modalTitle").textContent=p?"Edit Product":"Add New Product";$("productType").value=p?.product_type||"";$("productSubType").value=p?.product_sub_type||"";$("productName").value=p?.name||"";$("originalPrice").value=p?.original_price??"";$("sellingPrice").value=p?.price??"";$("stockQuantity").value=p?.stock_quantity??0;$("minimumQuantity").value=p?.minimum_quantity??1;$("bulkQuantity").value=p?.bulk_quantity??0;$("bulkPrice").value=p?.bulk_price??0;$("description").value=p?.description||"";let x=p?extra(p):{};$("color").value=x.color;$("size").value=x.size;$("moreInfo").value="";target(p?.target_for||"Women");existingImages=Array.isArray(p?.image_urls)?[...p.image_urls]:[];renderPreview();$("productModal").classList.add("show")}
