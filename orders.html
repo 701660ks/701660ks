@@ -78,10 +78,10 @@ button,input,select{font:inherit}button{cursor:pointer}
 .filter-buttons{display:flex;gap:6px;flex-wrap:wrap}
 .filter-btn{border:1px solid #dbe1ea;background:#fff;border-radius:8px;padding:7px 10px;font-size:10px;font-weight:800;color:#475569}
 .filter-btn.active{background:#111827;color:#fff;border-color:#111827}
-
 .table-wrap{
   width:100%;
-  overflow-x:auto;
+  max-width:100%;
+  overflow-x:auto !important;
   overflow-y:hidden;
   -webkit-overflow-scrolling:touch;
   overscroll-behavior-x:contain;
@@ -89,14 +89,11 @@ button,input,select{font:inherit}button{cursor:pointer}
   cursor:grab;
 }
 
-.table-wrap:active{
-  cursor:grabbing;
-}
-
 .table-wrap table{
+  width:940px;
   min-width:940px;
+  border-collapse:collapse;
 }
-
 
 table{width:100%;border-collapse:collapse;min-width:940px}
 th,td{padding:12px;border-bottom:1px solid #eef1f5;text-align:left;font-size:12px;vertical-align:middle}
@@ -332,6 +329,64 @@ tbody tr:hover{background:#fafcff}
  .content{padding:10px}.search-box{min-width:100%}.select{flex:1;min-width:0}.head-actions{width:100%}.head-actions .btn{flex:1}
  .detail-grid{grid-template-columns:1fr}.table-footer{align-items:flex-start;flex-direction:column}
 }
+
+
+
+@media (max-width:650px){
+
+  .table-wrap{
+    width:100%;
+    max-width:100%;
+    overflow-x:scroll !important;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-x;
+    scrollbar-width:auto;
+  }
+
+  .table-wrap table{
+    width:940px !important;
+    min-width:940px !important;
+  }
+
+  .table-footer{
+    display:flex !important;
+    width:100%;
+    align-items:center;
+    justify-content:space-between;
+    flex-direction:column;
+    gap:12px;
+    padding:14px 10px;
+  }
+
+  .pagination{
+    display:flex !important;
+    width:100%;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:5px;
+  }
+
+  .page-numbers{
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:5px;
+  }
+
+  .page-btn{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    min-width:36px;
+    height:36px;
+    padding:0 9px;
+  }
+}
+
+
 </style>
 </head>
 
@@ -1194,6 +1249,35 @@ $("nextPage").onclick = () => {
       block:"start"
     });
 };
+
+// NUMBERED PAGINATION BUTTONS
+$("pageNumbers").addEventListener("click", (e) => {
+
+  const button = e.target.closest(".page-btn");
+
+  if (!button) return;
+
+  const page = Number(button.dataset.page);
+
+  if (!Number.isInteger(page)) return;
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(rows().length / pageSize)
+  );
+
+  if (page < 1 || page > totalPages) return;
+
+  currentPage = page;
+
+  renderOrders();
+
+  document.querySelector(".table-wrap")
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+});
 
 $("viewProductsBtn").onclick=()=>location.href="my-product.html";
 $("openBuyBtn").onclick=()=>location.href="wholesaler.html#buy";
