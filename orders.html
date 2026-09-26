@@ -93,7 +93,107 @@ tbody tr:hover{background:#fafcff}
 .status.packed{background:#fef3c7;color:#92400e}.status.shipped{background:#dbeafe;color:#1d4ed8}
 .status.delivered{background:#dcfce7;color:#15803d}.status.cancelled{background:#fee2e2;color:#b91c1c}
 .action-row{display:flex;gap:5px}.action{border:1px solid #dbe1ea;background:#fff;border-radius:7px;padding:6px 8px;font-size:10px;font-weight:800}
-.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;color:#64748b;font-size:10px}
+
+.table-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  color:#64748b;
+  font-size:11px;
+  border-top:1px solid #eef1f5;
+  background:#fff;
+  position:relative;
+  z-index:5;
+}
+
+.pagination{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:5px;
+  flex-wrap:wrap;
+  min-width:0;
+}
+
+.page-numbers{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.page-btn{
+  min-width:34px;
+  height:34px;
+  padding:0 10px;
+  border:1px solid #dbe1ea;
+  background:#fff;
+  color:#172033;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+.page-btn:hover:not(:disabled){
+  background:#f1f5f9;
+  border-color:#cbd5e1;
+}
+
+.page-btn.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+
+.page-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.page-ellipsis{
+  min-width:25px;
+  text-align:center;
+  color:#94a3b8;
+  font-weight:800;
+  font-size:12px;
+}
+
+@media(max-width:700px){
+  .table-footer{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .pagination{
+    width:100%;
+    justify-content:center;
+  }
+
+  .page-btn{
+    height:36px;
+    min-width:36px;
+  }
+}
+
+@media(max-width:480px){
+  .page-btn.page-prev,
+  .page-btn.page-next{
+    padding:0 8px;
+  }
+
+  .page-numbers{
+    max-width:100%;
+    justify-content:center;
+  }
+}
+
+
+
+
 .pagination{display:flex;gap:5px}.page-btn{border:1px solid #dbe1ea;background:#fff;border-radius:7px;padding:6px 9px;font-size:10px}.page-btn.active{background:#111827;color:#fff}
 
 /* RIGHT SIDE */
@@ -286,11 +386,31 @@ tbody tr:hover{background:#fafcff}
           <tbody id="ordersBody"><tr><td colspan="8" class="loading">Loading orders...</td></tr></tbody>
         </table>
       </div>
+<div class="table-footer">
+  <span id="resultInfo">Showing 0 orders</span>
 
-      <div class="table-footer">
-        <span id="resultInfo">Showing 0 orders</span>
-        <div class="pagination"><button class="page-btn" id="prevPage">‹</button><button class="page-btn active" id="pageNumber">1</button><button class="page-btn" id="nextPage">›</button></div>
-      </div>
+  <div class="pagination" id="pagination">
+    <button
+      type="button"
+      class="page-btn page-prev"
+      id="prevPage"
+      aria-label="Previous page">
+      ‹ Previous
+    </button>
+
+    <div id="pageNumbers" class="page-numbers"></div>
+
+    <button
+      type="button"
+      class="page-btn page-next"
+      id="nextPage"
+      aria-label="Next page">
+      Next ›
+    </button>
+  </div>
+</div>
+
+    
     </section>
 
     <aside class="side-stack">
@@ -506,23 +626,267 @@ function renderStats(){
 }
 
 function renderOrders(){
- const r=rows(), pages=Math.max(1,Math.ceil(r.length/pageSize));currentPage=Math.min(currentPage,pages);
- const start=(currentPage-1)*pageSize, page=r.slice(start,start+pageSize), body=$("ordersBody");
- if(!page.length)body.innerHTML='<tr><td colspan="8" class="loading">No orders found.</td></tr>';
- else body.innerHTML=page.map(o=>{
-  const name=o.user_name||o.customer_name||"Customer", sk=statusKey(o.status), date=o.created_at?new Date(o.created_at).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}):"—";
-  return `<tr>
-   <td><span class="order-id">#${esc(o.order_number||String(o.id||"").slice(0,8))}</span></td>
-   <td><div class="customer"><span class="avatar">${esc(initials(name))}</span><div><strong>${esc(name)}</strong><small>${esc(o.user_mobile||"Customer")}</small></div></div></td>
-   <td>${esc(date)}</td><td>${esc(o.buying_quantity||1)}</td>
-   <td><b>${money(o.total_price||Number(o.price||0)*Number(o.buying_quantity||1))}</b></td>
-   <td><span class="status ${esc(sk)}"><span class="status-dot"></span>${esc(statusLabel(o.status))}</span></td>
-   <td>${esc(o.tracking_number||"Not assigned")}</td>
-   <td><button class="action manage-order-btn" data-view="${esc(o.id)}">Manage Order</button></td>
-  </tr>`
- }).join("");
- $("resultInfo").textContent=`Showing ${r.length?start+1:0}–${Math.min(start+pageSize,r.length)} of ${r.length} orders`;
- $("pageNumber").textContent=currentPage;$("prevPage").disabled=currentPage<=1;$("nextPage").disabled=currentPage>=pages;
+  const r = rows();
+
+  const pages = Math.max(
+    1,
+    Math.ceil(r.length / pageSize)
+  );
+
+  // Always keep the current page valid
+  if(currentPage > pages){
+    currentPage = pages;
+  }
+
+  if(currentPage < 1){
+    currentPage = 1;
+  }
+
+  const start = (currentPage - 1) * pageSize;
+  const page = r.slice(start, start + pageSize);
+
+  const body = $("ordersBody");
+
+  if(!page.length){
+    body.innerHTML = `
+      <tr>
+        <td colspan="8" class="loading">
+          No orders found.
+        </td>
+      </tr>
+    `;
+  }else{
+    body.innerHTML = page.map(o => {
+
+      const name =
+        o.user_name ||
+        o.customer_name ||
+        "Customer";
+
+      const sk = statusKey(o.status);
+
+      const date = o.created_at
+        ? new Date(o.created_at).toLocaleDateString(
+            "en-IN",
+            {
+              day:"2-digit",
+              month:"short",
+              year:"numeric"
+            }
+          )
+        : "—";
+
+      const total =
+        Number(
+          o.total_price ??
+          (
+            Number(o.price || 0) *
+            Number(o.buying_quantity || 1)
+          )
+        ) || 0;
+
+      return `
+        <tr>
+
+          <td>
+            <span class="order-id">
+              #${esc(
+                o.order_number ||
+                String(o.id || "").slice(0,8)
+              )}
+            </span>
+          </td>
+
+          <td>
+            <div class="customer">
+              <span class="avatar">
+                ${esc(initials(name))}
+              </span>
+
+              <div>
+                <strong>${esc(name)}</strong>
+                <small>
+                  ${esc(o.user_mobile || "Customer")}
+                </small>
+              </div>
+            </div>
+          </td>
+
+          <td>${esc(date)}</td>
+
+          <td>
+            ${esc(o.buying_quantity || 1)}
+          </td>
+
+          <td>
+            <b>${money(total)}</b>
+          </td>
+
+          <td>
+            <span class="status ${esc(sk)}">
+              <span class="status-dot"></span>
+              ${esc(statusLabel(o.status))}
+            </span>
+          </td>
+
+          <td>
+            ${esc(
+              o.tracking_number ||
+              "Not assigned"
+            )}
+          </td>
+
+          <td>
+            <button
+              type="button"
+              class="action manage-order-btn"
+              data-view="${esc(o.id)}">
+              Manage Order
+            </button>
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
+  }
+
+  // ----------------------------------------
+  // RESULT INFORMATION
+  // ----------------------------------------
+
+  const from = r.length
+    ? start + 1
+    : 0;
+
+  const to = Math.min(
+    start + pageSize,
+    r.length
+  );
+
+  $("resultInfo").textContent =
+    `Showing ${from}–${to} of ${r.length} orders`;
+
+
+  // ----------------------------------------
+  // PAGINATION BUTTONS
+  // ----------------------------------------
+
+  $("prevPage").disabled =
+    currentPage <= 1;
+
+  $("nextPage").disabled =
+    currentPage >= pages;
+
+
+  // ----------------------------------------
+  // NUMBERED PAGES
+  // ----------------------------------------
+
+  const pageNumbers = $("pageNumbers");
+
+  if(!pageNumbers){
+    return;
+  }
+
+  pageNumbers.innerHTML = "";
+
+  /*
+    Show:
+
+    1 2 3 4 5
+
+    For many pages:
+
+    1 ... 5 6 7 ... 20
+  */
+
+  const addPage = (pageNumber) => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+
+    button.className =
+      "page-btn" +
+      (
+        pageNumber === currentPage
+          ? " active"
+          : ""
+      );
+
+    button.textContent =
+      pageNumber;
+
+    button.dataset.page =
+      pageNumber;
+
+    pageNumbers.appendChild(button);
+  };
+
+
+  const addEllipsis = () => {
+
+    const span =
+      document.createElement("span");
+
+    span.className =
+      "page-ellipsis";
+
+    span.textContent =
+      "…";
+
+    pageNumbers.appendChild(span);
+  };
+
+
+  if(pages <= 7){
+
+    for(
+      let i = 1;
+      i <= pages;
+      i++
+    ){
+      addPage(i);
+    }
+
+  }else{
+
+    // First page
+    addPage(1);
+
+    if(currentPage > 4){
+      addEllipsis();
+    }
+
+    const startPage =
+      Math.max(
+        2,
+        currentPage - 1
+      );
+
+    const endPage =
+      Math.min(
+        pages - 1,
+        currentPage + 1
+      );
+
+    for(
+      let i = startPage;
+      i <= endPage;
+      i++
+    ){
+      addPage(i);
+    }
+
+    if(currentPage < pages - 3){
+      addEllipsis();
+    }
+
+    // Last page
+    addPage(pages);
+  }
 }
 
 function renderProducts(){
