@@ -1113,8 +1113,51 @@ $("dateFilter").onchange=()=>{currentPage=1;renderOrders()};
 $("sortOrder").onchange=()=>{currentPage=1;renderOrders()};
 $("quickSearch").oninput=renderQuick;
 $("exportBtn").onclick=exportCSV;
-$("prevPage").onclick=()=>{if(currentPage>1){currentPage--;renderOrders()}};
-$("nextPage").onclick=()=>{currentPage++;renderOrders()};
+
+
+$("prevPage").onclick = () => {
+
+  if(currentPage <= 1){
+    return;
+  }
+
+  currentPage--;
+
+  renderOrders();
+
+  document.querySelector(".table-wrap")
+    ?.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+};
+
+
+$("nextPage").onclick = () => {
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        rows().length / pageSize
+      )
+    );
+
+  if(currentPage >= totalPages){
+    return;
+  }
+
+  currentPage++;
+
+  renderOrders();
+
+  document.querySelector(".table-wrap")
+    ?.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+};
+
 $("viewProductsBtn").onclick=()=>location.href="my-product.html";
 $("openBuyBtn").onclick=()=>location.href="wholesaler.html#buy";
 $("quickOrderBtn").onclick=()=>location.href="wholesaler.html#buy";
