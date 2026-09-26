@@ -2031,161 +2031,565 @@ tbody tr:hover{
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script>
 (function(){
 "use strict";
 
-let currentUser=null, allOrders=[], allProducts=[], currentStatus="all", currentPage=1, selectedOrder=null;
-const pageSize=15, $=id=>document.getElementById(id);
+/* =========================================================
+   GLOBAL DATA
+   ========================================================= */
 
-function money(v){return "₹"+Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function initials(n){return String(n||"U").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"U"}
-function statusKey(s){s=String(s||"pending").toLowerCase().replace(/\s+/g,"_");return s==="confirmed"?"processing":s}
-function statusLabel(s){return statusKey(s).replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())}
-function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2200)}
-function sb(){return window.supabaseClient||window.supabase||null}
+let currentUser = null;
+let allOrders = [];
+let allProducts = [];
+let currentStatus = "all";
+let currentPage = 1;
+let selectedOrder = null;
+
+/* IMPORTANT: 15 ORDERS PER PAGE */
+const pageSize = 15;
+
+const $ = id => document.getElementById(id);
+
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
+
+function money(v){
+  return "₹" + Number(v || 0).toLocaleString("en-IN", {
+    maximumFractionDigits: 2
+  });
+}
+
+function esc(v){
+  return String(v ?? "").replace(
+    /[&<>"']/g,
+    m => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[m])
+  );
+}
+
+function initials(n){
+  return String(n || "U")
+    .trim()
+    .split(/\s+/)
+    .slice(0,2)
+    .map(x => x[0])
+    .join("")
+    .toUpperCase() || "U";
+}
+
+function statusKey(s){
+  s = String(s || "pending")
+    .toLowerCase()
+    .replace(/\s+/g,"_");
+
+  return s === "confirmed" ? "processing" : s;
+}
+
+function statusLabel(s){
+  return statusKey(s)
+    .replace(/_/g," ")
+    .replace(/\b\w/g,c => c.toUpperCase());
+}
+
+function toast(m){
+  const t = $("toast");
+
+  if(!t) return;
+
+  t.textContent = m;
+  t.classList.add("show");
+
+  clearTimeout(toast.t);
+
+  toast.t = setTimeout(() => {
+    t.classList.remove("show");
+  },2200);
+}
+
+function sb(){
+  return window.supabaseClient || window.supabase || null;
+}
+
+
+/* =========================================================
+   LOAD SUPABASE DATA
+   ========================================================= */
 
 async function load(){
- const client =
-   (typeof supabaseClient !== "undefined" ? supabaseClient : null) ||
-   window.supabaseClient ||
-   null;
 
- if(!client || !client.auth){
-   showDataError("Supabase client is not available. Check that supabase.js loads before order.html.");
-   return;
- }
+  const client =
+    (typeof supabaseClient !== "undefined"
+      ? supabaseClient
+      : null) ||
+    window.supabaseClient ||
+    null;
 
- try{
-   const {data:sessionData,error:sessionError}=await client.auth.getSession();
-   if(sessionError) throw sessionError;
+  if(!client || !client.auth){
+    showDataError(
+      "Supabase client is not available. Check that supabase.js loads before orders.html."
+    );
+    return;
+  }
 
-   currentUser=sessionData?.session?.user||null;
+  try{
 
-   if(!currentUser){
-     showDataError("No logged-in user session. Please login as a wholesaler.");
-     return;
-   }
+    const {
+      data:sessionData,
+      error:sessionError
+    } = await client.auth.getSession();
 
-   const displayName =
-     currentUser.user_metadata?.full_name ||
-     currentUser.user_metadata?.name ||
-     currentUser.email?.split("@")[0] ||
-     "Wholesaler";
-   $("topUserName").textContent=displayName;
+    if(sessionError) throw sessionError;
 
-   /*
-    * IMPORTANT:
-    * Orders are loaded only from the authenticated wholesaler's seller_id.
-    * There is NO demo/fallback data in this page.
-    */
-   const ordersResult=await client
-     .from("orders")
-     .select("*")
-     .eq("seller_id",currentUser.id)
-     .order("created_at",{ascending:false});
+    currentUser =
+      sessionData?.session?.user || null;
 
-   if(ordersResult.error) throw ordersResult.error;
-   allOrders=ordersResult.data||[];
+    if(!currentUser){
+      showDataError(
+        "No logged-in user session. Please login as a wholesaler."
+      );
+      return;
+    }
 
-   /*
-    * Load this wholesaler's real products only.
-    */
-   const productsResult=await client
-     .from("products")
-     .select("id,name,price,bulk_price,stock_quantity,image_urls,is_active,seller_id")
-     .eq("seller_id",currentUser.id);
+    const displayName =
+      currentUser.user_metadata?.full_name ||
+      currentUser.user_metadata?.name ||
+      currentUser.email?.split("@")[0] ||
+      "Wholesaler";
 
-   if(productsResult.error) throw productsResult.error;
-   allProducts=productsResult.data||[];
+    if($("topUserName")){
+      $("topUserName").textContent = displayName;
+    }
 
-   /*
-    * Customer names/mobile numbers are not necessarily stored directly
-    * in orders. If user_id exists, fetch matching real profiles.
-    * If RLS prevents this query, the order itself is still shown and
-    * customer fields fall back to values that actually exist in orders.
-    */
-   const userIds=[...new Set(allOrders.map(o=>o.user_id).filter(Boolean))];
 
-   if(userIds.length){
-     const profilesResult=await client
-       .from("profiles")
-       .select("id,full_name,mobile,email,user_type")
-       .in("id",userIds);
+    /* ===============================
+       LOAD ORDERS
+       =============================== */
 
-     if(!profilesResult.error){
-       const profileMap=new Map((profilesResult.data||[]).map(x=>[String(x.id),x]));
-       allOrders=allOrders.map(o=>{
-         const profile=profileMap.get(String(o.user_id));
-         return {
-           ...o,
-           user_name:o.user_name||o.customer_name||profile?.full_name||null,
-           user_mobile:o.user_mobile||profile?.mobile||null,
-           user_email:o.user_email||profile?.email||null,
-           customer_type:o.customer_type||profile?.user_type||null
-         };
-       });
-     }else{
-       console.warn("profiles lookup was not available:",profilesResult.error);
-     }
-   }
+    const ordersResult = await client
+      .from("orders")
+      .select("*")
+      .eq("seller_id",currentUser.id)
+      .order("created_at",{ascending:false});
 
-   render();
-   if(!allOrders.length) toast("No orders found for this wholesaler.");
- }catch(e){
-   console.error("Order dashboard Supabase error:",e);
-   showDataError("Unable to load real Supabase data: "+(e.message||"Unknown error"));
- }
+    if(ordersResult.error){
+      throw ordersResult.error;
+    }
+
+    allOrders = ordersResult.data || [];
+
+
+    /* ===============================
+       LOAD PRODUCTS
+       =============================== */
+
+    const productsResult = await client
+      .from("products")
+      .select(
+        "id,name,price,bulk_price,stock_quantity,image_urls,is_active,seller_id"
+      )
+      .eq("seller_id",currentUser.id);
+
+    if(productsResult.error){
+      throw productsResult.error;
+    }
+
+    allProducts = productsResult.data || [];
+
+
+    /* ===============================
+       LOAD CUSTOMER PROFILES
+       =============================== */
+
+    const userIds = [
+      ...new Set(
+        allOrders
+          .map(o => o.user_id)
+          .filter(Boolean)
+      )
+    ];
+
+    if(userIds.length){
+
+      const profilesResult = await client
+        .from("profiles")
+        .select(
+          "id,full_name,mobile,email,user_type"
+        )
+        .in("id",userIds);
+
+      if(!profilesResult.error){
+
+        const profileMap = new Map(
+          (profilesResult.data || [])
+            .map(x => [String(x.id),x])
+        );
+
+        allOrders = allOrders.map(o => {
+
+          const profile =
+            profileMap.get(String(o.user_id));
+
+          return {
+            ...o,
+
+            user_name:
+              o.user_name ||
+              o.customer_name ||
+              profile?.full_name ||
+              null,
+
+            user_mobile:
+              o.user_mobile ||
+              profile?.mobile ||
+              null,
+
+            user_email:
+              o.user_email ||
+              profile?.email ||
+              null,
+
+            customer_type:
+              o.customer_type ||
+              profile?.user_type ||
+              null
+          };
+
+        });
+
+      }else{
+
+        console.warn(
+          "profiles lookup was not available:",
+          profilesResult.error
+        );
+
+      }
+    }
+
+
+    /* ===============================
+       RENDER EVERYTHING
+       =============================== */
+
+    render();
+
+    if(!allOrders.length){
+      toast("No orders found for this wholesaler.");
+    }
+
+  }catch(e){
+
+    console.error(
+      "Order dashboard Supabase error:",
+      e
+    );
+
+    showDataError(
+      "Unable to load real Supabase data: " +
+      (e.message || "Unknown error")
+    );
+  }
 }
+
+
+/* =========================================================
+   DATA ERROR
+   ========================================================= */
 
 function showDataError(message){
- allOrders=[];
- allProducts=[];
- $("ordersBody").innerHTML=
-   `<tr><td colspan="8" class="loading" style="color:#b91c1c">
-      ${esc(message)}
-    </td></tr>`;
- $("topProducts").innerHTML=
-   `<div class="loading" style="color:#b91c1c">${esc(message)}</div>`;
- $("quickResults").innerHTML=
-   `<div class="loading" style="color:#b91c1c">${esc(message)}</div>`;
- renderStats();
- $("resultInfo").textContent="No live data loaded";
- $("topUserName").textContent="Wholesaler";
+
+  allOrders = [];
+  allProducts = [];
+
+  if($("ordersBody")){
+    $("ordersBody").innerHTML = `
+      <tr>
+        <td colspan="8"
+            class="loading"
+            style="color:#b91c1c">
+          ${esc(message)}
+        </td>
+      </tr>
+    `;
+  }
+
+  if($("topProducts")){
+    $("topProducts").innerHTML =
+      `<div class="loading"
+            style="color:#b91c1c">
+        ${esc(message)}
+      </div>`;
+  }
+
+  if($("quickResults")){
+    $("quickResults").innerHTML =
+      `<div class="loading"
+            style="color:#b91c1c">
+        ${esc(message)}
+      </div>`;
+  }
+
+  renderStats();
+
+  if($("resultInfo")){
+    $("resultInfo").textContent =
+      "No live data loaded";
+  }
+
+  if($("topUserName")){
+    $("topUserName").textContent =
+      "Wholesaler";
+  }
 }
+
+
+/* =========================================================
+   FILTERED / SORTED ORDERS
+   ========================================================= */
 
 function rows(){
- const q=($("orderSearch").value||"").toLowerCase().trim(), date=$("dateFilter").value, sort=$("sortOrder").value;
- let r=allOrders.filter(o=>{
-  const hay=[o.order_number,o.id,o.product_name,o.tracking_number,o.user_name,o.customer_name,o.user_mobile].join(" ").toLowerCase();
-  if(q&&!hay.includes(q))return false;
-  if(currentStatus!=="all"&&statusKey(o.status)!==currentStatus)return false;
-  if(date!=="all"){const age=(Date.now()-new Date(o.created_at||0).getTime())/86400000;if(date==="today"?age>1:age>Number(date))return false}
-  return true;
- });
- r.sort((a,b)=>sort==="high"?Number(b.total_price||0)-Number(a.total_price||0):sort==="low"?Number(a.total_price||0)-Number(b.total_price||0):(sort==="oldest"?1:-1)*(new Date(a.created_at||0)-new Date(b.created_at||0)));
- return r;
+
+  const q =
+    ($("orderSearch")?.value || "")
+      .toLowerCase()
+      .trim();
+
+  const date =
+    $("dateFilter")?.value || "all";
+
+  const sort =
+    $("sortOrder")?.value || "newest";
+
+
+  let r = allOrders.filter(o => {
+
+    const hay = [
+      o.order_number,
+      o.id,
+      o.product_name,
+      o.tracking_number,
+      o.user_name,
+      o.customer_name,
+      o.user_mobile
+    ]
+      .join(" ")
+      .toLowerCase();
+
+
+    if(q && !hay.includes(q)){
+      return false;
+    }
+
+
+    if(
+      currentStatus !== "all" &&
+      statusKey(o.status) !== currentStatus
+    ){
+      return false;
+    }
+
+
+    if(date !== "all"){
+
+      const age =
+        (
+          Date.now() -
+          new Date(o.created_at || 0).getTime()
+        ) / 86400000;
+
+      if(
+        date === "today"
+          ? age > 1
+          : age > Number(date)
+      ){
+        return false;
+      }
+    }
+
+    return true;
+  });
+
+
+  r.sort((a,b) => {
+
+    if(sort === "high"){
+      return (
+        Number(b.total_price || 0) -
+        Number(a.total_price || 0)
+      );
+    }
+
+    if(sort === "low"){
+      return (
+        Number(a.total_price || 0) -
+        Number(b.total_price || 0)
+      );
+    }
+
+    if(sort === "oldest"){
+      return (
+        new Date(a.created_at || 0) -
+        new Date(b.created_at || 0)
+      );
+    }
+
+    return (
+      new Date(b.created_at || 0) -
+      new Date(a.created_at || 0)
+    );
+  });
+
+  return r;
 }
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
 
 function renderStats(){
- const r=allOrders, c=s=>r.filter(o=>statusKey(o.status)===s).length;
- const processing=r.filter(o=>["processing","packed"].includes(statusKey(o.status))).length;
- const active=r.filter(o=>["pending","processing","packed"].includes(statusKey(o.status))).length;
- $("activeCount").textContent=active;$("processingCount").textContent=processing;$("pendingCount").textContent=c("pending");$("shippedCount").textContent=c("shipped");
- $("sidePending").textContent=c("pending");$("sideProcessing").textContent=processing;$("sideShipped").textContent=c("shipped");$("sideDelivered").textContent=c("delivered");
+
+  const r = allOrders;
+
+  const count = s =>
+    r.filter(
+      o => statusKey(o.status) === s
+    ).length;
+
+  const processing =
+    r.filter(o =>
+      ["processing","packed"]
+        .includes(statusKey(o.status))
+    ).length;
+
+  const active =
+    r.filter(o =>
+      ["pending","processing","packed"]
+        .includes(statusKey(o.status))
+    ).length;
+
+
+  if($("activeCount"))
+    $("activeCount").textContent = active;
+
+  if($("processingCount"))
+    $("processingCount").textContent = processing;
+
+  if($("pendingCount"))
+    $("pendingCount").textContent =
+      count("pending");
+
+  if($("shippedCount"))
+    $("shippedCount").textContent =
+      count("shipped");
+
+
+  if($("sidePending"))
+    $("sidePending").textContent =
+      count("pending");
+
+  if($("sideProcessing"))
+    $("sideProcessing").textContent =
+      processing;
+
+  if($("sideShipped"))
+    $("sideShipped").textContent =
+      count("shipped");
+
+  if($("sideDelivered"))
+    $("sideDelivered").textContent =
+      count("delivered");
 }
 
+
+/* =========================================================
+   TABLE SCROLL
+   ========================================================= */
+
+function scrollOrdersToTop(){
+
+  const wrap =
+    document.querySelector(".table-wrap");
+
+  if(!wrap) return;
+
+  wrap.scrollLeft = 0;
+
+  wrap.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+
+/* =========================================================
+   GO TO ORDER PAGE
+   ========================================================= */
+
+function goToPage(page){
+
+  const filteredOrders = rows();
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        filteredOrders.length / pageSize
+      )
+    );
+
+
+  if(!Number.isInteger(page)){
+    return;
+  }
+
+
+  if(page < 1){
+    page = 1;
+  }
+
+
+  if(page > totalPages){
+    page = totalPages;
+  }
+
+
+  currentPage = page;
+
+  renderOrders();
+
+  scrollOrdersToTop();
+}
+
+
+/* =========================================================
+   RENDER ORDERS
+   ========================================================= */
+
 function renderOrders(){
+
   const r = rows();
 
-  const pages = Math.max(
-    1,
-    Math.ceil(r.length / pageSize)
-  );
 
-  // Always keep the current page valid
+  /* TOTAL PAGES */
+  const pages =
+    Math.max(
+      1,
+      Math.ceil(
+        r.length / pageSize
+      )
+    );
+
+
+  /* KEEP PAGE VALID */
   if(currentPage > pages){
     currentPage = pages;
   }
@@ -2194,169 +2598,256 @@ function renderOrders(){
     currentPage = 1;
   }
 
-  const start = (currentPage - 1) * pageSize;
-  const page = r.slice(start, start + pageSize);
 
-  const body = $("ordersBody");
+  /* PAGE START */
+  const start =
+    (currentPage - 1) *
+    pageSize;
+
+
+  /* EXACTLY MAX 15 ORDERS */
+  const page =
+    r.slice(
+      start,
+      start + pageSize
+    );
+
+
+  const body =
+    $("ordersBody");
+
+  if(!body) return;
+
+
+  /* ===============================
+     TABLE ROWS
+     =============================== */
 
   if(!page.length){
+
     body.innerHTML = `
       <tr>
-        <td colspan="8" class="loading">
+        <td colspan="8"
+            class="loading">
           No orders found.
         </td>
       </tr>
     `;
+
   }else{
-    body.innerHTML = page.map(o => {
 
-      const name =
-        o.user_name ||
-        o.customer_name ||
-        "Customer";
+    body.innerHTML =
+      page.map(o => {
 
-      const sk = statusKey(o.status);
+        const name =
+          o.user_name ||
+          o.customer_name ||
+          "Customer";
 
-      const date = o.created_at
-        ? new Date(o.created_at).toLocaleDateString(
-            "en-IN",
-            {
-              day:"2-digit",
-              month:"short",
-              year:"numeric"
-            }
-          )
-        : "—";
 
-      const total =
-        Number(
-          o.total_price ??
-          (
-            Number(o.price || 0) *
-            Number(o.buying_quantity || 1)
-          )
-        ) || 0;
+        const sk =
+          statusKey(o.status);
 
-      return `
-        <tr>
 
-          <td>
-            <span class="order-id">
-              #${esc(
-                o.order_number ||
-                String(o.id || "").slice(0,8)
+        const date =
+          o.created_at
+            ? new Date(
+                o.created_at
+              ).toLocaleDateString(
+                "en-IN",
+                {
+                  day:"2-digit",
+                  month:"short",
+                  year:"numeric"
+                }
+              )
+            : "—";
+
+
+        const total =
+          Number(
+            o.total_price ??
+            (
+              Number(o.price || 0) *
+              Number(
+                o.buying_quantity || 1
+              )
+            )
+          ) || 0;
+
+
+        return `
+          <tr>
+
+            <td>
+              <span class="order-id">
+                #${esc(
+                  o.order_number ||
+                  String(o.id || "")
+                    .slice(0,8)
+                )}
+              </span>
+            </td>
+
+
+            <td>
+              <div class="customer">
+
+                <span class="avatar">
+                  ${esc(
+                    initials(name)
+                  )}
+                </span>
+
+                <div>
+
+                  <strong>
+                    ${esc(name)}
+                  </strong>
+
+                  <small>
+                    ${esc(
+                      o.user_mobile ||
+                      "Customer"
+                    )}
+                  </small>
+
+                </div>
+
+              </div>
+            </td>
+
+
+            <td>
+              ${esc(date)}
+            </td>
+
+
+            <td>
+              ${esc(
+                o.buying_quantity || 1
               )}
-            </span>
-          </td>
+            </td>
 
-          <td>
-            <div class="customer">
-              <span class="avatar">
-                ${esc(initials(name))}
+
+            <td>
+              <b>
+                ${money(total)}
+              </b>
+            </td>
+
+
+            <td>
+
+              <span
+                class="status ${esc(sk)}">
+
+                <span
+                  class="status-dot">
+                </span>
+
+                ${esc(
+                  statusLabel(
+                    o.status
+                  )
+                )}
+
               </span>
 
-              <div>
-                <strong>${esc(name)}</strong>
-                <small>
-                  ${esc(o.user_mobile || "Customer")}
-                </small>
-              </div>
-            </div>
-          </td>
+            </td>
 
-          <td>${esc(date)}</td>
 
-          <td>
-            ${esc(o.buying_quantity || 1)}
-          </td>
+            <td>
+              ${esc(
+                o.tracking_number ||
+                "Not assigned"
+              )}
+            </td>
 
-          <td>
-            <b>${money(total)}</b>
-          </td>
 
-          <td>
-            <span class="status ${esc(sk)}">
-              <span class="status-dot"></span>
-              ${esc(statusLabel(o.status))}
-            </span>
-          </td>
+            <td>
 
-          <td>
-            ${esc(
-              o.tracking_number ||
-              "Not assigned"
-            )}
-          </td>
+              <button
+                type="button"
+                class="action manage-order-btn"
+                data-view="${esc(o.id)}">
 
-          <td>
-            <button
-              type="button"
-              class="action manage-order-btn"
-              data-view="${esc(o.id)}">
-              Manage Order
-            </button>
-          </td>
+                Manage Order
 
-        </tr>
-      `;
+              </button>
 
-    }).join("");
+            </td>
+
+          </tr>
+        `;
+
+      }).join("");
   }
 
-  // ----------------------------------------
-  // RESULT INFORMATION
-  // ----------------------------------------
 
-  const from = r.length
-    ? start + 1
-    : 0;
+  /* ===============================
+     RESULT INFO
+     =============================== */
 
-  const to = Math.min(
-    start + pageSize,
+  const from =
     r.length
-  );
+      ? start + 1
+      : 0;
 
-  $("resultInfo").textContent =
-    `Showing ${from}–${to} of ${r.length} orders`;
-
-
-  // ----------------------------------------
-  // PAGINATION BUTTONS
-  // ----------------------------------------
-
-  $("prevPage").disabled =
-    currentPage <= 1;
-
-  $("nextPage").disabled =
-    currentPage >= pages;
+  const to =
+    Math.min(
+      start + pageSize,
+      r.length
+    );
 
 
-  // ----------------------------------------
-  // NUMBERED PAGES
-  // ----------------------------------------
+  if($("resultInfo")){
 
-  const pageNumbers = $("pageNumbers");
+    $("resultInfo").textContent =
+      `Showing ${from}–${to} of ${r.length} orders`;
+  }
+
+
+  /* ===============================
+     PREVIOUS / NEXT
+     =============================== */
+
+  if($("prevPage")){
+
+    $("prevPage").disabled =
+      currentPage <= 1;
+  }
+
+
+  if($("nextPage")){
+
+    $("nextPage").disabled =
+      currentPage >= pages;
+  }
+
+
+  /* ===============================
+     NUMBERED PAGES
+     =============================== */
+
+  const pageNumbers =
+    $("pageNumbers");
 
   if(!pageNumbers){
     return;
   }
 
+
   pageNumbers.innerHTML = "";
 
-  /*
-    Show:
 
-    1 2 3 4 5
-
-    For many pages:
-
-    1 ... 5 6 7 ... 20
-  */
-
-  const addPage = (pageNumber) => {
+  function addPage(pageNumber){
 
     const button =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
+
 
     button.type = "button";
 
@@ -2368,31 +2859,40 @@ function renderOrders(){
           : ""
       );
 
+
     button.textContent =
       pageNumber;
 
+
     button.dataset.page =
-      pageNumber;
-
-    pageNumbers.appendChild(button);
-  };
+      String(pageNumber);
 
 
-  const addEllipsis = () => {
+    pageNumbers.appendChild(
+      button
+    );
+  }
+
+
+  function addEllipsis(){
 
     const span =
-      document.createElement("span");
+      document.createElement(
+        "span"
+      );
 
     span.className =
       "page-ellipsis";
 
-    span.textContent =
-      "…";
+    span.textContent = "…";
 
-    pageNumbers.appendChild(span);
-  };
+    pageNumbers.appendChild(
+      span
+    );
+  }
 
 
+  /* SHOW ALL IF 7 OR LESS */
   if(pages <= 7){
 
     for(
@@ -2400,17 +2900,22 @@ function renderOrders(){
       i <= pages;
       i++
     ){
+
       addPage(i);
     }
 
   }else{
 
-    // First page
+    /* FIRST */
     addPage(1);
 
+
+    /* LEFT ELLIPSIS */
     if(currentPage > 4){
+
       addEllipsis();
     }
+
 
     const startPage =
       Math.max(
@@ -2418,185 +2923,531 @@ function renderOrders(){
         currentPage - 1
       );
 
+
     const endPage =
       Math.min(
         pages - 1,
         currentPage + 1
       );
 
+
     for(
       let i = startPage;
       i <= endPage;
       i++
     ){
+
       addPage(i);
     }
 
+
+    /* RIGHT ELLIPSIS */
     if(currentPage < pages - 3){
+
       addEllipsis();
     }
 
-    // Last page
+
+    /* LAST */
     addPage(pages);
   }
 }
 
+
+/* =========================================================
+   TOP PRODUCTS
+   ========================================================= */
+
 function renderProducts(){
- const map=new Map();
- allOrders.forEach(o=>{
-  const key=String(o.product_id||o.product_name||"");
-  const x=map.get(key)||{id:o.product_id||null,name:o.product_name||"Product",qty:0,amount:0};
-  x.qty+=Number(o.buying_quantity||1);
-  x.amount+=Number(o.total_price||0);
-  map.set(key,x);
- });
- let r=[...map.values()].sort((a,b)=>b.qty-a.qty).slice(0,8);
- if(!r.length){
-  $("topProducts").innerHTML='<div class="loading">No real order/product records found in Supabase.</div>';
-  return;
- }
- $("topProducts").innerHTML=r.map((p,i)=>{
-  const x=p.id?allProducts.find(a=>String(a.id)===String(p.id)):allProducts.find(a=>a.name===p.name);
-  const img=x?.image_urls?.[0]||"";
-  const pid=p.id||x?.id;
-  const link=pid?`product.html?id=${encodeURIComponent(pid)}&product_id=${encodeURIComponent(pid)}`:"#";
-  return `<div class="product-card">
-    <a class="product-card-link" href="${link}" ${pid?"":"aria-disabled=\"true\""}>
-      <div class="product-image">${img?`<img src="${esc(img)}" alt="">`:"📦"}</div>
-      <strong title="${esc(p.name)}">${esc(p.name)}</strong>
-      <small>${p.qty} units sold</small>
-      <div class="product-price">${money(p.amount||x?.bulk_price||x?.price)}</div>
-      <div class="product-sales">${i===0?"Top seller":"Popular product"}</div>
-      <span class="product-view-mini">View Product →</span>
-    </a>
-    ${pid?`<a class="product-manage-mini" href="my-product.html?manage=${encodeURIComponent(pid)}">⚙ Manage Product</a>`:""}
-  </div>`;
- }).join("");
+
+  const map = new Map();
+
+
+  allOrders.forEach(o => {
+
+    const key =
+      String(
+        o.product_id ||
+        o.product_name ||
+        ""
+      );
+
+
+    const x =
+      map.get(key) ||
+      {
+        id:o.product_id || null,
+        name:o.product_name || "Product",
+        qty:0,
+        amount:0
+      };
+
+
+    x.qty +=
+      Number(
+        o.buying_quantity || 1
+      );
+
+
+    x.amount +=
+      Number(
+        o.total_price || 0
+      );
+
+
+    map.set(key,x);
+  });
+
+
+  const r =
+    [...map.values()]
+      .sort(
+        (a,b) =>
+          b.qty - a.qty
+      )
+      .slice(0,8);
+
+
+  if(!r.length){
+
+    $("topProducts").innerHTML =
+      '<div class="loading">No real order/product records found in Supabase.</div>';
+
+    return;
+  }
+
+
+  $("topProducts").innerHTML =
+    r.map((p,i) => {
+
+      const x =
+        p.id
+          ? allProducts.find(
+              a =>
+                String(a.id) ===
+                String(p.id)
+            )
+          : allProducts.find(
+              a =>
+                a.name === p.name
+            );
+
+
+      const img =
+        x?.image_urls?.[0] || "";
+
+
+      const pid =
+        p.id || x?.id;
+
+
+      const link =
+        pid
+          ? `product.html?id=${encodeURIComponent(pid)}&product_id=${encodeURIComponent(pid)}`
+          : "#";
+
+
+      return `
+        <div class="product-card">
+
+          <a
+            class="product-card-link"
+            href="${link}"
+            ${pid ? "" : 'aria-disabled="true"'}>
+
+            <div class="product-image">
+
+              ${
+                img
+                  ? `<img src="${esc(img)}" alt="">`
+                  : "📦"
+              }
+
+            </div>
+
+            <strong title="${esc(p.name)}">
+              ${esc(p.name)}
+            </strong>
+
+            <small>
+              ${p.qty} units sold
+            </small>
+
+            <div class="product-price">
+              ${money(
+                p.amount ||
+                x?.bulk_price ||
+                x?.price
+              )}
+            </div>
+
+            <div class="product-sales">
+              ${
+                i === 0
+                  ? "Top seller"
+                  : "Popular product"
+              }
+            </div>
+
+            <span class="product-view-mini">
+              View Product →
+            </span>
+
+          </a>
+
+          ${
+            pid
+              ? `
+                <a
+                  class="product-manage-mini"
+                  href="my-product.html?manage=${encodeURIComponent(pid)}">
+
+                  ⚙ Manage Product
+
+                </a>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+
+    }).join("");
 }
+
+
+/* =========================================================
+   QUICK PRODUCTS
+   ========================================================= */
 
 function renderQuick(){
- const q=($("quickSearch").value||"").toLowerCase().trim();
- const r=allProducts.filter(p=>p.is_active!==false&&(!q||String(p.name||"").toLowerCase().includes(q))).slice(0,8);
- $("quickResults").innerHTML=r.length?r.map(p=>{
-  const link=`product.html?id=${encodeURIComponent(p.id)}&product_id=${encodeURIComponent(p.id)}`;
-  return `<div class="quick-item">
-    <a class="quick-product-link" href="${link}">
-      ${p.image_urls?.[0]?`<img src="${esc(p.image_urls[0])}" alt="">`:'<span class="quick-product-icon">📦</span>'}
-      <span><strong>${esc(p.name)}</strong><small>Stock: ${esc(p.stock_quantity??"—")} · ${money(p.bulk_price||p.price)}</small><em>View Product</em></span>
+
+  const q =
+    ($("quickSearch")?.value || "")
+      .toLowerCase()
+      .trim();
+
+
+  const r =
+    allProducts
+      .filter(
+        p =>
+          p.is_active !== false &&
+          (
+            !q ||
+            String(
+              p.name || ""
+            )
+            .toLowerCase()
+            .includes(q)
+          )
+      )
+      .slice(0,8);
+
+
+  $("quickResults").innerHTML =
+    r.length
+      ? r.map(p => {
+
+          const link =
+            `product.html?id=${encodeURIComponent(p.id)}&product_id=${encodeURIComponent(p.id)}`;
+
+
+          return `
+            <div class="quick-item">
+
+              <a
+                class="quick-product-link"
+                href="${link}">
+
+                ${
+                  p.image_urls?.[0]
+                    ? `<img
+                         src="${esc(p.image_urls[0])}"
+                         alt="">`
+                    : `<span class="quick-product-icon">
+                         📦
+                       </span>`
+                }
+
+                <span>
+
+                  <strong>
+                    ${esc(p.name)}
+                  </strong>
+
+                  <small>
+                    Stock:
+                    ${esc(
+                      p.stock_quantity ?? "—"
+                    )}
+                    ·
+                    ${money(p.bulk_price||p.price)}</small>
+        <em>View Product</em>
+      </span>
     </a>
-    <div class="quick-actions"><a class="btn primary small" href="${link}">View</a><a class="btn secondary small" href="my-product.html?manage=${encodeURIComponent(p.id)}">Manage</a></div>
+
+    <div class="quick-actions">
+      <a class="btn primary small" href="${link}">View</a>
+      <a class="btn secondary small" href="my-product.html?manage=${encodeURIComponent(p.id)}">Manage</a>
+    </div>
   </div>`;
- }).join(""):'<div class="loading">No matching Supabase products.</div>';
+ }).join("")
+ :'<div class="loading">No matching Supabase products.</div>';
 }
 
-function render(){renderStats();renderOrders();renderProducts();renderQuick();updateCart()}
-function updateCart(){try{const c=JSON.parse(localStorage.getItem("jsu_wholesaler_cart")||"[]");$("cartCount").textContent=Array.isArray(c)?c.reduce((n,x)=>n+Number(x.quantity||x.qty||1),0):0}catch(e){$("cartCount").textContent="0"}}
+function render(){
+ renderStats();
+ renderOrders();
+ renderProducts();
+ renderQuick();
+ updateCart();
+}
+
+function updateCart(){
+ try{
+  const c=JSON.parse(localStorage.getItem("jsu_wholesaler_cart")||"[]");
+  $("cartCount").textContent=Array.isArray(c)
+    ? c.reduce((n,x)=>n+Number(x.quantity||x.qty||1),0)
+    : 0;
+ }catch(e){
+  $("cartCount").textContent="0";
+ }
+}
 
 async function loadPaymentForOrder(orderId){
  const client=sb();
  if(!client?.from||!orderId)return [];
- const {data,error}=await client.from("payments").select("*").eq("order_id",orderId).eq("seller_id",currentUser.id).order("created_at",{ascending:false});
- if(error){console.warn("Payment lookup failed:",error.message);return []}
+
+ const {data,error}=await client
+   .from("payments")
+   .select("*")
+   .eq("order_id",orderId)
+   .eq("seller_id",currentUser.id)
+   .order("created_at",{ascending:false});
+
+ if(error){
+   console.warn("Payment lookup failed:",error.message);
+   return [];
+ }
+
  return data||[];
 }
+
 function paymentStatusPaid(p){
- const s=String(p?.payment_status||p?.status||"").toLowerCase().replace(/\s+/g,"_");
+ const s=String(p?.payment_status||p?.status||"")
+   .toLowerCase()
+   .replace(/\s+/g,"_");
+
  return ["paid","success","successful","completed","captured","confirmed"].includes(s);
 }
+
 function paymentModeLabel(v){
  const s=String(v||"—").replace(/_/g," ");
  return s.replace(/\b\w/g,c=>c.toUpperCase());
 }
+
 function paymentFields(p){
  const known=[
-  ["Payment ID",p.id],["Order ID",p.order_id],["Payment Status",p.payment_status||p.status],
-  ["Payment Mode",p.payment_mode],["Amount",p.amount!=null?money(p.amount):null],["Transaction ID",p.transaction_id],
-  ["Paid At",p.paid_at?new Date(p.paid_at).toLocaleString("en-IN"):null],["UPI ID",p.upi_id],
-  ["UPI Amount",p.upi_amount!=null?money(p.upi_amount):null],["UTR Number",p.utr_no||p.utr_number||p.utr],
-  ["Account Name",p.account_name],["Account Number",p.account_number],["IFSC Code",p.ifsc_code],
-  ["Mobile Number",p.mobile_number||p.user_mobile],["User Name",p.user_name],["Notes",p.notes||p.remark]
+  ["Payment ID",p.id],
+  ["Order ID",p.order_id],
+  ["Payment Status",p.payment_status||p.status],
+  ["Payment Mode",p.payment_mode],
+  ["Amount",p.amount!=null?money(p.amount):null],
+  ["Transaction ID",p.transaction_id],
+  ["Paid At",p.paid_at?new Date(p.paid_at).toLocaleString("en-IN"):null],
+  ["UPI ID",p.upi_id],
+  ["UPI Amount",p.upi_amount!=null?money(p.upi_amount):null],
+  ["UTR Number",p.utr_no||p.utr_number||p.utr],
+  ["Account Name",p.account_name],
+  ["Account Number",p.account_number],
+  ["IFSC Code",p.ifsc_code],
+  ["Mobile Number",p.mobile_number||p.user_mobile],
+  ["User Name",p.user_name],
+  ["Notes",p.notes||p.remark]
  ];
+
  return known.filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
 }
-function orderTotal(o){return Number(o?.total_price??(Number(o?.price||0)*Number(o?.buying_quantity||1)))||0}
+
+function orderTotal(o){
+ return Number(
+   o?.total_price ??
+   (Number(o?.price||0)*Number(o?.buying_quantity||1))
+ )||0;
+}
+
 function calculatePaymentSummary(order,payments){
  const total=orderTotal(order);
- const paidFromPayments=payments.filter(paymentStatusPaid).reduce((sum,p)=>sum+Number(p.amount||0),0);
- const fallbackPaid=Number(order.advance_amount??order.paid_amount??order.advance_paid??0)||0;
- const paid=Math.min(total, paidFromPayments>0?paidFromPayments:fallbackPaid);
+
+ const paidFromPayments=payments
+   .filter(paymentStatusPaid)
+   .reduce((sum,p)=>sum+Number(p.amount||0),0);
+
+ const fallbackPaid=
+   Number(order.advance_amount??order.paid_amount??order.advance_paid??0)||0;
+
+ const paid=Math.min(
+   total,
+   paidFromPayments>0?paidFromPayments:fallbackPaid
+ );
+
  const remaining=Math.max(0,total-paid);
+
  const mode=String(order.payment_mode||"").toLowerCase();
  const hasCOD=mode.includes("cod")||mode.includes("cash");
- const hasAdvance=paid>0 && remaining>0;
+ const hasAdvance=paid>0&&remaining>0;
+
  return {total,paid,remaining,hasCOD,hasAdvance,mode};
 }
+
 function renderPaymentSummary(order,payments){
  const s=calculatePaymentSummary(order,payments);
  let note="";
+
  if(s.hasCOD&&s.paid>0&&s.remaining>0){
-   note=`<div class="payment-note"><b>COD + Advance Payment:</b> ${money(s.paid)} has already been paid by the recorded payment method. <b>Remaining COD: ${money(s.remaining)}</b>.</div>`;
+   note=`<div class="payment-note">
+     <b>COD + Advance Payment:</b>
+     ${money(s.paid)} has already been paid by the recorded payment method.
+     <b>Remaining COD: ${money(s.remaining)}</b>.
+   </div>`;
  }else if(s.hasCOD){
-   note=`<div class="payment-note"><b>Cash on Delivery:</b> ${money(s.paid)} paid in advance, <b>${money(s.remaining)} remaining to collect on delivery</b>.</div>`;
+   note=`<div class="payment-note">
+     <b>Cash on Delivery:</b>
+     ${money(s.paid)} paid in advance,
+     <b>${money(s.remaining)} remaining to collect on delivery</b>.
+   </div>`;
  }else if(s.paid>0&&s.remaining>0){
-   note=`<div class="payment-note"><b>Partial payment:</b> ${money(s.paid)} paid, <b>${money(s.remaining)} remaining</b>.</div>`;
+   note=`<div class="payment-note">
+     <b>Partial payment:</b>
+     ${money(s.paid)} paid,
+     <b>${money(s.remaining)} remaining</b>.
+   </div>`;
  }else if(s.paid>=s.total&&s.total>0){
-   note=`<div class="payment-note"><b>Payment complete:</b> ${money(s.paid)} paid for this order.</div>`;
+   note=`<div class="payment-note">
+     <b>Payment complete:</b>
+     ${money(s.paid)} paid for this order.
+   </div>`;
  }else{
-   note=`<div class="payment-note"><b>Payment status:</b> No paid amount is recorded for this order yet.</div>`;
+   note=`<div class="payment-note">
+     <b>Payment status:</b>
+     No paid amount is recorded for this order yet.
+   </div>`;
  }
+
  return `<div class="payment-summary">
-   <div class="payment-summary-card"><span>Order Total</span><strong>${money(s.total)}</strong></div>
-   <div class="payment-summary-card paid"><span>Paid Amount</span><strong>${money(s.paid)}</strong></div>
-   <div class="payment-summary-card remaining"><span>Remaining Amount</span><strong>${money(s.remaining)}</strong></div>
+   <div class="payment-summary-card">
+     <span>Order Total</span>
+     <strong>${money(s.total)}</strong>
+   </div>
+
+   <div class="payment-summary-card paid">
+     <span>Paid Amount</span>
+     <strong>${money(s.paid)}</strong>
+   </div>
+
+   <div class="payment-summary-card remaining">
+     <span>Remaining Amount</span>
+     <strong>${money(s.remaining)}</strong>
+   </div>
  </div>${note}`;
 }
+
 function renderPaymentDetails(order,payments){
  const box=$("paymentDetails");
  const summary=renderPaymentSummary(order,payments);
+
  if(!payments.length){
-  box.innerHTML=summary+'<div class="empty-payment"><div class="empty-icon">💳</div><h3>No separate payment record found</h3><p>The amount summary above is calculated from this order and any paid amount fields stored on it.</p></div>';
+  box.innerHTML=summary+
+    '<div class="empty-payment">' +
+      '<div class="empty-icon">💳</div>' +
+      '<h3>No separate payment record found</h3>' +
+      '<p>The amount summary above is calculated from this order and any paid amount fields stored on it.</p>' +
+    '</div>';
   return;
  }
+
  box.innerHTML=summary+payments.map((p,i)=>{
-  const paid=paymentStatusPaid(p),fields=paymentFields(p);
+  const paid=paymentStatusPaid(p);
+  const fields=paymentFields(p);
+
   return `<div class="payment-record ${paid?'paid':''}">
     <div class="payment-record-head">
-      <div><strong>Payment ${i+1}</strong><small>${esc(paymentModeLabel(p.payment_mode))}</small></div>
-      <span class="payment-badge ${paid?'paid':'pending'}">${esc(paymentModeLabel(p.payment_status||p.status||'Pending'))}</span>
+      <div>
+        <strong>Payment ${i+1}</strong>
+        <small>${esc(paymentModeLabel(p.payment_mode))}</small>
+      </div>
+      <span class="payment-badge ${paid?'paid':'pending'}">
+        ${esc(paymentModeLabel(p.payment_status||p.status||'Pending'))}
+      </span>
     </div>
-    <div class="detail-grid payment-grid">${fields.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("")}</div>
-    ${paid?'<div class="paid-note">✓ This payment is marked as paid in Supabase and is included in the paid amount above.</div>':''}
-  </div>`
+
+    <div class="detail-grid payment-grid">
+      ${fields.map(x=>`
+        <div class="detail-item">
+          <span>${esc(x[0])}</span>
+          <strong>${esc(x[1])}</strong>
+        </div>
+      `).join("")}
+    </div>
+
+    ${paid
+      ? '<div class="paid-note">✓ This payment is marked as paid in Supabase and is included in the paid amount above.</div>'
+      : ''}
+  </div>`;
  }).join("");
 }
+
 function renderProcessSteps(){
  const current=statusKey(selectedOrder?.status);
  const dbStatus=current==="processing"?"confirmed":current;
+
  const steps=[
-  {key:"pending",label:"Pending"},{key:"confirmed",label:"Processing"},{key:"packed",label:"Packed"},
-  {key:"shipped",label:"Shipped"},{key:"delivered",label:"Delivered"}
+  {key:"pending",label:"Pending"},
+  {key:"confirmed",label:"Processing"},
+  {key:"packed",label:"Packed"},
+  {key:"shipped",label:"Shipped"},
+  {key:"delivered",label:"Delivered"}
  ];
+
  const idx=steps.findIndex(x=>x.key===dbStatus);
+
  $("processSteps").innerHTML=steps.map((st,i)=>{
-  const done=idx>=0&&i<=idx,active=i===idx;
-  return `<button type="button" class="process-step ${done?'done':''} ${active?'current':''}" data-process-status="${st.key}">
-    <span class="step-number">${done?'✓':i+1}</span><span>${st.label}</span>
-  </button>`
+  const done=idx>=0&&i<=idx;
+  const active=i===idx;
+
+  return `<button type="button"
+      class="process-step ${done?'done':''} ${active?'current':''}"
+      data-process-status="${st.key}">
+      <span class="step-number">${done?'✓':i+1}</span>
+      <span>${st.label}</span>
+  </button>`;
  }).join("");
+
  $("cancelOrderBtn").disabled=["delivered","cancelled"].includes(dbStatus);
 }
+
 function showManageTab(tab){
- document.querySelectorAll(".manage-tab").forEach(x=>x.classList.toggle("active",x.dataset.manageTab===tab));
+ document.querySelectorAll(".manage-tab")
+   .forEach(x=>x.classList.toggle("active",x.dataset.manageTab===tab));
+
  $("detailsTab").classList.toggle("hidden",tab!=="details");
  $("processTab").classList.toggle("hidden",tab!=="process");
  $("paymentTab").classList.toggle("hidden",tab!=="payment");
 }
+
 async function openOrder(id){
  selectedOrder=allOrders.find(o=>String(o.id)===String(id));
  if(!selectedOrder)return;
- const sk=statusKey(selectedOrder.status), total=orderTotal(selectedOrder);
+
+ const sk=statusKey(selectedOrder.status);
+ const total=orderTotal(selectedOrder);
+
  $("modalOrderStatus").className="status "+sk;
- $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(selectedOrder.status));
+ $("modalOrderStatus").innerHTML=
+   '<span class="status-dot"></span>'+
+   esc(statusLabel(selectedOrder.status));
+
  const d=[
   ["Order Number","#"+(selectedOrder.order_number||selectedOrder.id)],
   ["Order ID",selectedOrder.id],
@@ -2617,153 +3468,417 @@ async function openOrder(id){
   ["Created",selectedOrder.created_at?new Date(selectedOrder.created_at).toLocaleString("en-IN"):"—"],
   ["Updated",selectedOrder.updated_at?new Date(selectedOrder.updated_at).toLocaleString("en-IN"):"—"]
  ];
- $("orderDetails").innerHTML=d.map(x=>`<div class="detail-item"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join("");
- const productId=selectedOrder.product_id||allProducts.find(p=>p.name===selectedOrder.product_name)?.id;
+
+ $("orderDetails").innerHTML=d.map(x=>`
+   <div class="detail-item">
+     <span>${esc(x[0])}</span>
+     <strong>${esc(x[1])}</strong>
+   </div>
+ `).join("");
+
+ const productId=
+   selectedOrder.product_id||
+   allProducts.find(p=>p.name===selectedOrder.product_name)?.id;
+
  $("productLinkBox").innerHTML=productId
-  ? `<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="product-view-link" href="product.html?id=${encodeURIComponent(productId)}&product_id=${encodeURIComponent(productId)}">🔗 View Product</a><a class="product-view-link" href="my-product.html?manage=${encodeURIComponent(productId)}">⚙ Manage Product</a></div>`
+  ? `<div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="product-view-link"
+         href="product.html?id=${encodeURIComponent(productId)}&product_id=${encodeURIComponent(productId)}">
+         🔗 View Product
+      </a>
+      <a class="product-view-link"
+         href="my-product.html?manage=${encodeURIComponent(productId)}">
+         ⚙ Manage Product
+      </a>
+    </div>`
   : '<span class="muted small">No product_id is stored for this order, so the exact product cannot be opened safely.</span>';
+
  renderProcessSteps();
  showManageTab("details");
+
  $("orderModal").classList.remove("hidden");
- $("paymentDetails").innerHTML='<div class="loading">Loading payment details from Supabase...</div>';
+
+ $("paymentDetails").innerHTML=
+   '<div class="loading">Loading payment details from Supabase...</div>';
+
  const payments=await loadPaymentForOrder(selectedOrder.id);
  renderPaymentDetails(selectedOrder,payments);
 }
+
 async function updateOrderStatus(next){
  if(!selectedOrder||!currentUser)return;
+
  const client=sb();
  const dbNext=next==="processing"?"confirmed":next;
- const allowed=["pending","confirmed","packed","shipped","delivered","cancelled"];
- if(!allowed.includes(dbNext)){toast("Invalid order status.");return}
+
+ const allowed=[
+   "pending",
+   "confirmed",
+   "packed",
+   "shipped",
+   "delivered",
+   "cancelled"
+ ];
+
+ if(!allowed.includes(dbNext)){
+   toast("Invalid order status.");
+   return;
+ }
+
  const now=new Date().toISOString();
- const result=await client.from("orders").update({status:dbNext,updated_at:now}).eq("id",selectedOrder.id).eq("seller_id",currentUser.id).select("id,status,updated_at").maybeSingle();
- if(result.error){toast("Status update failed: "+result.error.message);return}
- if(!result.data){toast("Status was not changed. Supabase RLS may be blocking UPDATE for this wholesaler.");return}
- selectedOrder.status=result.data.status;selectedOrder.updated_at=result.data.updated_at;
- const i=allOrders.findIndex(o=>String(o.id)===String(selectedOrder.id));
- if(i>=0){allOrders[i].status=result.data.status;allOrders[i].updated_at=result.data.updated_at}
- $("modalOrderStatus").className="status "+statusKey(result.data.status);
- $("modalOrderStatus").innerHTML='<span class="status-dot"></span>'+esc(statusLabel(result.data.status));
- renderStats();renderOrders();renderProcessSteps();
- toast("Order status updated to "+(dbNext==="confirmed"?"Processing":statusLabel(dbNext)));
+
+ const result=await client
+   .from("orders")
+   .update({
+     status:dbNext,
+     updated_at:now
+   })
+   .eq("id",selectedOrder.id)
+   .eq("seller_id",currentUser.id)
+   .select("id,status,updated_at")
+   .maybeSingle();
+
+ if(result.error){
+   toast("Status update failed: "+result.error.message);
+   return;
+ }
+
+ if(!result.data){
+   toast("Status was not changed. Supabase RLS may be blocking UPDATE for this wholesaler.");
+   return;
+ }
+
+ selectedOrder.status=result.data.status;
+ selectedOrder.updated_at=result.data.updated_at;
+
+ const i=allOrders.findIndex(
+   o=>String(o.id)===String(selectedOrder.id)
+ );
+
+ if(i>=0){
+   allOrders[i].status=result.data.status;
+   allOrders[i].updated_at=result.data.updated_at;
+ }
+
+ $("modalOrderStatus").className=
+   "status "+statusKey(result.data.status);
+
+ $("modalOrderStatus").innerHTML=
+   '<span class="status-dot"></span>'+
+   esc(statusLabel(result.data.status));
+
+ renderStats();
+ renderOrders();
+ renderProcessSteps();
+
+ toast(
+   "Order status updated to "+
+   (dbNext==="confirmed"?"Processing":statusLabel(dbNext))
+ );
 }
+
 async function cancelSelectedOrder(){
  if(!selectedOrder)return;
- if(!confirm("Cancel this order? This will update the real Supabase order status to cancelled."))return;
+
+ if(!confirm(
+   "Cancel this order? This will update the real Supabase order status to cancelled."
+ )){
+   return;
+ }
+
  await updateOrderStatus("cancelled");
 }
 
 function exportCSV(){
- const lines=[["Order ID","Customer","Date","Product","Quantity","Amount","Status","Tracking"],...rows().map(o=>[o.order_number||o.id,o.user_name||o.customer_name||"Customer",o.created_at,o.product_name,o.buying_quantity||1,o.total_price||0,statusLabel(o.status),o.tracking_number||""])].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(","));
- const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([lines.join("\n")],{type:"text/csv"}));a.download="js-undefined-orders.csv";a.click();
+ const lines=[
+   [
+     "Order ID",
+     "Customer",
+     "Date",
+     "Product",
+     "Quantity",
+     "Amount",
+     "Status",
+     "Tracking"
+   ],
+   ...rows().map(o=>[
+     o.order_number||o.id,
+     o.user_name||o.customer_name||"Customer",
+     o.created_at,
+     o.product_name,
+     o.buying_quantity||1,
+     o.total_price||0,
+     statusLabel(o.status),
+     o.tracking_number||""
+   ])
+ ].map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(","));
+
+ const a=document.createElement("a");
+
+ a.href=URL.createObjectURL(
+   new Blob([lines.join("\n")],{type:"text/csv"})
+ );
+
+ a.download="js-undefined-orders.csv";
+ a.click();
+
+ setTimeout(()=>{
+   URL.revokeObjectURL(a.href);
+ },1000);
 }
 
-$("menuButton").onclick=()=>$("sidebar").classList.toggle("open");
-$("refreshBtn").onclick=()=>{toast("Refreshing Supabase data...");load()};
-$("orderSearch").oninput=()=>{currentPage=1;renderOrders()};
-$("dateFilter").onchange=()=>{currentPage=1;renderOrders()};
-$("sortOrder").onchange=()=>{currentPage=1;renderOrders()};
+
+/* =========================================
+   EVENT HANDLERS
+========================================= */
+
+$("menuButton").onclick=()=>{
+ $("sidebar").classList.toggle("open");
+};
+
+$("refreshBtn").onclick=()=>{
+ toast("Refreshing Supabase data...");
+ load();
+};
+
+$("orderSearch").oninput=()=>{
+ currentPage=1;
+ renderOrders();
+};
+
+$("dateFilter").onchange=()=>{
+ currentPage=1;
+ renderOrders();
+};
+
+$("sortOrder").onchange=()=>{
+ currentPage=1;
+ renderOrders();
+};
+
 $("quickSearch").oninput=renderQuick;
+
 $("exportBtn").onclick=exportCSV;
 
 
-$("prevPage").onclick = () => {
+/* =========================================
+   PREVIOUS PAGE
+========================================= */
 
-  if(currentPage <= 1){
-    return;
-  }
+$("prevPage").onclick=()=>{
+ if(currentPage<=1)return;
 
-  currentPage--;
+ currentPage--;
 
-  renderOrders();
+ renderOrders();
 
-  document.querySelector(".table-wrap")
-    ?.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+ scrollOrdersToTop();
 };
 
 
-$("nextPage").onclick = () => {
+/* =========================================
+   NEXT PAGE
+========================================= */
 
-  const totalPages =
-    Math.max(
-      1,
-      Math.ceil(
-        rows().length / pageSize
-      )
-    );
+$("nextPage").onclick=()=>{
+ const totalPages=Math.max(
+   1,
+   Math.ceil(rows().length/pageSize)
+ );
 
-  if(currentPage >= totalPages){
-    return;
-  }
+ if(currentPage>=totalPages)return;
 
-  currentPage++;
+ currentPage++;
 
-  renderOrders();
+ renderOrders();
 
-  document.querySelector(".table-wrap")
-    ?.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+ scrollOrdersToTop();
 };
 
-// NUMBERED PAGINATION BUTTONS
-$("pageNumbers").addEventListener("click", (e) => {
 
-  const button = e.target.closest(".page-btn");
+/* =========================================
+   NUMBERED PAGE BUTTONS
+========================================= */
 
-  if (!button) return;
+$("pageNumbers").addEventListener("click",e=>{
+ const button=e.target.closest("[data-page]");
 
-  const page = Number(button.dataset.page);
+ if(!button)return;
 
-  if (!Number.isInteger(page)) return;
+ const page=Number(button.dataset.page);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(rows().length / pageSize)
-  );
-
-  if (page < 1 || page > totalPages) return;
-
-  currentPage = page;
-
-  renderOrders();
-
-  document.querySelector(".table-wrap")
-    ?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+ goToPage(page);
 });
 
-$("viewProductsBtn").onclick=()=>location.href="my-product.html";
-$("openBuyBtn").onclick=()=>location.href="wholesaler.html#buy";
-$("quickOrderBtn").onclick=()=>location.href="wholesaler.html#buy";
+
+/* =========================================
+   KEYBOARD PAGINATION
+========================================= */
+
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowLeft" && e.altKey){
+   goToPage(currentPage-1);
+ }
+
+   
+ if(e.key==="ArrowRight" && e.altKey){
+   goToPage(currentPage+1);
+ }
+});
+
+
+/* =========================================
+   MOBILE TABLE SWIPE SUPPORT
+========================================= */
+
+const tableWrap=document.querySelector(".table-wrap");
+
+if(tableWrap){
+
+ let touchStartX=0;
+ let touchStartScroll=0;
+
+ tableWrap.addEventListener(
+   "touchstart",
+   e=>{
+     if(!e.touches.length)return;
+
+     touchStartX=e.touches[0].clientX;
+     touchStartScroll=tableWrap.scrollLeft;
+   },
+   {passive:true}
+ );
+
+ tableWrap.addEventListener(
+   "touchmove",
+   e=>{
+     if(!e.touches.length)return;
+
+     const currentX=e.touches[0].clientX;
+     const distance=touchStartX-currentX;
+
+     if(Math.abs(distance)>2){
+       tableWrap.scrollLeft=touchStartScroll+distance;
+     }
+   },
+   {passive:true}
+ );
+}
+
+
+/* =========================================
+   OTHER EVENTS
+========================================= */
+
+$("viewProductsBtn").onclick=()=>{
+ location.href="my-product.html";
+};
+
+$("openBuyBtn").onclick=()=>{
+ location.href="wholesaler.html#buy";
+};
+
+$("quickOrderBtn").onclick=()=>{
+ location.href="wholesaler.html#buy";
+};
+
 $("cancelOrderBtn").onclick=cancelSelectedOrder;
-$("logoutBtn").onclick=async()=>{try{if(sb()?.auth)await sb().auth.signOut()}finally{location.href="login.html"}};
+
+$("logoutBtn").onclick=async()=>{
+ try{
+   if(sb()?.auth){
+     await sb().auth.signOut();
+   }
+ }finally{
+   location.href="login.html";
+ }
+};
+
 
 document.addEventListener("click",e=>{
+
  const f=e.target.closest("[data-status]");
+
  if(f){
-  document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
-  f.classList.add("active");currentStatus=f.dataset.status;currentPage=1;renderOrders();return;
+   document
+     .querySelectorAll(".filter-btn")
+     .forEach(x=>x.classList.remove("active"));
+
+   f.classList.add("active");
+
+   currentStatus=f.dataset.status;
+   currentPage=1;
+
+   renderOrders();
+
+   return;
  }
- const v=e.target.closest("[data-view]");if(v){openOrder(v.dataset.view);return}
- const n=e.target.closest("[data-next]");if(n){openOrder(n.dataset.next);return}
+
+
+ const v=e.target.closest("[data-view]");
+
+ if(v){
+   openOrder(v.dataset.view);
+   return;
+ }
+
+
+ const n=e.target.closest("[data-next]");
+
+ if(n){
+   openOrder(n.dataset.next);
+   return;
+ }
+
+
  const b=e.target.closest("[data-buy]");
- if(b){location.href="product.html?id="+encodeURIComponent(b.dataset.buy)+"&product_id="+encodeURIComponent(b.dataset.buy);return}
- const mt=e.target.closest("[data-manage-tab]");if(mt){showManageTab(mt.dataset.manageTab);return}
- const ps=e.target.closest("[data-process-status]");if(ps){updateOrderStatus(ps.dataset.processStatus);return}
- if(e.target.closest("[data-close]"))e.target.closest(".modal")?.classList.add("hidden");
- if(e.target.classList.contains("modal"))e.target.classList.add("hidden");
+
+ if(b){
+   location.href=
+     "product.html?id="+
+     encodeURIComponent(b.dataset.buy)+
+     "&product_id="+
+     encodeURIComponent(b.dataset.buy);
+
+   return;
+ }
+
+
+ const mt=e.target.closest("[data-manage-tab]");
+
+ if(mt){
+   showManageTab(mt.dataset.manageTab);
+   return;
+ }
+
+
+ const ps=e.target.closest("[data-process-status]");
+
+ if(ps){
+   updateOrderStatus(ps.dataset.processStatus);
+   return;
+ }
+
+
+ if(e.target.closest("[data-close]")){
+   e.target.closest(".modal")?.classList.add("hidden");
+ }
+
+
+ if(e.target.classList.contains("modal")){
+   e.target.classList.add("hidden");
+ }
+
 });
 
+
 window.addEventListener("DOMContentLoaded",load);
+
 })();
+
 </script>
+
+  
 </body>
 </html>
 
