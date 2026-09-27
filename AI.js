@@ -39,7 +39,11 @@ async function profile(){if(S.profile)return S.profile;const u=await user();cons
 
 function admin(){const p=S.profile||{},r=String(p.role||p.user_role||p.user_type||p.type||'').toLowerCase();return p.is_admin===true||['admin','business_admin','super_admin'].includes(r)}
 
-async function seller(q){
+function seller(q){
+    return q;
+}
+
+async function applySeller(q){
     if(admin()) return q;
 
     const u = await user();
@@ -60,34 +64,141 @@ function price(c){const m=c.replace(/,/g,'').match(/(?:under|below|less than|upt
 const best=c=>/best.?selling|top.?selling|best products|top products/i.test(c), products=c=>/\bproduct|products|inventory|catalog|items\b/i.test(c), orders=c=>/\border|orders|purchase\b/i.test(c), customers=c=>/customer|customers|buyer|buyers|user|users/i.test(c), payments=c=>/payment|payments|upi|utr|transaction/i.test(c), sales=c=>/sales|revenue|turnover|earning|earnings/i.test(c), pending=c=>/pending/i.test(c), deleting=c=>/\b(delete|remove|erase|trash)\b/i.test(c), updating=c=>/\b(update|change|edit|modify|set|increase|decrease)\b/i.test(c), critical=c=>payments(c)||/\b(send|transfer|refund|cancel|capture|collect|pay)\b/i.test(c);
 function orderAmount(c){return /order.*(amount|price|total|value)/i.test(c)||/(amount|price|total|value).*order/i.test(c)}
 
-async function qProducts(c){let q=await seller(client().from('products').select('*'));q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;let rows=r.data||[],p=price(c);if(p!==null)rows=rows.filter(x=>Number(x.selling_price??x.price??x.bulk_price??x.original_price??0)<=p);if(/low stock|stock low|running out|out of stock/i.test(c))rows=rows.filter(x=>Number(x.stock_quantity??x.stock??0)<=10);return {title:p!==null?'Products under '+money(p):/low stock|stock low/i.test(c)?'Low Stock Products':'Products',rows,cols:['id','name','product_type','product_sub_type','price','selling_price','bulk_price','stock_quantity','minimum_quantity','is_active']}}
+async function qProducts(c){
+    let q = client().from('products').select('*');
 
-async function qBest(c){let q=await seller(client().from('order_items').select('*').limit(5000));let r=await q;if(r.error){q=await seller(client().from('orders').select('*').limit(5000));r=await q;if(r.error)throw r.error}const m=new Map();(r.data||[]).forEach(x=>{const id=x.product_id||x.id||null,n=x.product_name||x.name||x.product||'Unknown Product',qty=Number(x.quantity??x.buying_quantity??x.qty??1)||0,total=Number(x.total_price??x.total??x.amount??(Number(x.price||0)*qty))||0,k=String(id||n);if(!m.has(k))m.set(k,{product_id:id,product_name:n,units_sold:0,revenue:0});m.get(k).units_sold+=qty;m.get(k).revenue+=total});let rows=[...m.values()].sort((a,b)=>b.units_sold-a.units_sold);const p=price(c);if(p!==null){const pr=await qProducts('products under '+p),ok=new Set(pr.rows.map(x=>String(x.id)));rows=rows.filter(x=>!x.product_id||ok.has(String(x.product_id)))}return {title:p!==null?'Best-Selling Products Under '+money(p):'Best-Selling Products',rows,cols:['product_id','product_name','units_sold','revenue']}}
+    q = await applySeller(q);
 
-async function qOrders(c){let q=await seller(client().from('orders').select('*'));if(pending(c))q=q.eq('status','pending');q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;return {title:pending(c)?'Pending Orders':'Orders',rows:r.data||[],cols:['id','order_number','product_name','buying_quantity','total_price','payment_mode','status','tracking_number','created_at']}}
+    q = q.order('created_at', {ascending:false});
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    let rows = r.data || [];
+    const p = price(c);
+
+    if(p !== null){
+        rows = rows.filter(x =>
+            Number(
+                x.selling_price ??
+                x.price ??
+                x.bulk_price ??
+                x.original_price ??
+                0
+            ) <= p
+        );
+    }
+
+    if(/low stock|stock low|running out|out of stock/i.test(c)){
+        rows = rows.filter(x =>
+            Number(x.stock_quantity ?? x.stock ?? 0) <= 10
+        );
+    }
+
+    return {
+        title:
+            p !== null
+                ? 'Products under ' + money(p)
+                : /low stock|stock low/i.test(c)
+                    ? 'Low Stock Products'
+                    : 'Products',
+
+        rows,
+
+        cols:[
+            'id',
+            'name',
+            'product_type',
+            'product_sub_type',
+            'price',
+            'selling_price',
+            'bulk_price',
+            'stock_quantity',
+            'minimum_quantity',
+            'is_active'
+        ]
+    };
+}
+
+
+
+async function qOrders(c){
+    let q = client().from('orders').select('*');
+
+    q = await applySeller(q);
+
+    if(pending(c)){
+        q = q.eq('status','pending');
+    }
+
+    q = q.order('created_at',{ascending:false});
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    return {
+        title:pending(c) ? 'Pending Orders' : 'Orders',
+        rows:r.data || [],
+        cols:[
+            'id',
+            'order_number',
+            'product_name',
+            'buying_quantity',
+            'total_price',
+            'payment_mode',
+            'status',
+            'tracking_number',
+            'created_at'
+        ]
+    };
+}
+
 async function qCustomers(){const r=await client().from('profiles').select('*').order('created_at',{ascending:false});if(r.error)throw r.error;return {title:'Customers / Users',rows:r.data||[],cols:['id','full_name','email','mobile','user_type','status','created_at']}}
 async function qPayments(){let q=await seller(client().from('payments').select('*'));q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;return {title:'Payments',rows:r.data||[],cols:['id','order_number','transaction_id','amount','payment_mode','payment_status','user_name','user_mobile','paid_at']}}
+
+
 async function qSales(){let q=await seller(client().from('orders').select('*'));const r=await q;if(r.error)throw r.error;const rows=r.data||[],total=rows.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0),del=rows.filter(x=>String(x.status||'').toLowerCase()==='delivered'),dr=del.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0);return {title:'Sales Summary',rows:[{metric:'Total Orders',value:rows.length},{metric:'Total Sales',value:money(total)},{metric:'Delivered Orders',value:del.length},{metric:'Delivered Revenue',value:money(dr)}],cols:['metric','value']}}
+
 async function read(c){if(best(c))return qBest(c);if(payments(c))return qPayments();if(customers(c))return qCustomers();if(orders(c))return qOrders(c);if(sales(c))return qSales();if(products(c)||/low stock/i.test(c))return qProducts(c);throw Error('Try: show best-selling products under 2500, show pending orders, show products, show customers, show payments, or show sales.')}
+
+
 function entity(c){if(/\b(product|products|item|items)\b/i.test(c))return'product';if(/\b(customer|customers|user|users|buyer|buyers)\b/i.test(c))return'customer';if(/\b(order|orders)\b/i.test(c))return'order';if(/\b(payment|payments|upi|transaction)\b/i.test(c))return'payment';return null}
 function idFrom(c){const a=c.match(/(?:id|product id|order id|user id|customer id)\s*[:#]?\s*([a-zA-Z0-9-]{6,})/i);if(a)return a[1];const b=c.match(/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b/i);return b?b[0]:null}
+
+
 function action(c){if(orderAmount(c))return{type:'blocked',reason:'Sorry, I cannot update an order amount, order total, or order price from the AI assistant.'};const e=entity(c),id=idFrom(c);if(deleting(c))return e?{type:'delete',entity:e,id,command:c}:{type:'clarify',reason:'Tell me whether you want to delete a product or customer, and provide its ID if needed.'};if(updating(c))return e?{type:e==='order'||e==='payment'?'critical':'update',entity:e,id,command:c}:{type:'clarify',reason:'Tell me what you want to update, for example: update product price to 2500.'};if(critical(c))return{type:'critical',entity:e||'critical',id,command:c};return null}
+
+
 function closeModal(){if($('modal'))$('modal').classList.remove('open');S.pending=null}window.closeModal=closeModal;
 function approve(a,why){S.pending=a;if($('mt'))$('mt').textContent='Approval Required';if($('mb'))$('mb').innerHTML='<div class="approval"><b>Important:</b><br>'+esc(why)+'</div><p>This action will not run until you approve it.</p>';if($('ma')){$('ma').innerHTML='<button class="btn" id="rejectAction">Reject</button><button class="btn ok" id="approveAction">Approve & Execute</button>';$('rejectAction').onclick=()=>{add('ai','Rejected. No database query was executed.');toast('Rejected. Nothing was changed.');closeModal()};$('approveAction').onclick=async()=>{const x=S.pending;closeModal();if(x)await runProtected(x)}}if($('modal'))$('modal').classList.add('open')}
 async function audit(a,status,details){try{const u=await user();await client().from('ai_audit_log').insert({user_id:u.id,action_type:a.type||'unknown',entity_type:a.entity||null,entity_id:a.id||null,command:a.command||'',status,details:details||null})}catch(e){console.warn('Audit unavailable:',e.message)}}
 async function notify(a,msg){try{const u=await user();await client().from('ai_notifications').insert({user_id:u.id,title:'AI action completed',message:msg,action_type:a.type||null,entity_type:a.entity||null,entity_id:a.id||null,is_read:false})}catch(e){console.warn('Notification unavailable:',e.message)}}
 async function archive(entity,row,command){try{const u=await user();const r=await client().from('ai_deleted_records').insert({deleted_by:u.id,entity_type:entity,entity_id:row.id||null,record_data:row,command,deleted_at:new Date().toISOString()});if(r.error)throw r.error}catch(e){throw Error('Safety archive failed. Nothing was deleted. '+e.message)}}
+
+
 async function history(command,status,count){try{const u=await user();await client().from('ai_query_history').insert({user_id:u.id,query_text:command,result_count:count||0,status:status||'completed'})}catch(e){console.warn('History unavailable:',e.message)}}
 async function findProduct(a){let q=await seller(client().from('products').select('*').limit(20));if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
 async function findCustomer(a){let q=client().from('profiles').select('*').limit(20);if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
+
+
 async function findOrder(a){let q=await seller(client().from('orders').select('*').limit(20));if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
 function updatePrice(c){const m=c.replace(/,/g,'').match(/(?:price|selling price|bulk price)\D+(?:to|=|at)?\s*₹?\s*(\d+(?:\.\d+)?)/i);return m?Number(m[1]):null}
 function updateStock(c){const m=c.match(/(?:stock|quantity)\D+(?:to|=)?\s*(\d+)/i);return m?Number(m[1]):null}
 async function updateProduct(a){const rows=await findProduct(a);if(!rows.length)throw Error('Product not found. Please provide the product ID.');if(rows.length>1&&!a.id)throw Error('More than one product matched. Please provide the product ID.');const p=rows[0],patch={},np=updatePrice(a.command),ns=updateStock(a.command);if(np!==null)patch.price=np;if(ns!==null)patch.stock_quantity=ns;if(!Object.keys(patch).length)throw Error('Specify the new product price or stock quantity.');patch.updated_at=new Date().toISOString();let q=await seller(client().from('products').update(patch).eq('id',p.id));const r=await q.select('*').single();if(r.error)throw r.error;return r.data}
+
+
 async function updateOrder(a){if(orderAmount(a.command))throw Error('Sorry, I cannot update an order amount, order total, or order price.');const rows=await findOrder(a);if(!rows.length)throw Error('Order not found. Please provide the order ID.');if(rows.length>1&&!a.id)throw Error('More than one order matched. Please provide the order ID.');const m=a.command.match(/\b(pending|processing|packed|shipped|out[_ ]for[_ ]delivery|delivered|cancelled|canceled)\b/i);if(!m)throw Error('Specify the new order status: pending, processing, packed, shipped, out_for_delivery, delivered, or cancelled.');const st=m[1].toLowerCase().replace(/ /g,'_').replace('canceled','cancelled');let q=await seller(client().from('orders').update({status:st,updated_at:new Date().toISOString()}).eq('id',rows[0].id));const r=await q.select('*').single();if(r.error)throw r.error;return r.data}
+
+
 async function deleteProduct(a){const rows=await findProduct(a);if(!rows.length)throw Error('Product not found.');if(rows.length>1&&!a.id)throw Error('More than one product matched. Provide the product ID.');const row=rows[0];await archive('product',row,a.command);let q=await seller(client().from('products').delete().eq('id',row.id));const r=await q.select('*');if(r.error)throw r.error;return row}
 async function deleteCustomer(a){const rows=await findCustomer(a);if(!rows.length)throw Error('Customer not found.');if(rows.length>1&&!a.id)throw Error('More than one customer matched. Provide the customer ID.');const row=rows[0];await archive('customer',row,a.command);const r=await client().from('profiles').delete().eq('id',row.id).select('*');if(r.error)throw Error('Customer was archived but profile deletion was blocked by Supabase permissions.');return row}
-async function runProtected(a){busy(true);try{let r,msg;if(a.type==='update'&&a.entity==='product'){r=await updateProduct(a);msg='Product updated successfully.'}else if(a.type==='critical'&&a.entity==='order'){r=await updateOrder(a);msg='Order updated successfully.'}else if(a.type==='delete'&&a.entity==='product'){r=await deleteProduct(a);msg='Product deleted successfully and its deleted record was archived.'}else if(a.type==='delete'&&a.entity==='customer'){r=await deleteCustomer(a);msg='Customer deleted and its deleted record was archived.'}else{throw Error('This sensitive operation needs a dedicated backend/provider. No database change was made.')}await audit(a,'completed',r);await notify(a,msg);add('ai',msg);toast(msg);if(a.entity==='product'){const x=await qProducts('products');result(x.title,x.rows,x.cols)}else if(a.entity==='order'){const x=await qOrders('orders');result(x.title,x.rows,x.cols)}else if(a.entity==='customer'){const x=await qCustomers();result(x.title,x.rows,x.cols)}}catch(e){console.error(e);await audit(a,'failed',{error:e.message});add('ai','The action was not completed. '+e.message);toast('Action not completed.')}finally{busy(false);loadHistory()}}
+
+
+async function runProtected(a){busy(true);try{let r,msg;if(a.type==='update'&&a.entity==='product'){r=await updateProduct(a);msg='Product updated successfully.'}else if(a.type==='critical'&&a.entity==='order'){r=await updateOrder(a);msg='Order updated successfully.'}else if(a.type==='delete'&&a.entity==='product'){r=await deleteProduct(a);msg='Product deleted successfully and its deleted record was archived.'}else if(a.type==='delete'&&a.entity==='customer'){r=await deleteCustomer(a);msg='Customer deleted and its deleted record was archived.'}else{throw Error('This sensitive operation needs a dedicated backend/provider. No database change was made.')}await audit(a,'completed',r);await notify(a,msg);add('ai',msg);toast(msg);if(a.entity==='product'){const x=await qProducts('products');result(x.title,x.rows,x.cols)}else if(a.entity==='order'){const x=await qOrders('orders');result(x.title,x.rows,x.cols)}else if(a.entity==='customer'){const x=await qCustomers();result(x.title,x.rows,x.cols)}}catch(e){console.error(e);await audit(a,'failed',{error:e.message});add('ai','The action was not completed. '+e.message);toast('Action not completed.')
+}finally{busy(false);loadHistory()}}
+
 function manage(i){const r=S.rows[i];if(!r)return;let h='<div class="detail">';Object.entries(r).forEach(([k,v])=>h+='<div class="d"><small>'+esc(colName(k))+'</small><b>'+esc(val(k,v))+'</b></div>');h+='</div>';if($('mt'))$('mt').textContent='Record Details';if($('mb'))$('mb').innerHTML=h;if($('ma')){$('ma').innerHTML='<button class="btn" id="detailClose">Close</button><button class="btn ok" id="detailOpen">Open</button>';$('detailClose').onclick=closeModal;$('detailOpen').onclick=()=>{const id=r.id||r.product_id||'';const t=S.title.toLowerCase();if(t.includes('product'))location.href='view-product.html?id='+encodeURIComponent(id);else if(t.includes('order'))location.href='orders.html?order_id='+encodeURIComponent(id);else toast('Record ID: '+id)}}$('modal').classList.add('open')}
 async function loadHistory(){const h=$('hist');if(!h)return;try{const u=await user(),r=await client().from('ai_query_history').select('*').eq('user_id',u.id).order('created_at',{ascending:false}).limit(15);if(r.error)throw r.error;const rows=r.data||[];if(!rows.length){h.innerHTML='<div class="empty"><b>No recent searches</b>Your AI queries will appear here.</div>';return}let x='<div class="tablewrap"><table><thead><tr><th>Query</th><th>Status</th><th>Results</th><th>Date</th><th>Action</th></tr></thead><tbody>';rows.forEach(z=>x+='<tr><td>'+esc(z.query_text||z.command||'')+'</td><td>'+esc(z.status||'completed')+'</td><td>'+esc(z.result_count??0)+'</td><td>'+esc(dateText(z.created_at))+'</td><td><button class="manage" data-history="'+esc(z.query_text||z.command||'')+'">View</button></td></tr>');h.innerHTML=x+'</tbody></table></div>'}catch(e){h.innerHTML='<div class="empty"><b>History is not available yet</b>Run the AI history table/policies first.</div>'}}
 async function handle(raw){const c=String(raw||'').trim().replace(/\s+/g,' ');if(!c||S.busy)return;add('user',c);busy(true);try{await user();await profile();const a=action(c);if(a){if(a.type==='blocked'){add('ai',a.reason);await history(c,'blocked',0);return}if(a.type==='clarify'){add('ai',a.reason);await history(c,'needs_clarification',0);return}busy(false);let why=a.type==='delete'?'You asked me to DELETE '+a.entity+'. I will not run the delete query until you approve it.':a.type==='update'?'You asked me to UPDATE '+a.entity+'. I will execute it only after your approval.':'This is an ORDER/PAYMENT or other sensitive operation. I will execute it only after your approval.';approve(a,why);await history(c,'approval_requested',0);return}const x=await read(c);result(x.title,x.rows,x.cols);add('ai',x.rows.length?'Done. I found '+x.rows.length+' record(s) and displayed them in the table.':'I checked the database, but no matching records were found.');await history(c,'completed',x.rows.length)}catch(e){console.error(e);add('ai','Sorry, I could not complete that request. '+(e.message||e));await history(c,'failed',0)}finally{busy(false);loadHistory()}}
