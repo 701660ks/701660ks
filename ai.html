@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Command Center • Wholesaler</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.ai-page{min-height:100vh;background:#f7f9fc}.ai-main{margin-left:225px;padding:28px;max-width:1200px}
+.ai-hero{background:linear-gradient(135deg,#17106d,#2d43ba);border-radius:20px;color:#fff;padding:27px;position:relative;overflow:hidden;box-shadow:0 15px 40px rgba(41,39,145,.2)}
+.ai-hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-110px;top:-160px;background:rgba(255,255,255,.07)}
+.ai-hero h1{margin:0;font-size:25px}.ai-hero p{color:#d8dcff;font-size:11px;max-width:620px;line-height:1.6}.ai-status{display:inline-flex;align-items:center;gap:6px;background:rgba(72,230,164,.14);border:1px solid rgba(72,230,164,.3);padding:6px 9px;border-radius:99px;font-size:9px}.ai-status i{width:7px;height:7px;border-radius:50%;background:#46e5a3}
+.exec-grid{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-top:16px}.exec-card{background:#fff;border:1px solid #e6ebf2;border-radius:15px;box-shadow:0 9px 28px rgba(22,38,70,.06);overflow:hidden}.exec-head{padding:17px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;gap:15px}.exec-head h2{margin:0;font-size:14px}.exec-head small{display:block;color:#8a95a5;font-size:9px;margin-top:4px}.command-box{padding:17px;background:#fbfcff}.command-bubble{display:flex;gap:11px}.command-avatar{width:35px;height:35px;border-radius:50%;background:#e9e5ff;color:#5b3be8;display:grid;place-items:center;flex:none}.command-text{background:#fff;border:1px solid #e4e8ef;border-radius:11px;padding:11px 13px;font-size:11px;line-height:1.5}.timeline{padding:17px}.step{display:flex;gap:12px;position:relative;padding-bottom:20px}.step:not(:last-child):after{content:"";position:absolute;left:15px;top:32px;bottom:0;border-left:1px dashed #dbe1eb}.step-icon{width:31px;height:31px;border-radius:50%;background:#edf8f4;color:#159b69;display:grid;place-items:center;z-index:1;flex:none}.step-icon svg{width:15px}.step h3{font-size:10px;margin:2px 0 4px}.step p{font-size:9px;color:#7f8a9a;margin:0;line-height:1.5}.result-wrap{border-top:1px solid #edf0f4;padding:15px}.result-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.result-title h3{font-size:11px;margin:0}.copy-btn{border:1px solid #dfe5ed;background:#fff;border-radius:7px;padding:5px 8px;font-size:8px;color:#687588}.result-table{overflow:auto}.result-table table{width:100%;border-collapse:collapse;min-width:520px}.result-table th{font-size:8px;text-align:left;color:#8994a4;background:#fafbfd;padding:8px}.result-table td{font-size:9px;border-top:1px solid #edf0f4;padding:9px;color:#536176;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.side-ai{background:#fff;border:1px solid #e6ebf2;border-radius:15px;padding:16px;box-shadow:0 9px 28px rgba(22,38,70,.06);height:max-content}.side-ai h3{
+font-size:12px;margin:0 0 12px}.action-pill{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #e8ecf2;border-radius:9px;margin-bottom:7px}.action-pill i{width:27px;height:27px;border-radius:8px;background:#eeeaff;color:#5b3be8;display:grid;place-items:center}.action-pill svg{width:14px}.action-pill b{font-size:9px}.action-pill span{display:block;color:#8994a4;font-size:8px;margin-top:2px}.run-again{width:100%;height:37px;border:0;border-radius:9px;background:#4c36e8;color:#fff;font-size:10px;font-weight:800;margin-top:8px}.empty-ai{text-align:center;padding:55px 20px;color:#8a96a5;font-size:11px}
+@media(max-width:800px){.ai-main{margin-left:0;padding:16px}.exec-grid{grid-template-columns:1fr}.side-ai{order:-1}}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-logo"><i data-lucide="bar-chart-3"></i></div><div><strong>JS WHOLESALE</strong><small>B2B ADMIN</small></div><button class="mobile-close" id="closeSidebar"><i data-lucide="x"></i></button></div>
+    <div class="side-section">MAIN</div>
+    <nav class="side-nav">
+      <a href="index.html"><i data-lucide="home"></i><span>Dashboard</span></a>
+      <a href="index.html#products"><i data-lucide="package"></i><span>My Products</span></a>
+      <a href="index.html#buy-products"><i data-lucide="shopping-bag"></i><span>Buy Products</span></a>
+      <a href="index.html#orders"><i data-lucide="truck"></i><span>Orders</span></a>
+      <a href="index.html#payments"><i data-lucide="credit-card"></i><span>Payments</span></a>
+      <a href="index.html#customers"><i data-lucide="users"></i><span>Customers</span></a>
+      <a href="index.html#inventory"><i data-lucide="boxes"></i><span>Inventory</span></a>
+      <a class="active" href="ai.html"><i data-lucide="sparkles"></i><span>AI Command Center</span></a>
+      <a href="index.html#profile"><i data-lucide="user-round"></i><span>Profile</span></a>
+    </nav>
+    <div class="side-section side-bottom-label">ACCOUNT</div><button class="logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Logout</span></button>
+  </aside>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <main class="ai-main">
+    <button class="hamburger" id="openSidebar"><i data-lucide="menu"></i></button>
+    <section class="ai-hero">
+      <span class="ai-status"><i></i> AI COMMAND CENTER</span>
+      <h1>Wholesaler AI execution</h1>
+      <p>Your voice/text command is interpreted securely, matched to an allowed business action, executed against your Supabase records, and shown here as a transparent execution report.</p>
+    </section>
+    <div id="pageMessage" class="exec-card empty-ai">Loading your latest AI execution…</div>
+    <div id="executionGrid" class="exec-grid hidden">
+      <section class="exec-card">
+        <div class="exec-head"><div><h2 id="actionTitle">Execution</h2><small id="executionDate">—</small></div><span id="executionStatus" class="status delivered">Completed</span></div>
+        <div class="command-box"><div class="command-bubble"><div class="command-avatar"><i data-lucide="mic"></i></div><div class="command-text" id="commandText">—</div></div></div>
+        <div class="timeline">
+          <div class="step"><div class="step-icon"><i data-lucide="message-square"></i></div><div><h3>1. Command received</h3><p id="step1">Voice/text input captured from the dashboard.</p></div></div>
+          <div class="step"><div class="step-icon"><i data-lucide="brain-circuit"></i></div><div><h3>2. AI action selected</h3><p id="step2">—</p></div></div>
+          <div class="step"><div class="step-icon"><i data-lucide="database"></i></div><div><h3>3. Supabase data executed</h3><p id="step3">—</p></div></div>
+          <div class="step"><div class="step-icon"><i data-lucide="check-circle-2"></i></div><div><h3>4. Result prepared</h3><p id="step4">—</p></div></div>
+        </div>
+        <div class="result-wrap"><div class="result-title"><h3>Live result records</h3><button class="copy-btn" id="copyResult">Copy JSON</button></div><div class="result-table" id="resultTable"></div></div>
+      </section>
+      <aside class="side-ai">
+        <h3>Execution details</h3>
+        <div class="action-pill"><i><i data-lucide="zap"></i></i><div><b id="actionName">—</b><span>Allowed action</span></div></div>
+        <div class="action-pill"><i><i data-lucide="database"></i></i><div><b>Supabase</b><span>Live database source</span></div></div>
+        <div class="action-pill"><i><i data-lucide="shield-check"></i></i><div><b>Restricted</b><span>Only approved read actions run</span></div></div>
+        <button class="run-again" id="runAgain">Run command again</button>
+        <button class="wide-outline" id="backDashboard">Back to dashboard</button>
+      </aside>
+    </div>
+  </main>
+</div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+(async()=>{
+  lucide.createIcons();
+  const C=window.B2B_CONFIG;
+  const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_PUBLISHABLE_KEY);
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  const id=new URLSearchParams(location.search).get("id");
+  let current=null;
+
+  function table(rows){
+    if(!rows?.length)return "<div class='empty-ai'>The action completed but Supabase returned no matching records.</div>";
+    const keys=[...new Set(rows.flatMap(r=>Object.keys(r)))].slice(0,7);
+    return `<table><thead><tr>${keys.map(k=>`<th>${esc(k)}</th>`).join("")}</tr></thead><tbody>${rows.slice(0,50).map(r=>`<tr>${keys.map(k=>`<td title="${esc(typeof r[k]==="object"?JSON.stringify(r[k]):r[k])}">${esc(typeof r[k]==="object"?JSON.stringify(r[k]):r[k])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  }
+
+  async function load(){
+    if(!C||C.SUPABASE_URL.includes("YOUR_")){ $("pageMessage").textContent="Configure supabase-config.js first.";return; }
+    let q=sb.from("ai_executions").select("*").order("created_at",{ascending:false}).limit(1);
+    if(id)q=sb.from("ai_executions").select("*").eq("id",id).limit(1);
+    const {data,error}=await q;
+    if(error){$("pageMessage").textContent=error.message;return}
+    current=data?.[0];
+    if(!current){$("pageMessage").textContent="No AI execution has been recorded yet. Return to the dashboard and ask the AI a command.";return}
+    $("pageMessage").classList.add("hidden");$("executionGrid").classList.remove("hidden");
+    $("actionTitle").textContent=(current.action||"Execution").replaceAll("_"," ");
+    $("executionDate").textContent=new Date(current.created_at).toLocaleString("en-IN");
+    $("commandText").textContent=current.command_text;
+    $("executionStatus").textContent=current.status;
+    $("executionStatus").className="status "+(current.status==="completed"?"delivered":"cancelled");
+    $("actionName").textContent=current.action||"unsupported";
+    $("step2").textContent=current.summary||"Action interpreted by the AI command service.";
+    $("step3").textContent=current.status==="completed"?"The dashboard executed the allowed action against the authenticated Supabase session.":"The action did not complete.";
+    $("step4").textContent=current.status==="completed"?"Result stored in ai_executions and rendered from the saved execution payload.":"Check the error/result payload.";
+    const rows=current.result_payload?.rows||[];
+    $("resultTable").innerHTML=table(rows);
+    $("copyResult").onclick=async()=>{await navigator.clipboard.writeText(JSON.stringify(current,null,2));alert("Execution JSON copied.")};
+    $("runAgain").onclick=()=>{sessionStorage.setItem("ai_pending_command",current.command_text);location.href="index.html"};
+    lucide.createIcons();
+  }
+  $("backDashboard").onclick=()=>location.href="index.html";
+  $("logoutBtn").onclick=async()=>{await sb.auth.signOut();location.href="index.html"};
+  $("openSidebar").onclick=()=>{$("sidebar").classList.add("open");$("mobileOverlay").classList.add("show")};
+  $("closeSidebar").onclick=close;$("mobileOverlay").onclick=close;
+  function close(){$("sidebar").classList.remove("open");$("mobileOverlay").classList.remove("show")}
+  load();
+})();
+</script>
+</body>
+</html>
