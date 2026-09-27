@@ -1,4 +1,16 @@
 /* JS UNDEFINED AI Assistant - works with current AI.html */
+
+const AI_SUPABASE_URL = "https://qfkxnmefqjtsckmkrfld.supabase.co";
+const AI_SUPABASE_KEY = "sb_publishable_e8DMdaZyjRQq9s_dH12W9w_g-q7x3hR";
+
+let supabaseClient;
+
+if (window.supabase && typeof window.supabase.createClient === "function") {
+    supabaseClient = window.supabase.createClient(
+        AI_SUPABASE_URL,
+        AI_SUPABASE_KEY
+    );
+}
 (function(){
 'use strict';
 const PAGE_SIZE=15;
