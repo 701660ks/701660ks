@@ -121,7 +121,87 @@ async function qProducts(c){
     };
 }
 
+async function qBest(c){
+    let q = client().from('order_items').select('*').limit(5000);
 
+    q = await applySeller(q);
+
+    let r = await q;
+
+    if(r.error){
+        q = client().from('orders').select('*').limit(5000);
+        q = await applySeller(q);
+        r = await q;
+
+        if(r.error) throw r.error;
+    }
+
+    const m = new Map();
+
+    (r.data || []).forEach(x=>{
+        const id = x.product_id || x.id || null;
+        const n = x.product_name || x.name || x.product || 'Unknown Product';
+
+        const qty =
+            Number(
+                x.quantity ??
+                x.buying_quantity ??
+                x.qty ??
+                1
+            ) || 0;
+
+        const total =
+            Number(
+                x.total_price ??
+                x.total ??
+                x.amount ??
+                (Number(x.price || 0) * qty)
+            ) || 0;
+
+        const k = String(id || n);
+
+        if(!m.has(k)){
+            m.set(k,{
+                product_id:id,
+                product_name:n,
+                units_sold:0,
+                revenue:0
+            });
+        }
+
+        m.get(k).units_sold += qty;
+        m.get(k).revenue += total;
+    });
+
+    let rows = [...m.values()]
+        .sort((a,b)=>b.units_sold-a.units_sold);
+
+    const p = price(c);
+
+    if(p !== null){
+        const pr = await qProducts('products under '+p);
+        const ok = new Set(pr.rows.map(x=>String(x.id)));
+
+        rows = rows.filter(x =>
+            !x.product_id || ok.has(String(x.product_id))
+        );
+    }
+
+    return {
+        title:p !== null
+            ? 'Best-Selling Products Under '+money(p)
+            : 'Best-Selling Products',
+
+        rows,
+
+        cols:[
+            'product_id',
+            'product_name',
+            'units_sold',
+            'revenue'
+        ]
+    };
+}
 
 async function qOrders(c){
     let q = client().from('orders').select('*');
@@ -156,7 +236,37 @@ async function qOrders(c){
 }
 
 async function qCustomers(){const r=await client().from('profiles').select('*').order('created_at',{ascending:false});if(r.error)throw r.error;return {title:'Customers / Users',rows:r.data||[],cols:['id','full_name','email','mobile','user_type','status','created_at']}}
-async function qPayments(){let q=await seller(client().from('payments').select('*'));q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;return {title:'Payments',rows:r.data||[],cols:['id','order_number','transaction_id','amount','payment_mode','payment_status','user_name','user_mobile','paid_at']}}
+
+
+
+async function qPayments(){
+    let q = client().from('payments').select('*');
+
+    q = await applySeller(q);
+
+    q = q.order('created_at',{ascending:false});
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    return {
+        title:'Payments',
+        rows:r.data || [],
+        cols:[
+            'id',
+            'order_number',
+            'transaction_id',
+            'amount',
+            'payment_mode',
+            'payment_status',
+            'user_name',
+            'user_mobile',
+            'paid_at'
+        ]
+    };
+}
+
 
 
 async function qSales(){let q=await seller(client().from('orders').select('*'));const r=await q;if(r.error)throw r.error;const rows=r.data||[],total=rows.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0),del=rows.filter(x=>String(x.status||'').toLowerCase()==='delivered'),dr=del.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0);return {title:'Sales Summary',rows:[{metric:'Total Orders',value:rows.length},{metric:'Total Sales',value:money(total)},{metric:'Delivered Orders',value:del.length},{metric:'Delivered Revenue',value:money(dr)}],cols:['metric','value']}}
