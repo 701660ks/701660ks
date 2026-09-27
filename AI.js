@@ -20,9 +20,19 @@ const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 const money=v=>{const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:2}).format(n):'₹0'};
 const num=v=>new Intl.NumberFormat('en-IN').format(Number(v)||0);
 const dateText=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?String(v):d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})};
+
 function toast(m){const e=$('toast');if(!e)return;e.textContent=m;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),3000)}
 function status(v){if($('state'))$('state').textContent=v}
-function client(){const c=window.supabaseClient||window.sb||window.supabase;if(!c||typeof c.from!=='function'||!c.auth)throw Error('Supabase client was not found. Check that supabase.js loads before ai.js.');return c}
+
+function client(){
+    const c = supabaseClient || window.supabaseClient || window.sb;
+
+    if(!c || typeof c.from !== 'function' || !c.auth){
+        throw new Error('Supabase client could not be initialized.');
+    }
+
+    return c;
+}
 async function user(){if(S.user)return S.user;const r=await client().auth.getUser();if(r.error)throw r.error;if(!r.data?.user)throw Error('Please log in first.');return S.user=r.data.user}
 async function profile(){if(S.profile)return S.profile;const u=await user();const r=await client().from('profiles').select('*').eq('id',u.id).maybeSingle();return S.profile=r.error?{}:(r.data||{})}
 function admin(){const p=S.profile||{},r=String(p.role||p.user_role||p.user_type||p.type||'').toLowerCase();return p.is_admin===true||['admin','business_admin','super_admin'].includes(r)}
