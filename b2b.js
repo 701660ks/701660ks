@@ -143,28 +143,86 @@
     $("chartSubtitle").textContent=`Actual order totals • last ${days} days`;
   }
 
+  
   async function executeAI(command){
-    const clean=command.trim(); if(!clean)return;
-    sessionStorage.setItem("ai_pending_command",clean);
-    $("sendCommand").disabled=true;
-    try{
-      const {data,error}=await sb.functions.invoke("ai-command",{body:{command:clean}});
-      if(error)throw error;
-      const action=data?.action||"unsupported";
-      const result=await runAllowedAction(action,data?.parameters||{});
-      const record={
-        command_text:clean,action,status:result.ok?"completed":"failed",
-        summary:result.summary,input_payload:{parameters:data?.parameters||{}},
-        result_payload:result.payload
-      };
-      const {data:inserted,error:insertError}=await sb.from("ai_executions").insert(record).select("id").single();
-      if(insertError)throw insertError;
-      location.href=`ai.html?id=${encodeURIComponent(inserted.id)}`;
-    }catch(e){
-      toast(`AI command failed: ${e.message}`);
-      $("sendCommand").disabled=false;
-    }
+  const clean = String(command || "").trim();
+
+  if (!clean) {
+    toast("Please enter an AI command.");
+    return;
   }
+
+  sessionStorage.setItem("ai_pending_command", clean);
+
+  $("sendCommand").disabled = true;
+
+  try {
+    /*
+      Your existing Supabase Edge Function interprets
+      the natural-language command.
+    */
+    const { data, error } = await sb.functions.invoke("ai-command", {
+      body: {
+        command: clean
+      }
+    });
+
+    if (error) throw error;
+
+    const action = data?.action || "unsupported";
+    const parameters = data?.parameters || {};
+
+    /*
+      Execute only the actions already allowed by this dashboard.
+      All returned information comes from your real Supabase data.
+    */
+    const result = await runAllowedAction(action, parameters);
+
+    /*
+      Keep the complete AI execution locally for ai.html.
+      No new Supabase table is required.
+    */
+    const execution = {
+      id: crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+
+      command_text: clean,
+
+      action: action,
+
+      parameters: parameters,
+
+      status: result.ok ? "completed" : "failed",
+
+      summary: result.summary,
+
+      payload: result.payload,
+
+      created_at: new Date().toISOString()
+    };
+
+    sessionStorage.setItem(
+      "ai_execution_result",
+      JSON.stringify(execution)
+    );
+
+    /*
+      Open the dedicated AI execution/result screen.
+    */
+    window.location.href = "ai.html";
+
+  } catch (e) {
+
+    console.error("AI command error:", e);
+
+    toast(
+      `AI command failed: ${e?.message || "Unknown error"}`
+    );
+
+    $("sendCommand").disabled = false;
+  }
+}
 
   async function runAllowedAction(action,p){
     try{
@@ -174,11 +232,29 @@
         if(p.query)rows=rows.filter(r=>JSON.stringify(r).toLowerCase().includes(String(p.query).toLowerCase()));
         rows.sort((a,b)=>new Date(val(b,C.FIELDS.date))-new Date(val(a,C.FIELDS.date))); rows=rows.slice(0,50);
         summary=`Found ${rows.length} order record(s) from Supabase.`;
-      }else if(action==="sales_summary"){
-        const total=state.orders.reduce((a,r)=>a+(Number(val(r,C.FIELDS.total,0))||0),0);
-        summary=`Loaded ${state.orders.length} order records with total order value ${money(total)}.`;
-        rows=state.orders.slice(0,50);
-      }else if(action==="payment_status"){
+      }
+
+else if(action==="sales_summary"){
+
+  const total = state.orders.reduce(
+    (a, r) => a + (Number(val(r, C.FIELDS.total, 0)) || 0),
+    0
+  );
+
+  const average = state.orders.length
+    ? total / state.orders.length
+    : 0;
+
+  summary =
+    `Loaded ${state.orders.length} real order records. ` +
+    `Total order value is ${money(total)} ` +
+    `with an average order value of ${money(average)}.`;
+
+  rows = state.orders.slice(0, 50);
+
+
+
+else if(action==="payment_status"){
         rows=state.payments.slice(0,50); summary=`Loaded ${state.payments.length} payment records.`;
       }else if(action==="low_stock"){
         rows=state.inventory.filter(r=>(Number(val(r,C.FIELDS.quantity,0))||0)<=10).slice(0,100);
