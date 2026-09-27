@@ -34,20 +34,36 @@ function client(){
     return c;
 }
 async function user(){if(S.user)return S.user;const r=await client().auth.getUser();if(r.error)throw r.error;if(!r.data?.user)throw Error('Please log in first.');return S.user=r.data.user}
+
 async function profile(){if(S.profile)return S.profile;const u=await user();const r=await client().from('profiles').select('*').eq('id',u.id).maybeSingle();return S.profile=r.error?{}:(r.data||{})}
+
 function admin(){const p=S.profile||{},r=String(p.role||p.user_role||p.user_type||p.type||'').toLowerCase();return p.is_admin===true||['admin','business_admin','super_admin'].includes(r)}
-async function seller(q){if(admin())return q;return q.eq('seller_id',(await user()).id)}
+
+async function seller(q){
+    if(admin()) return q;
+
+    const u = await user();
+    return q.eq('seller_id', u.id);
+}
+
+
 function add(role,msg){const c=$('chat');if(!c)return;const d=document.createElement('div');d.className='msg '+(role==='user'?'me':'ai');d.innerHTML='<b>'+(role==='user'?'You':'AI Assistant')+'</b>'+esc(msg).replace(/\n/g,'<br>');c.appendChild(d);c.scrollTop=c.scrollHeight}
+
 function busy(v){S.busy=v;status(v?'Working…':'Ready');document.querySelectorAll('.send,.mic').forEach(b=>b.disabled=v)}
 function colName(k){return String(k).replace(/_/g,' ').replace(/\b\w/g,x=>x.toUpperCase())}
 function val(k,v){if(v===null||v===undefined||v==='')return '—';const x=String(k).toLowerCase();if(/price|amount|total|revenue|sales|discount/.test(x)&&Number.isFinite(Number(v)))return money(v);if(/date|created_at|updated_at|paid_at/.test(x))return dateText(v);if(Array.isArray(v))return v.join(', ');if(typeof v==='object')return JSON.stringify(v);return String(v)}
+
 function render(){const out=$('out'),count=$('count'),title=$('title');if(title)title.textContent=S.title;if(!S.rows.length){if(count)count.textContent='0 results';if(out)out.innerHTML='<div class="empty"><b>No matching data found</b>Try another search or command.</div>';return}if(count)count.textContent=num(S.rows.length)+' results';const total=Math.ceil(S.rows.length/PAGE_SIZE)||1;if(S.page>total)S.page=total;const start=(S.page-1)*PAGE_SIZE,rows=S.rows.slice(start,start+PAGE_SIZE),cols=S.cols.slice(0,10);let h='<div class="tablewrap"><table><thead><tr>'+cols.map(c=>'<th>'+esc(colName(c))+'</th>').join('')+'<th>Manage</th></tr></thead><tbody>';rows.forEach((r,i)=>{h+='<tr>'+cols.map(c=>'<td>'+esc(val(c,r[c]))+'</td>').join('')+'<td><button class="manage" data-manage="'+(start+i)+'">Manage</button></td></tr>'});h+='</tbody></table></div><div class="pager"><span>Showing '+(start+1)+'–'+Math.min(start+PAGE_SIZE,S.rows.length)+' of '+S.rows.length+'</span><div class="pages"><button data-page="'+Math.max(1,S.page-1)+'">‹</button><button class="on">'+S.page+'</button><button data-page="'+Math.min(total,S.page+1)+'">›</button></div></div>';if(out)out.innerHTML=h}
+
 function result(title,rows,cols){S.page=1;S.title=title;S.rows=rows||[];S.cols=cols||((rows&&rows[0])?Object.keys(rows[0]):[]);render()}
 function price(c){const m=c.replace(/,/g,'').match(/(?:under|below|less than|upto|up to|max(?:imum)?(?: price)?)\D*₹?\s*(\d+(?:\.\d+)?)/i)||c.match(/₹\s*(\d+(?:\.\d+)?)/i);return m?Number(m[1]):null}
 const best=c=>/best.?selling|top.?selling|best products|top products/i.test(c), products=c=>/\bproduct|products|inventory|catalog|items\b/i.test(c), orders=c=>/\border|orders|purchase\b/i.test(c), customers=c=>/customer|customers|buyer|buyers|user|users/i.test(c), payments=c=>/payment|payments|upi|utr|transaction/i.test(c), sales=c=>/sales|revenue|turnover|earning|earnings/i.test(c), pending=c=>/pending/i.test(c), deleting=c=>/\b(delete|remove|erase|trash)\b/i.test(c), updating=c=>/\b(update|change|edit|modify|set|increase|decrease)\b/i.test(c), critical=c=>payments(c)||/\b(send|transfer|refund|cancel|capture|collect|pay)\b/i.test(c);
 function orderAmount(c){return /order.*(amount|price|total|value)/i.test(c)||/(amount|price|total|value).*order/i.test(c)}
+
 async function qProducts(c){let q=await seller(client().from('products').select('*'));q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;let rows=r.data||[],p=price(c);if(p!==null)rows=rows.filter(x=>Number(x.selling_price??x.price??x.bulk_price??x.original_price??0)<=p);if(/low stock|stock low|running out|out of stock/i.test(c))rows=rows.filter(x=>Number(x.stock_quantity??x.stock??0)<=10);return {title:p!==null?'Products under '+money(p):/low stock|stock low/i.test(c)?'Low Stock Products':'Products',rows,cols:['id','name','product_type','product_sub_type','price','selling_price','bulk_price','stock_quantity','minimum_quantity','is_active']}}
+
 async function qBest(c){let q=await seller(client().from('order_items').select('*').limit(5000));let r=await q;if(r.error){q=await seller(client().from('orders').select('*').limit(5000));r=await q;if(r.error)throw r.error}const m=new Map();(r.data||[]).forEach(x=>{const id=x.product_id||x.id||null,n=x.product_name||x.name||x.product||'Unknown Product',qty=Number(x.quantity??x.buying_quantity??x.qty??1)||0,total=Number(x.total_price??x.total??x.amount??(Number(x.price||0)*qty))||0,k=String(id||n);if(!m.has(k))m.set(k,{product_id:id,product_name:n,units_sold:0,revenue:0});m.get(k).units_sold+=qty;m.get(k).revenue+=total});let rows=[...m.values()].sort((a,b)=>b.units_sold-a.units_sold);const p=price(c);if(p!==null){const pr=await qProducts('products under '+p),ok=new Set(pr.rows.map(x=>String(x.id)));rows=rows.filter(x=>!x.product_id||ok.has(String(x.product_id)))}return {title:p!==null?'Best-Selling Products Under '+money(p):'Best-Selling Products',rows,cols:['product_id','product_name','units_sold','revenue']}}
+
 async function qOrders(c){let q=await seller(client().from('orders').select('*'));if(pending(c))q=q.eq('status','pending');q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;return {title:pending(c)?'Pending Orders':'Orders',rows:r.data||[],cols:['id','order_number','product_name','buying_quantity','total_price','payment_mode','status','tracking_number','created_at']}}
 async function qCustomers(){const r=await client().from('profiles').select('*').order('created_at',{ascending:false});if(r.error)throw r.error;return {title:'Customers / Users',rows:r.data||[],cols:['id','full_name','email','mobile','user_type','status','created_at']}}
 async function qPayments(){let q=await seller(client().from('payments').select('*'));q=q.order('created_at',{ascending:false});const r=await q;if(r.error)throw r.error;return {title:'Payments',rows:r.data||[],cols:['id','order_number','transaction_id','amount','payment_mode','payment_status','user_name','user_mobile','paid_at']}}
