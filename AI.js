@@ -379,14 +379,126 @@ async function findOrder(a){
 }
 
 function updateStock(c){const m=c.match(/(?:stock|quantity)\D+(?:to|=)?\s*(\d+)/i);return m?Number(m[1]):null}
-async function updateProduct(a){const rows=await findProduct(a);if(!rows.length)throw Error('Product not found. Please provide the product ID.');if(rows.length>1&&!a.id)throw Error('More than one product matched. Please provide the product ID.');const p=rows[0],patch={},np=updatePrice(a.command),ns=updateStock(a.command);if(np!==null)patch.price=np;if(ns!==null)patch.stock_quantity=ns;if(!Object.keys(patch).length)throw Error('Specify the new product price or stock quantity.');patch.updated_at=new Date().toISOString();let q=await seller(client().from('products').update(patch).eq('id',p.id));const r=await q.select('*').single();if(r.error)throw r.error;return r.data}
 
 
-async function updateOrder(a){if(orderAmount(a.command))throw Error('Sorry, I cannot update an order amount, order total, or order price.');const rows=await findOrder(a);if(!rows.length)throw Error('Order not found. Please provide the order ID.');if(rows.length>1&&!a.id)throw Error('More than one order matched. Please provide the order ID.');const m=a.command.match(/\b(pending|processing|packed|shipped|out[_ ]for[_ ]delivery|delivered|cancelled|canceled)\b/i);if(!m)throw Error('Specify the new order status: pending, processing, packed, shipped, out_for_delivery, delivered, or cancelled.');const st=m[1].toLowerCase().replace(/ /g,'_').replace('canceled','cancelled');let q=await seller(client().from('orders').update({status:st,updated_at:new Date().toISOString()}).eq('id',rows[0].id));const r=await q.select('*').single();if(r.error)throw r.error;return r.data}
+async function updateProduct(a){
+    const rows = await findProduct(a);
+
+    if(!rows.length){
+        throw Error('Product not found. Please provide the product ID.');
+    }
+
+    if(rows.length > 1 && !a.id){
+        throw Error('More than one product matched. Please provide the product ID.');
+    }
+
+    const p = rows[0];
+    const patch = {};
+
+    const np = updatePrice(a.command);
+    const ns = updateStock(a.command);
+
+    if(np !== null) patch.price = np;
+    if(ns !== null) patch.stock_quantity = ns;
+
+    if(!Object.keys(patch).length){
+        throw Error('Specify the new product price or stock quantity.');
+    }
+
+    patch.updated_at = new Date().toISOString();
+
+    let q = client()
+        .from('products')
+        .update(patch)
+        .eq('id',p.id);
+
+    q = await applySeller(q);
+
+    const r = await q.select('*').single();
+
+    if(r.error) throw r.error;
+
+    return r.data;
+}
+
+async function updateOrder(a){
+    if(orderAmount(a.command)){
+        throw Error(
+            'Sorry, I cannot update an order amount, order total, or order price.'
+        );
+    }
+
+    const rows = await findOrder(a);
+
+    if(!rows.length){
+        throw Error('Order not found. Please provide the order ID.');
+    }
+
+    if(rows.length > 1 && !a.id){
+        throw Error('More than one order matched. Please provide the order ID.');
+    }
+
+    const m = a.command.match(
+        /\b(pending|processing|packed|shipped|out[_ ]for[_ ]delivery|delivered|cancelled|canceled)\b/i
+    );
+
+    if(!m){
+        throw Error(
+            'Specify the new order status: pending, processing, packed, shipped, out_for_delivery, delivered, or cancelled.'
+        );
+    }
+
+    const st = m[1]
+        .toLowerCase()
+        .replace(/ /g,'_')
+        .replace('canceled','cancelled');
+
+    let q = client()
+        .from('orders')
+        .update({
+            status:st,
+            updated_at:new Date().toISOString()
+        })
+        .eq('id',rows[0].id);
+
+    q = await applySeller(q);
+
+    const r = await q.select('*').single();
+
+    if(r.error) throw r.error;
+
+    return r.data;
+}
 
 
-async function deleteProduct(a){const rows=await findProduct(a);if(!rows.length)throw Error('Product not found.');if(rows.length>1&&!a.id)throw Error('More than one product matched. Provide the product ID.');const row=rows[0];await archive('product',row,a.command);let q=await seller(client().from('products').delete().eq('id',row.id));const r=await q.select('*');if(r.error)throw r.error;return row}
-async function deleteCustomer(a){const rows=await findCustomer(a);if(!rows.length)throw Error('Customer not found.');if(rows.length>1&&!a.id)throw Error('More than one customer matched. Provide the customer ID.');const row=rows[0];await archive('customer',row,a.command);const r=await client().from('profiles').delete().eq('id',row.id).select('*');if(r.error)throw Error('Customer was archived but profile deletion was blocked by Supabase permissions.');return row}
+async function deleteProduct(a){
+    const rows = await findProduct(a);
+
+    if(!rows.length){
+        throw Error('Product not found.');
+    }
+
+    if(rows.length > 1 && !a.id){
+        throw Error('More than one product matched. Provide the product ID.');
+    }
+
+    const row = rows[0];
+
+    await archive('product',row,a.command);
+
+    let q = client()
+        .from('products')
+        .delete()
+        .eq('id',row.id);
+
+    q = await applySeller(q);
+
+    const r = await q.select('*');
+
+    if(r.error) throw r.error;
+
+    return row;
+}
 
 
 async function runProtected(a){busy(true);try{let r,msg;if(a.type==='update'&&a.entity==='product'){r=await updateProduct(a);msg='Product updated successfully.'}else if(a.type==='critical'&&a.entity==='order'){r=await updateOrder(a);msg='Order updated successfully.'}else if(a.type==='delete'&&a.entity==='product'){r=await deleteProduct(a);msg='Product deleted successfully and its deleted record was archived.'}else if(a.type==='delete'&&a.entity==='customer'){r=await deleteCustomer(a);msg='Customer deleted and its deleted record was archived.'}else{throw Error('This sensitive operation needs a dedicated backend/provider. No database change was made.')}await audit(a,'completed',r);await notify(a,msg);add('ai',msg);toast(msg);if(a.entity==='product'){const x=await qProducts('products');result(x.title,x.rows,x.cols)}else if(a.entity==='order'){const x=await qOrders('orders');result(x.title,x.rows,x.cols)}else if(a.entity==='customer'){const x=await qCustomers();result(x.title,x.rows,x.cols)}}catch(e){console.error(e);await audit(a,'failed',{error:e.message});add('ai','The action was not completed. '+e.message);toast('Action not completed.')
