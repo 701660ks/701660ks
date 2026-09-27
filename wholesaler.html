@@ -4,979 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JS UNDEFINED — Wholesaler Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-
-
-<style>
-/* ===== FINAL RESPONSIVE LAYOUT FIX ===== */
-
-html,
-body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-}
-
-.layout,
-.content,
-.page-section,
-.panel {
-    min-width: 0;
-    max-width: 100%;
-}
-
-.content {
-    overflow-x: hidden;
-}
-
-/* ===== DESKTOP / LAPTOP ===== */
-
-.chart-grid {
-    width: 100%;
-    min-width: 0;
-}
-
-.chart-grid > .panel {
-    min-width: 0;
-    width: 100%;
-}
-
-.chart-wrap {
-    width: 100%;
-    min-width: 0;
-    overflow: hidden;
-}
-
-.chart-wrap canvas {
-    max-width: 100% !important;
-}
-
-/* ===== TABLET ===== */
-
-@media (max-width: 1200px) {
-
-    .chart-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .chart-grid > .panel {
-        width: 100%;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-/* ===== MOBILE ===== */
-
-@media (max-width: 800px) {
-
-    .content {
-        width: 100%;
-        padding: 12px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 10px;
-    }
-
-    .stat-card {
-        min-width: 0;
-        padding: 12px;
-    }
-
-    .stat-card strong {
-        font-size: 21px;
-    }
-
-    .chart-grid {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        width: 100%;
-        gap: 12px;
-    }
-
-    .chart-grid .panel {
-        width: 100%;
-        min-width: 0;
-    }
-
-    .chart-wrap {
-        width: 100%;
-        height: 250px;
-        overflow: hidden;
-    }
-
-    .chart-wrap canvas {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    /* Recent Orders */
-    #dashboard .table-wrap {
-        width: 100%;
-        overflow-x: hidden;
-    }
-
-    #dashboard table {
-        width: 100%;
-        min-width: 0 !important;
-        table-layout: fixed;
-    }
-
-    #dashboard th,
-    #dashboard td {
-        padding: 8px 4px;
-        font-size: 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    #dashboard th:nth-child(1),
-    #dashboard td:nth-child(1) {
-        width: 22%;
-    }
-
-    #dashboard th:nth-child(2),
-    #dashboard td:nth-child(2) {
-        width: 31%;
-    }
-
-    #dashboard th:nth-child(3),
-    #dashboard td:nth-child(3) {
-        width: 11%;
-        text-align: center;
-    }
-
-    #dashboard th:nth-child(4),
-    #dashboard td:nth-child(4) {
-        width: 18%;
-        text-align: right;
-    }
-
-    #dashboard th:nth-child(5),
-    #dashboard td:nth-child(5) {
-        width: 18%;
-        text-align: center;
-    }
-
-    #dashboard .pill {
-        font-size: 8px;
-        padding: 4px 5px;
-    }
-}
-
-/* ===== SMALL PHONE ===== */
-
-@media (max-width: 520px) {
-
-    .content {
-        padding: 10px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 8px;
-    }
-
-    .stat-card {
-        padding: 10px;
-    }
-
-    .stat-card span {
-        font-size: 10px;
-    }
-
-    .stat-card strong {
-        font-size: 19px;
-    }
-
-    .stat-card small {
-        font-size: 9px;
-    }
-
-    .chart-wrap {
-        height: 230px;
-    }
-
-    #dashboard th,
-    #dashboard td {
-        padding: 7px 3px;
-        font-size: 9px;
-    }
-
-    #dashboard th:nth-child(1),
-    #dashboard td:nth-child(1) {
-        width: 22%;
-    }
-
-    #dashboard th:nth-child(2),
-    #dashboard td:nth-child(2) {
-        width: 31%;
-    }
-
-    #dashboard th:nth-child(3),
-    #dashboard td:nth-child(3) {
-        width: 11%;
-    }
-
-    #dashboard th:nth-child(4),
-    #dashboard td:nth-child(4) {
-        width: 18%;
-    }
-
-    #dashboard th:nth-child(5),
-    #dashboard td:nth-child(5) {
-        width: 18%;
-    }
-}
-
-
-/* PAYMENT GRAPH */
-
-.payment-chart-panel {
-    margin-top: 16px;
-}
-
-.payment-chart-wrap {
-    width: 100%;
-    min-height: 300px;
-    height: 300px;
-    padding: 10px 15px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-#paymentChart {
-    display: block;
-    width: 100% !important;
-    height: 260px !important;
-}
-
-@media (max-width: 700px) {
-
-    .payment-chart-wrap {
-        height: 280px;
-        min-height: 280px;
-        padding: 5px;
-    }
-
-    #paymentChart {
-        height: 250px !important;
-    }
-
-}
-
-
-/* =========================================
-   MATCH WHOLESALER SIDEBAR
-   ========================================= */
-
-.sidebar {
-    width: 170px !important;
-    min-width: 170px !important;
-    background: #ffffff !important;
-    border-right: 1px solid #e5e7eb !important;
-}
-
-.sidebar-brand {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    padding: 10px 8px !important;
-    background: #ffffff !important;
-}
-
-.sidebar-brand-mark {
-    width: 25px !important;
-    height: 25px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 1px solid #e5e7eb !important;
-    border-radius: 5px !important;
-    background: #ffffff !important;
-    color: #111827 !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-}
-
-.sidebar-brand-text strong {
-    display: block !important;
-    color: #111827 !important;
-    font-size: 14px !important;
-    font-weight: 900 !important;
-    line-height: 1.2 !important;
-}
-
-.sidebar-brand-text small {
-    display: block !important;
-    color: #64748b !important;
-    font-size: 8px !important;
-    font-weight: 600 !important;
-    line-height: 1.2 !important;
-}
-
-.sidebar-menu {
-    padding: 6px 4px !important;
-}
-
-.sidebar .nav-item {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    padding: 9px 7px !important;
-    margin-bottom: 6px !important;
-    border: 0 !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-    color: #111827 !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    text-align: left !important;
-}
-
-.sidebar .nav-item:hover {
-    background: #f1f5f9 !important;
-}
-
-.sidebar .nav-item.active {
-    background: #eef2ff !important;
-    color: #4338ca !important;
-    font-weight: 800 !important;
-}
-
-.sidebar .nav-icon {
-    width: 20px !important;
-    min-width: 20px !important;
-    font-size: 15px !important;
-    text-align: center !important;
-}
-
-.sidebar .nav-count {
-    margin-left: auto !important;
-    background: #111827 !important;
-    color: #ffffff !important;
-    border-radius: 50px !important;
-    padding: 2px 6px !important;
-    font-size: 9px !important;
-}
-
-.sidebar-bottom {
-    margin-top: 0 !important;
-    padding: 5px 4px 12px !important;
-    border-top: 1px solid #e5e7eb !important;
-}
-
-.logout-sidebar-btn {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    padding: 9px 7px !important;
-    border: 0 !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-    color: #b91c1c !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    text-align: left !important;
-}
-
-.logout-sidebar-btn:hover {
-    background: #fef2f2 !important;
-}
-
-/* =========================================
-   SIDEBAR BRAND - LARGE & BOLD
-   ========================================= */
-
-.sidebar .sidebar-brand strong,
-.sidebar .brand strong {
-    font-size: 22px !important;
-    font-weight: 900 !important;
-    color: #111827 !important;
-    line-height: 1.2 !important;
-    display: block !important;
-}
-
-.sidebar .sidebar-brand small,
-.sidebar .brand small {
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    color: #475569 !important;
-    line-height: 1.3 !important;
-    display: block !important;
-}
-
-/* Sidebar menu text */
-.sidebar .nav-item span:not(.nav-icon) {
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: #111827 !important;
-    margin-top:4px;
-}
-
-/* Sidebar icons */
-.sidebar .nav-icon {
-    font-size: 20px !important;
-}
-
-/* Active Dashboard */
-.sidebar .nav-item.active span:not(.nav-icon) {
-    color: #4338ca !important;
-    font-weight: 800 !important;
-}
-
-@media (max-width: 800px) {
-    .sidebar {
-        width: 240px !important;
-        min-width: 240px !important;
-        left: -250px !important;
-    }
-
-    .sidebar.open {
-        left: 0 !important;
-    }
-}
-</style>
-
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script defer src="supabase.js"></script>
- <script defer src="app.js"></script>
-  
-  
+  <link rel="stylesheet" href="wholesaler.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-
-
 <body>
-  <div id="loadingScreen" class="loading-screen"><div class="spinner"></div><p>Loading dashboard…</p></div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span></span><span></span><span></span></div>
+        <div><strong>JS</strong><strong>UNDEFINED</strong></div>
+      </div>
 
-  <div id="app" class="app hidden">
-    
+      <nav class="side-nav">
+        <button class="nav-item active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+        <button class="nav-item" data-page="products"><i data-lucide="package"></i><span>My Products</span></button>
+        <button class="nav-item" data-page="buy"><i data-lucide="shopping-cart"></i><span>Buy Products</span></button>
+        <button class="nav-item" data-page="cart"><i data-lucide="shopping-bag"></i><span>Cart</span><b class="nav-badge" id="cartCount">0</b></button>
+        <button class="nav-item" data-page="orders"><i data-lucide="truck"></i><span>Orders</span></button>
+        <button class="nav-item" data-page="payments"><i data-lucide="credit-card"></i><span>Payments</span></button>
+        <button class="nav-item" data-page="customers"><i data-lucide="users"></i><span>Customers</span></button>
+        <button class="nav-item" data-page="inventory"><i data-lucide="boxes"></i><span>Inventory</span></button>
+        <button class="nav-item" data-page="reports"><i data-lucide="bar-chart-3"></i><span>Reports</span></button>
+        <button class="nav-item ai-nav" data-page="ai"><i data-lucide="sparkles"></i><span>AI Command Center</span></button>
+        <button class="nav-item" data-page="notifications"><i data-lucide="bell"></i><span>Notifications</span><b class="red-badge">3</b></button>
+        <button class="nav-item" data-page="profile"><i data-lucide="user-round"></i><span>Profile</span></button>
+      </nav>
 
-   
+      <button class="nav-item logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Logout</span></button>
+    </aside>
 
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu"><i data-lucide="menu"></i></button>
+        <div class="top-logo">JS <span>UNDEFINED</span></div>
 
-   <!-- =========================================
-     TOP NAVBAR
-     ========================================= -->
-<header class="topbar">
+        <form class="command-bar" id="commandForm">
+          <i data-lucide="sparkles"></i>
+          <input id="commandInput" autocomplete="off" placeholder="Ask AI anything or give a command...">
+          <button type="button" class="mic-btn" id="micBtn" title="Voice command"><i data-lucide="mic"></i></button>
+          <button class="command-submit" type="submit"><i data-lucide="arrow-right"></i></button>
+        </form>
 
-    <div class="topbar-left">
-
-        <button
-            id="menuButton"
-            class="icon-btn mobile-only"
-            type="button"
-            aria-label="Menu">
-            ☰
-        </button>
-
-        <div class="topbar-title">
-            Wholesaler Panel
+        <div class="top-actions">
+          <button class="icon-btn notification-btn" id="notifyBtn"><i data-lucide="bell"></i><span></span></button>
+          <button class="icon-btn" id="themeBtn"><i data-lucide="sun"></i></button>
+          <button class="user-menu" id="userMenu">
+            <div class="avatar" id="avatar">W</div>
+            <div class="user-label"><strong id="userName">Wholesaler</strong><small id="userRole">Admin</small></div>
+            <i data-lucide="chevron-down"></i>
+          </button>
         </div>
-
-    </div>
-
-
-    <div class="top-profile">
-
-        <div class="top-profile-icon">
-            👤
-        </div>
-
-        <div>
-            <span class="user-name">
-                Wholesaler
-            </span>
-
-            <small>
-                Wholesaler
-            </small>
-        </div>
-
-    </div>
-
-</header>
-
- <div class="layout">
-
-
-<!-- =========================================
-     SIDEBAR
-     ========================================= -->
-<aside id="sidebar" class="sidebar">
-
-    <!-- SIDEBAR BRAND -->
-    <div class="sidebar-brand">
-
-        <div class="sidebar-brand-mark">
-            JS
-        </div>
-
-        <div class="sidebar-brand-text">
-
-            <strong>
-                JS UNDEFINED
-            </strong>
-
-            <small>
-                Wholesaler Panel
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <!-- SIDEBAR MENU -->
-    <nav class="sidebar-menu">
-
-        <!-- Dashboard -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html'">
-
-            <span class="nav-icon">📊</span>
-
-            <span>Dashboard</span>
-
-        </button>
-
-
-        <!-- My Products -->
-       
-<button
-    class="nav-item"
-    type="button"
-    onclick="window.location.href='my-product.html'">
-
-    <span class="nav-icon">📦</span>
-    <span>My Products</span>
-
-</button>
-
-        <!-- Buy Products -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#buy'">
-
-            <span class="nav-icon">🛍️</span>
-
-            <span>Buy Products</span>
-
-        </button>
-
-
-        <!-- Cart -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#cart'">
-
-            <span class="nav-icon">🛒</span>
-
-            <span>Cart</span>
-
-            <b
-                id="cartCount"
-                class="nav-count">
-                0
-            </b>
-
-        </button>
-
-
-        <!-- Orders -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='orders.html'">
-
-            <span class="nav-icon">🚚</span>
-
-            <span>Orders</span>
-
-        </button>
-
-
-        <!-- Payments - ACTIVE -->
-        <button
-            class="nav-item active"
-            id="paymentNavBtn"
-            type="button">
-
-            <span class="nav-icon">💳</span>
-
-            <span>Payments</span>
-
-        </button>
-
-
-        <!-- Customers -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#customers'">
-
-            <span class="nav-icon">👥</span>
-
-            <span>Customers</span>
-
-        </button>
-
-
-        <!-- Inventory -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#inventory'">
-
-            <span class="nav-icon">🏷️</span>
-
-            <span>Inventory</span>
-
-        </button>
-
-
-        <!-- Reports -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#reports'">
-
-            <span class="nav-icon">📈</span>
-
-            <span>Reports</span>
-
-        </button>
-
-
-        <!-- Notifications -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#notifications'">
-
-            <span class="nav-icon">🔔</span>
-
-            <span>Notifications</span>
-
-        </button>
-
-
-        <!-- Profile -->
-        <button
-            class="nav-item"
-            type="button"
-            onclick="window.location.href='wholesaler.html#profile'">
-
-            <span class="nav-icon">👤</span>
-
-            <span>Profile</span>
-
-        </button>
-
-    </nav>
-
-
-    <!-- LOGOUT -->
-    <div class="sidebar-bottom">
-
-        <button
-            id="logoutBtn"
-            class="logout-sidebar-btn"
-            type="button">
-
-            <span class="nav-icon">🚪</span>
-
-            <span>Logout</span>
-
-        </button>
-
-    </div>
-
-</aside>
-
-
-<!-- =========================================
-     PAYMENT SIDEBAR NAVIGATION
-     ========================================= -->
-<script>
-document
-    .getElementById("paymentNavBtn")
-    ?.addEventListener("click", function () {
-
-        window.location.href = "payment.html";
-
-    });
-</script>
-
-      <main class="content">
-        <section id="dashboard" class="page-section active">
-          <div class="page-head"><div><h1>Dashboard</h1><p>Business overview and recent activity</p></div><button id="refreshDashboard" class="btn secondary">↻ Refresh</button></div>
-          <div class="stats-grid">
-            <div class="stat-card"><span>Products</span><strong id="statProducts">0</strong><small>Active / total</small></div>
-            <div class="stat-card"><span>Orders</span><strong id="statOrders">0</strong><small>Orders received</small></div>
-            <div class="stat-card"><span>Payments</span><strong id="statPayments">₹0</strong><small>Payment records</small></div>
-            <div class="stat-card"><span>Customers</span><strong id="statCustomers">0</strong><small>Unique buyers</small></div>
+      </header>
+
+      <div class="quick-actions" id="quickActions">
+        <button data-command="Show my best-selling products">Show my best-selling products</button>
+        <button data-command="Find low stock products">Find low stock products</button>
+        <button data-command="Create a reorder">Create a reorder</button>
+        <button data-command="Compare today's sales">Compare today's sales</button>
+      </div>
+
+      <section class="content">
+        <div class="page-heading">
+          <div><h1>Dashboard</h1><p>Business overview and recent activity</p></div>
+          <div class="heading-actions">
+            <select id="rangeSelect"><option>Last 7 Days</option><option>Last 30 Days</option><option>Last 90 Days</option><option>This Year</option></select>
+            <button class="outline-btn" id="refreshBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
           </div>
-          <div class="chart-grid">
-            <div class="panel"><div class="panel-head"><h3>Sales Graph</h3></div><div class="chart-wrap"><canvas id="salesChart"></canvas></div></div>
-            <div class="panel"><div class="panel-head"><h3>Payment Status</h3></div><div class="chart-wrap"><canvas id="paymentChart"></canvas></div></div>
-          </div>
-          <div class="panel"><div class="panel-head"><h3>Recent Orders</h3><button class="text-btn" data-section="orders">View all</button></div><div class="table-wrap"><table><thead><tr><th>Order</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th></tr></thead><tbody id="recentOrdersBody"></tbody></table></div></div>
-        </section>
-
-        <section id="products" class="page-section">
-          <div class="page-head"><div><h1>My Products</h1><p>Add and manage your wholesale catalogue</p></div><button id="addProductBtn" class="btn primary">＋ Add Product</button></div>
-          <div class="toolbar"><input id="myProductSearch" class="input" placeholder="Search my products…"><select id="myProductStatus" class="input"><option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
-          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Price</th><th>MOQ</th><th>Bulk Qty</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
-        </section>
-
-        <section id="buy" class="page-section">
-          <div class="page-head"><div><h1>Buy Products</h1><p>Purchase products from other sellers</p></div><button class="btn secondary" data-section="cart">🧺 Cart <span id="buyCartCount">0</span></button></div>
-          <div class="toolbar"><input id="marketSearch" class="input" placeholder="Search products…"><select id="marketCategory" class="input"><option value="">All types</option><option value="Women">Women</option><option value="Men">Men</option><option value="Kids">Kids</option><option value="Unisex">Unisex</option></select></div>
-          <div id="marketGrid" class="product-grid"></div>
-        </section>
-
-        <section id="cart" class="page-section">
-          <div class="page-head"><div><h1>Cart</h1><p>Review quantities before checkout</p></div></div>
-          <div id="cartList" class="cart-list"></div>
-          <div class="checkout-bar"><div><span>Cart Total</span><strong id="cartTotal">₹0</strong></div><button id="checkoutBtn" class="btn primary">Checkout</button></div>
-        </section>
-
-        <section id="orders" class="page-section">
-          <div class="page-head"><div><h1>Orders</h1><p>Sales received and purchases made</p></div><button id="refreshOrders" class="btn secondary">↻ Refresh</button></div>
-          <div class="tabs"><button class="tab active" data-order-tab="received">Received</button><button class="tab" data-order-tab="purchased">Purchased</button></div>
-          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Order</th><th>Product</th><th>Qty</th><th>Total</th><th>Status</th><th>Tracking</th><th>Action</th></tr></thead><tbody id="ordersBody"></tbody></table></div></div>
-        </section>
-
-       
-
-
-
-
-
-       <section id="customers" class="page-section">
-
-    <div class="page-head">
-
-        <div>
-            <h1>Customers</h1>
-
-            <p>
-                People and businesses that purchased your products
-            </p>
         </div>
 
-    </div>
-
-
-    <div class="customer-summary-bar">
-
-        <div>
-
-            <span class="customer-summary-icon">
-                👥
-            </span>
-
-            <div>
-                <strong>My Customers</strong>
-
-                <small>
-                    Buyers from your products
-                </small>
+        <div class="dashboard-grid">
+          <div class="main-column">
+            <div class="stat-grid">
+              <article class="stat-card"><div class="stat-icon purple"><i data-lucide="package"></i></div><div><span>Products</span><strong id="productsValue">2</strong><small class="up">↑ 0% <em>Active / Total</em></small></div><div class="sparkline purple-line">⌁⌁⌁</div></article>
+              <article class="stat-card"><div class="stat-icon green"><i data-lucide="clipboard-check"></i></div><div><span>Orders</span><strong id="ordersValue">2</strong><small class="up">↑ 100% <em>Orders received</em></small></div><div class="sparkline green-line">⌁⌁⌁</div></article>
+              <article class="stat-card"><div class="stat-icon violet"><i data-lucide="indian-rupee"></i></div><div><span>Payments</span><strong id="paymentsValue">₹1,947</strong><small class="up">↑ 100% <em>Payment records</em></small></div><div class="sparkline purple-line">⌁⌁⌁</div></article>
+              <article class="stat-card"><div class="stat-icon blue"><i data-lucide="user-round"></i></div><div><span>Customers</span><strong id="customersValue">1</strong><small class="up">↑ 0% <em>Unique buyers</em></small></div><div class="sparkline blue-line">⌁⌁⌁</div></article>
             </div>
 
+            <section class="panel sales-panel">
+              <div class="panel-title"><h2><i data-lucide="chart-no-axes-combined"></i> Sales Graph</h2><div class="periods"><button class="active">7D</button><button>30D</button><button>90D</button><button>1Y</button></div></div>
+              <div class="chart-wrap"><svg viewBox="0 0 900 260" preserveAspectRatio="none" aria-label="Sales chart"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5b38f5" stop-opacity=".28"/><stop offset="1" stop-color="#5b38f5" stop-opacity="0"/></linearGradient></defs><g class="gridlines"><line x1="50" y1="35" x2="870" y2="35"/><line x1="50" y1="95" x2="870" y2="95"/><line x1="50" y1="155" x2="870" y2="155"/><line x1="50" y1="215" x2="870" y2="215"/></g><path class="area" d="M50 205 C105 190 130 160 175 178 S255 130 295 150 S370 115 415 138 S480 155 525 130 S600 108 650 82 S730 100 775 62 S825 45 870 28 L870 215 L50 215 Z"/><path class="line" d="M50 205 C105 190 130 160 175 178 S255 130 295 150 S370 115 415 138 S480 155 525 130 S600 108 650 82 S730 100 775 62 S825 45 870 28"/></svg><div class="xlabels"><span>21 Sep</span><span>22 Sep</span><span>23 Sep</span><span>24 Sep</span><span>25 Sep</span><span>26 Sep</span><span>27 Sep</span></div></div>
+            </section>
+
+            <section class="panel payment-panel">
+              <div class="panel-title"><h2><i data-lucide="credit-card"></i> Payment Status</h2></div>
+              <div class="payment-content"><div class="donut"><div><small>Total</small><strong>₹1,947</strong></div></div><div class="payment-legend"><div><i class="dot paid"></i><span>Paid</span><b>1</b><strong>₹1,947</strong><em>100%</em></div><div><i class="dot pending"></i><span>Pending</span><b>0</b><strong>₹0</strong><em>0%</em></div><div><i class="dot other"></i><span>Other</span><b>0</b><strong>₹0</strong><em>0%</em></div></div></div>
+            </section>
+
+            <section class="panel orders-panel">
+              <div class="panel-title"><h2><i data-lucide="truck"></i> Recent Orders</h2><button class="text-btn" data-page="orders">View All</button></div>
+              <div class="table-wrap"><table><thead><tr><th>ORDER</th><th>PRODUCT</th><th>QTY</th><th>TOTAL</th><th>STATUS</th><th>DATE</th></tr></thead><tbody id="ordersBody"><tr><td>TEST-ORDER-001</td><td><span class="product-mini">👗</span> Test Women Printed Kurti</td><td>5</td><td>₹1,995</td><td><span class="status pending">Pending</span></td><td>27 Sep 2026<br><small>04:12 PM</small></td></tr><tr><td>TEST-ORDER-002</td><td><span class="product-mini">👡</span> Test Women Fashion Sandal</td><td>3</td><td>₹1,947</td><td><span class="status delivered">Delivered</span></td><td>26 Sep 2026<br><small>11:36 AM</small></td></tr></tbody></table></div>
+            </section>
+          </div>
+
+          <aside class="right-column">
+            <section class="ai-card">
+              <div class="ai-card-head"><div class="ai-orb"><i data-lucide="sparkles"></i></div><span>Best Model</span></div>
+              <h2>Your AI Business Assistant</h2><p>Your business is connected. Ask AI to analyze, recommend, or perform authorized tasks.</p>
+              <ul><li>Analyze sales</li><li>Find opportunities</li><li>Manage inventory</li><li>Assist with customers</li><li>Create business tasks</li></ul>
+              <button id="openAi"><i data-lucide="sparkles"></i> Ask AI <i data-lucide="arrow-right"></i></button>
+            </section>
+
+            <section class="panel insights">
+              <div class="panel-title"><h2><i data-lucide="lightbulb"></i> AI Insights</h2><button class="text-btn" id="viewInsights">View All</button></div>
+              <div class="insight green"><i data-lucide="trending-up"></i><div><strong>Sales Growth</strong><p>Your sales increased compared to last week.</p></div><i data-lucide="chevron-right"></i></div>
+              <div class="insight purple"><i data-lucide="star"></i><div><strong>Top Product</strong><p>Test Women Printed Kurti is performing best.</p></div><i data-lucide="chevron-right"></i></div>
+              <div class="insight blue"><i data-lucide="users"></i><div><strong>Customer Insight</strong><p>1 unique buyer recorded this week.</p></div><i data-lucide="chevron-right"></i></div>
+              <div class="insight orange"><i data-lucide="zap"></i><div><strong>Action Suggestion</strong><p>Consider adding inventory for top-selling products.</p></div><i data-lucide="chevron-right"></i></div>
+            </section>
+          </aside>
         </div>
 
-
-        <div class="customer-count-box">
-
-            <strong id="customerCount">
-                0
-            </strong>
-
-            <span>
-                Customers
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="panel customer-panel">
-
-        <div class="table-wrap customer-table-wrap">
-
-            <table class="customer-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Customer</th>
-
-                        <th>Type</th>
-
-                        <th>Business</th>
-
-                        <th>Mobile</th>
-
-                        <th>Orders</th>
-
-                        <th>Total Purchase</th>
-
-                        <th>Last Order</th>
-
-                        <th>Action</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="customersBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-        <section id="inventory" class="page-section">
-          <div class="page-head"><div><h1>Inventory</h1><p>Current stock and low-stock products</p></div><button id="refreshInventory" class="btn secondary">↻ Refresh</button></div>
-          <div class="panel"><div class="table-wrap"><table><thead><tr><th>Product</th><th>Stock</th><th>MOQ</th><th>Bulk Qty</th><th>Status</th><th>Update</th></tr></thead><tbody id="inventoryBody"></tbody></table></div></div>
-        </section>
-
-        <section id="reports" class="page-section">
-          <div class="page-head"><div><h1>Reports</h1><p>Sales, orders and inventory summary</p></div><button id="printReport" class="btn secondary">🖨 Print Report</button></div>
-          <div id="reportCards" class="stats-grid"></div>
-          <div class="panel"><div class="panel-head"><h3>Monthly Sales</h3></div><div class="chart-wrap"><canvas id="reportChart"></canvas></div></div>
-        </section>
-
-        <section id="notifications" class="page-section">
-          <div class="page-head"><div><h1>Notifications</h1><p>Important account and order activity</p></div></div>
-          <div id="notificationsList" class="notice-list"></div>
-        </section>
-
-        <section id="profile" class="page-section">
-          <div class="page-head"><div><h1>Profile</h1><p>Business and verification information</p></div></div>
-          <form id="profileForm" class="panel form-grid">
-            <label>Full Name<input id="profileName" class="input" required></label>
-            <label>Email<input id="profileEmail" class="input" type="email" disabled></label>
-            <label>Mobile<input id="profileMobile" class="input"></label>
-            <label>Business Name<input id="profileBusiness" class="input"></label>
-            <label>GST Number<input id="profileGST" class="input"></label>
-            <label>PAN Number<input id="profilePAN" class="input"></label>
-            <label class="full">Business Address<textarea id="profileAddress" class="input" rows="4"></textarea></label>
-            <div class="full verification-box"><strong>Verification:</strong> <span id="verificationStatus">Not submitted</span></div>
-            <button class="btn primary" type="submit">Save Profile</button>
-          </form>
-        </section>
-      </main>
-    </div>
+        <div class="bottom-ai-banner"><div class="banner-icon"><i data-lucide="crown"></i></div><div><strong>AI Model is the Best Choice for Your Business!</strong><small>Smarter decisions. Higher sales. Less effort.</small></div><button id="bannerAi">Explore AI Features <i data-lucide="arrow-right"></i></button></div>
+      </section>
+    </main>
   </div>
 
-  <div id="productModal" class="modal hidden">
-    <div class="modal-card large">
-      <div class="modal-head"><h2 id="productModalTitle">Add Product</h2><button class="icon-btn" data-close="productModal">✕</button></div>
-      <form id="productForm" class="form-grid">
-        <input type="hidden" id="productId">
-        <label>Product Name*<input id="pName" class="input" required></label>
-        <label>Product Type<select id="pType" class="input"><option>Women</option><option>Men</option><option>Kids</option><option>Unisex</option></select></label>
-        <label>Sub Type<input id="pSubType" class="input"></label>
-        <label>Target For<select id="pTarget" class="input"><option value="B2B">B2B</option><option value="User">User</option><option value="Both">Both</option></select></label>
-        <label>Price (₹)*<input id="pPrice" class="input" type="number" min="0" step="0.01" required></label>
-        <label>Original Price (₹)<input id="pOriginalPrice" class="input" type="number" min="0" step="0.01"></label>
-        <label>Discount (₹)<input id="pDiscount" class="input" type="number" min="0" step="0.01" value="0"></label>
-        <label>MOQ*<input id="pMOQ" class="input" type="number" min="1" value="1" required></label>
-        <label>Bulk Qty<input id="pBulkQty" class="input" type="number" min="0" value="0"></label>
-        <label>Bulk Price (₹)<input id="pBulkPrice" class="input" type="number" min="0" step="0.01" placeholder="Optional"></label>
-        <label>Stock Quantity<input id="pStock" class="input" type="number" min="0" value="0"></label>
-        <label>Image URLs <small>(one URL per line)</small><textarea id="pImages" class="input" rows="3" placeholder="https://..."></textarea></label>
-        <label class="full">Description<textarea id="pDescription" class="input" rows="4"></textarea></label>
-        <label class="full">More Information<textarea id="pMoreInfo" class="input" rows="3"></textarea></label>
-        <div class="full modal-actions"><button type="button" class="btn secondary" data-close="productModal">Cancel</button><button type="submit" class="btn primary">Save Product</button></div>
-      </form>
-    </div>
+  <button class="floating-ai" id="floatingAi"><i data-lucide="bot"></i><span>AI</span></button>
+
+  <div class="ai-drawer" id="aiDrawer">
+    <div class="ai-drawer-head"><div><div class="drawer-logo"><i data-lucide="sparkles"></i></div><div><strong>JS UNDEFINED AI</strong><small>Business Assistant</small></div></div><button id="closeAi"><i data-lucide="x"></i></button></div>
+    <div class="chat-body" id="chatBody"><div class="chat-msg ai"><strong>AI Assistant</strong><p>Hello! I can help with your wholesaler dashboard. Try “show pending orders”, “analyze sales”, “find low stock”, or “create a reorder”.</p></div></div>
+    <div class="suggestions"><button data-command="Analyze my sales">Analyze sales</button><button data-command="Show pending orders">Pending orders</button><button data-command="Find low stock products">Low stock</button></div>
+    <form class="chat-input" id="chatForm"><input id="chatInput" placeholder="Ask your business assistant..."><button><i data-lucide="arrow-up"></i></button></form>
   </div>
 
-  <div id="productDetailsModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Product Details</h2><button class="icon-btn" data-close="productDetailsModal">✕</button></div><div id="productDetails"></div></div></div>
-  <div id="checkoutModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2>Checkout</h2><button class="icon-btn" data-close="checkoutModal">✕</button></div><form id="checkoutForm"><div id="checkoutSummary"></div><label>Payment Mode<select id="checkoutPaymentMode" class="input"><option>COD</option><option>UPI</option><option>Bank Transfer</option><option>Pay Later</option></select></label><label>Note<textarea id="checkoutNote" class="input" rows="3"></textarea></label><button class="btn primary full" type="submit">Place Order</button></form></div></div>
-
-
-<div
-    id="customerDetailsModal"
-    class="modal hidden"
->
-
-    <div class="modal-card customer-details-modal">
-
-        <div class="modal-head">
-
-            <div>
-                <h2>Customer Details</h2>
-
-                <small>
-                    Customer information and purchase history
-                </small>
-            </div>
-
-            <button
-                class="icon-btn"
-                data-close="customerDetailsModal"
-            >
-                ✕
-            </button>
-
-        </div>
-
-
-        <div id="customerDetailsContent"></div>
-
-
-        <div class="customer-modal-actions">
-
-            <button
-                type="button"
-                class="btn secondary"
-                data-close="customerDetailsModal"
-            >
-                Close
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-  <div id="toast" class="toast"></div>
+  <div class="toast" id="toast"></div>
   <script src="wholesaler.js"></script>
-
-
-<script>
-document
-    .getElementById("paymentNavBtn")
-    ?.addEventListener("click", function () {
-
-        window.location.href = "payment.html";
-
-    });
-</script>
 </body>
 </html>
