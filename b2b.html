@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07121d">
+  <title>Wholesaler Admin • Dashboard</title>
+  <link rel="stylesheet" href="style1.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+<script src="supabase.js"></script>
+<script src="b2b.js"></script>
+
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><i data-lucide="bar-chart-3"></i></div>
+      <div><strong>JS WHOLESALE</strong><small>B2B ADMIN</small></div>
+      <button class="mobile-close" id="closeSidebar"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="side-section">MAIN</div>
+    <nav class="side-nav">
+      <a class="active" href="index.html"><i data-lucide="home"></i><span>Dashboard</span></a>
+      <a href="#products"><i data-lucide="package"></i><span>My Products</span></a>
+      <a href="#buy-products"><i data-lucide="shopping-bag"></i><span>Buy Products</span></a>
+      <a href="#cart"><i data-lucide="shopping-cart"></i><span>Cart</span><b class="nav-badge" id="cartCount">0</b></a>
+      <a href="#orders"><i data-lucide="truck"></i><span>Orders</span></a>
+      <a href="#payments"><i data-lucide="credit-card"></i><span>Payments</span></a>
+      <a href="#customers"><i data-lucide="users"></i><span>Customers</span></a>
+      <a href="#inventory"><i data-lucide="boxes"></i><span>Inventory</span></a>
+      <a href="#reports"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+      <a href="ai.html"><i data-lucide="sparkles"></i><span>AI Command Center</span></a>
+      <a href="#notifications"><i data-lucide="bell"></i><span>Notifications</span><b class="nav-badge red" id="notificationCount">0</b></a>
+      <a href="#profile"><i data-lucide="user-round"></i><span>Profile</span></a>
+    </nav>
+
+    <div class="side-section side-bottom-label">ACCOUNT</div>
+    <button class="logout" id="logoutBtn"><i data-lucide="log-out"></i><span>Logout</span></button>
+
+    <div class="sidebar-foot">
+      <span class="online-dot"></span>
+      <div><b>Live connection</b><small>Supabase connected</small></div>
+    </div>
+  </aside>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="hamburger" id="openSidebar"><i data-lucide="menu"></i></button>
+      <div class="ai-bar-wrap">
+        <div class="ai-bar">
+          <i data-lucide="sparkles"></i>
+          <input id="commandInput" autocomplete="off" placeholder="Ask AI anything or give a command...">
+          <button class="mic" id="micBtn" title="Speak"><i data-lucide="mic"></i></button>
+          <button class="send" id="sendCommand" title="Run AI command"><i data-lucide="arrow-right"></i></button>
+        </div>
+        <div class="quick-prompts">
+          <button data-command="Show my latest orders">Show my latest orders</button>
+          <button data-command="Show today's sales">Show today's sales</button>
+          <button data-command="Find low stock products">Find low stock products</button>
+          <button data-command="Show payment status">Show payment status</button>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" title="Notifications"><i data-lucide="bell"></i><span class="red-dot"></span></button>
+        <button class="icon-btn" id="themeBtn" title="Appearance"><i data-lucide="sun"></i></button>
+        <div class="admin-profile">
+          <div class="avatar" id="userAvatar">WA</div>
+          <div><b id="userName">Wholesaler</b><small id="userRole">Admin</small></div>
+          <i data-lucide="chevron-down"></i>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="page-heading">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Business overview and real-time wholesaler activity</p>
+        </div>
+        <div class="heading-actions">
+          <select id="rangeSelect">
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="365">Last 1 Year</option>
+          </select>
+          <button class="outline-btn" id="refreshBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+      </div>
+
+      <div id="globalError" class="global-error hidden"></div>
+
+      <div class="dashboard-grid">
+        <div class="left-column">
+          <section class="metric-grid">
+            <article class="metric-card">
+              <div class="metric-icon purple"><i data-lucide="package"></i></div>
+              <div class="metric-body"><span>Products</span><strong id="productsMetric">—</strong><small>Active / Total</small></div>
+              <div class="spark purple-spark">⌁⌁⌁</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-icon green"><i data-lucide="shopping-bag"></i></div>
+              <div class="metric-body"><span>Orders</span><strong id="ordersMetric">—</strong><small>Orders received</small></div>
+              <div class="spark green-spark">⌁⌁⌁</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-icon violet"><i data-lucide="indian-rupee"></i></div>
+              <div class="metric-body"><span>Payments</span><strong id="paymentsMetric">—</strong><small>Payment records</small></div>
+              <div class="spark purple-spark">⌁⌁⌁</div>
+            </article>
+            <article class="metric-card">
+              <div class="metric-icon blue"><i data-lucide="users"></i></div>
+              <div class="metric-body"><span>Customers</span><strong id="customersMetric">—</strong><small>Unique buyers</small></div>
+              <div class="spark blue-spark">⌁⌁⌁</div>
+            </article>
+          </section>
+
+          <section class="panel chart-panel" id="reports">
+            <div class="panel-head">
+              <div><h2><i data-lucide="chart-line"></i> Sales Graph</h2><small id="chartSubtitle">Actual records from Supabase</small></div>
+              <div class="segmented">
+                <button class="active" data-days="7">7D</button>
+                <button data-days="30">30D</button>
+                <button data-days="90">90D</button>
+                <button data-days="365">1Y</button>
+              </div>
+            </div>
+            <div class="chart-wrap"><canvas id="salesChart"></canvas></div>
+          </section>
+
+          <section class="panel payment-panel" id="payments">
+            <div class="panel-head">
+              <div><h2><i data-lucide="wallet-cards"></i> Payment Status</h2><small>Live payment records</small></div>
+            </div>
+            <div class="payment-layout">
+              <div class="donut-wrap"><canvas id="paymentChart"></canvas><div class="donut-center"><small>Total</small><b id="paymentTotal">—</b></div></div>
+              <div class="payment-legend" id="paymentLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel orders-panel" id="orders">
+            <div class="panel-head">
+              <div><h2><i data-lucide="truck"></i> Recent Orders</h2><small>Latest records from your orders table</small></div>
+              <button class="link-btn" data-command="Show my latest orders">View All</button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>ORDER</th><th>CUSTOMER</th><th>TOTAL</th><th>STATUS</th><th>DATE</th></tr></thead>
+                <tbody id="ordersBody"><tr><td colspan="5" class="empty">Loading real data…</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <aside class="right-column">
+          <section class="ai-card">
+            <div class="ai-card-top"><div class="ai-orb"><i data-lucide="sparkles"></i></div><div><b>Your AI Business Assistant</b><span>Connected to your wholesaler data</span></div><em>LIVE</em></div>
+            <p>Ask about orders, sales, payments, customers or inventory. Voice commands are supported.</p>
+            <ul>
+              <li><i data-lucide="check-circle-2"></i> Analyze sales</li>
+              <li><i data-lucide="check-circle-2"></i> Find opportunities</li>
+              <li><i data-lucide="check-circle-2"></i> Check inventory</li>
+              <li><i data-lucide="check-circle-2"></i> Assist with customers</li>
+              <li><i data-lucide="check-circle-2"></i> Run dashboard commands</li>
+            </ul>
+            <button id="askAiBtn" class="ask-ai"><i data-lucide="sparkles"></i> Ask AI <i data-lucide="arrow-right"></i></button>
+          </section>
+
+          <section class="panel insights-panel">
+            <div class="panel-head"><div><h2><i data-lucide="lightbulb"></i> AI Insights</h2></div><a href="ai.html">View All</a></div>
+            <div id="insightsList"><div class="insight-loading">Analyzing your real data…</div></div>
+          </section>
+
+          <section class="panel inventory-mini" id="inventory">
+            <div class="panel-head"><div><h2><i data-lucide="boxes"></i> Inventory Pulse</h2></div><button class="link-btn" data-command="Find low stock products">Check</button></div>
+            <div class="inventory-stats">
+              <div><b id="stockItems">—</b><span>Items tracked</span></div>
+              <div><b id="lowStock">—</b><span>Low stock</span></div>
+              <div><b id="outStock">—</b><span>Out of stock</span></div>
+            </div>
+          </section>
+
+          <section class="panel profile-mini" id="customers">
+            <div class="panel-head"><div><h2><i data-lucide="users"></i> Customers</h2></div></div>
+            <div class="profile-stat"><div class="round-icon blue"><i data-lucide="user-plus"></i></div><div><b id="newCustomers">—</b><span>Customer records available</span></div></div>
+            <button class="wide-outline" data-command="Show my customers">Open customer view</button>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button class="floating-ai" id="floatingAi" title="Open AI Command Center"><i data-lucide="bot"></i><span>AI</span></button>
+<div class="toast" id="toast"></div>
+
+<script src="supabase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
