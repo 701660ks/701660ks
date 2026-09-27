@@ -269,7 +269,56 @@ async function qPayments(){
 
 
 
-async function qSales(){let q=await seller(client().from('orders').select('*'));const r=await q;if(r.error)throw r.error;const rows=r.data||[],total=rows.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0),del=rows.filter(x=>String(x.status||'').toLowerCase()==='delivered'),dr=del.reduce((s,x)=>s+Number(x.total_price||x.amount||0),0);return {title:'Sales Summary',rows:[{metric:'Total Orders',value:rows.length},{metric:'Total Sales',value:money(total)},{metric:'Delivered Orders',value:del.length},{metric:'Delivered Revenue',value:money(dr)}],cols:['metric','value']}}
+ async function qSales(){
+    let q = client().from('orders').select('*');
+
+    q = await applySeller(q);
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    const rows = r.data || [];
+
+    const total = rows.reduce(
+        (s,x)=>s + Number(x.total_price || x.amount || 0),
+        0
+    );
+
+    const del = rows.filter(
+        x=>String(x.status || '').toLowerCase()==='delivered'
+    );
+
+    const dr = del.reduce(
+        (s,x)=>s + Number(x.total_price || x.amount || 0),
+        0
+    );
+
+    return {
+        title:'Sales Summary',
+
+        rows:[
+            {
+                metric:'Total Orders',
+                value:rows.length
+            },
+            {
+                metric:'Total Sales',
+                value:money(total)
+            },
+            {
+                metric:'Delivered Orders',
+                value:del.length
+            },
+            {
+                metric:'Delivered Revenue',
+                value:money(dr)
+            }
+        ],
+
+        cols:['metric','value']
+    };
+}
 
 async function read(c){if(best(c))return qBest(c);if(payments(c))return qPayments();if(customers(c))return qCustomers();if(orders(c))return qOrders(c);if(sales(c))return qSales();if(products(c)||/low stock/i.test(c))return qProducts(c);throw Error('Try: show best-selling products under 2500, show pending orders, show products, show customers, show payments, or show sales.')}
 
@@ -289,12 +338,46 @@ async function archive(entity,row,command){try{const u=await user();const r=awai
 
 
 async function history(command,status,count){try{const u=await user();await client().from('ai_query_history').insert({user_id:u.id,query_text:command,result_count:count||0,status:status||'completed'})}catch(e){console.warn('History unavailable:',e.message)}}
-async function findProduct(a){let q=await seller(client().from('products').select('*').limit(20));if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
-async function findCustomer(a){let q=client().from('profiles').select('*').limit(20);if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
 
 
-async function findOrder(a){let q=await seller(client().from('orders').select('*').limit(20));if(a.id)q=q.eq('id',a.id);const r=await q;if(r.error)throw r.error;return r.data||[]}
-function updatePrice(c){const m=c.replace(/,/g,'').match(/(?:price|selling price|bulk price)\D+(?:to|=|at)?\s*₹?\s*(\d+(?:\.\d+)?)/i);return m?Number(m[1]):null}
+async function findProduct(a){
+    let q = client()
+        .from('products')
+        .select('*')
+        .limit(20);
+
+    q = await applySeller(q);
+
+    if(a.id){
+        q = q.eq('id',a.id);
+    }
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    return r.data || [];
+}
+
+async function findOrder(a){
+    let q = client()
+        .from('orders')
+        .select('*')
+        .limit(20);
+
+    q = await applySeller(q);
+
+    if(a.id){
+        q = q.eq('id',a.id);
+    }
+
+    const r = await q;
+
+    if(r.error) throw r.error;
+
+    return r.data || [];
+}
+
 function updateStock(c){const m=c.match(/(?:stock|quantity)\D+(?:to|=)?\s*(\d+)/i);return m?Number(m[1]):null}
 async function updateProduct(a){const rows=await findProduct(a);if(!rows.length)throw Error('Product not found. Please provide the product ID.');if(rows.length>1&&!a.id)throw Error('More than one product matched. Please provide the product ID.');const p=rows[0],patch={},np=updatePrice(a.command),ns=updateStock(a.command);if(np!==null)patch.price=np;if(ns!==null)patch.stock_quantity=ns;if(!Object.keys(patch).length)throw Error('Specify the new product price or stock quantity.');patch.updated_at=new Date().toISOString();let q=await seller(client().from('products').update(patch).eq('id',p.id));const r=await q.select('*').single();if(r.error)throw r.error;return r.data}
 
